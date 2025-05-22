@@ -14,7 +14,7 @@ const Page = ({ params }) => {
   useEffect(() => {
     const fetchBusinessDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:18001/api/get-all-listings-by-id/${Id}`);
+        const response = await axios.get(`http://api.biziffy.com/api/get-all-listings-by-id/${Id}`);
         // console.log("API Response:", response.data);
         if (response.status) {
           setBusinesses(response?.data?.data);
