@@ -17,9 +17,9 @@
 }
 
 .earn-img {
-  width: 90px;
-  height: 90px;
-  object-fit: cover;
+  width: 100%;
+  height: 180px;
+  /* object-fit: cover; */
   margin-bottom: 15px;
 }
 
@@ -101,6 +101,10 @@
   margin-right: 10px;
 }
 
+.who-can-earn-data{
+  padding: 0rem;
+}
+
 @media (max-width: 768px) {
   .earn-revenue-list li{
     font-weight: 500;
@@ -117,8 +121,8 @@
     margin-top: 0;
   }
   .earn-img {
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 80px;
   }
 
   .earn-name {

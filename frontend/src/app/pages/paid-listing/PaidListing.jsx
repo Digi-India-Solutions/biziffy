@@ -20,7 +20,7 @@ const PaidListing = ({ websiteList, user }) => {
 
     if (!lastClickDay || parseInt(lastClickDay) < currentDay) {
 
-      axios.post(`https://api.biziffy.com/api/admin/increase-click-count-website-listing/${id}`, { user })
+      axios.post(`http://localhost:18001/api/admin/increase-click-count-website-listing/${id}`, { user })
         .then(() => { console.log(`click counted`); localStorage.setItem(key, currentDay.toString()); })
         .catch((err) => { console.error("Error increasing count", err) });
     } else {

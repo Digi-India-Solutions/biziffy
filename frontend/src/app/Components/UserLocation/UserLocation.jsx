@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
+import './location.css'
 export default function UserLocation({ location, setLocation }) {
   const [error, setError] = useState(null);
   const [retry, setRetry] = useState(false);
@@ -72,12 +72,14 @@ export default function UserLocation({ location, setLocation }) {
     <div>
       {location ? (
         <>
+        <div className="d-flex text-start">
           <p
             className="m-0 p-0 location-detact"
             title={location.city + ' ' + location.state} // Tooltip for full location
-          >
+            >
             {truncateLocation(location.city + ' ' + location.state)}
           </p>
+            </div>
         </>
       ) : (
         <>
