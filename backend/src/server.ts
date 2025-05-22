@@ -50,6 +50,7 @@ const allowedOrigins = [
   "http://localhost:18000",
   "http://localhost:18001",
   "https://biziffy.com",
+  "https://www.biziffy.com",
   "https://api.biziffy.com",
   "https://admin.biziffy.com",
   "https://www.biziffy.com"

@@ -71,7 +71,7 @@
 //     }
 
 //     // try {
-//     //   const res = await axios.get("http://api.biziffy.com/api/search", {
+//     //   const res = await axios.get("https://api.biziffy.com/api/search", {
 //     //     params: {
 //     //       query: searchText.trim(),
 //     //       pincode: location.pincode,
@@ -234,7 +234,7 @@ const BusinessNavbar = () => {
   useEffect(() => {
     const fetchPinCodes = async () => {
       try {
-        const response = await axios.get("http://api.biziffy.com/api/pincode/get-all-pin-codes");
+        const response = await axios.get("https://api.biziffy.com/api/pincode/get-all-pin-codes");
         if (response.data?.status) {
           setPinCodes(response.data.pinCodes);
         }

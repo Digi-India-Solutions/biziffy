@@ -21,7 +21,7 @@ const ContactPerson = ({ setKey, formData, setFormData }) => {
     try {
 
       // const response = await fetch(
-      //   "http://api.biziffy.com/api/admin/createContact",
+      //   "https://api.biziffy.com/api/admin/createContact",
       //   {
       //     method: "POST",
       //     headers: {
@@ -31,7 +31,7 @@ const ContactPerson = ({ setKey, formData, setFormData }) => {
       //   }
       // );
 
-      // const response = await fetch("http://api.biziffy.com/api/admin/createContact", {
+      // const response = await fetch("https://api.biziffy.com/api/admin/createContact", {
       //   method: "POST",
       //   headers: {
       //     "Content-Type": "application/json",

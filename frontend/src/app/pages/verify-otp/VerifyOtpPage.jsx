@@ -16,7 +16,7 @@ const VerifyOtpPage = ({ formData, title, openOtp, setOpenOtp, loading, setLoadi
 
     try {
       setLoading(true);
-      const res = await axios.post("http://api.biziffy.com/api/verify-otp", { ...formData, otp, });
+      const res = await axios.post("https://api.biziffy.com/api/verify-otp", { ...formData, otp, });
 
       if (res.data.status) {
         setLoading(false);

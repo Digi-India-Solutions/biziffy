@@ -106,7 +106,7 @@ const BusinessTiming = ({ setKey, formData, setFormData }) => {
     }));
     setFormData({ ...formData, timings: timingsData });
     try {
-      // const response = await fetch("http://api.biziffy.com/api/admin/createBusinessTiming", {
+      // const response = await fetch("https://api.biziffy.com/api/admin/createBusinessTiming", {
 
       //   method: "POST",
       //   headers: {

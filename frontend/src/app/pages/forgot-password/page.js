@@ -35,7 +35,7 @@ const Page = () => {
         setMessage('');
         // console.log('Submitting email:', email);
         try {
-            const res = await axios.post('http://api.biziffy.com/api/auth/send-otp', { email });
+            const res = await axios.post('https://api.biziffy.com/api/auth/send-otp', { email });
             // console.log('Send OTP response:', res.data);
             if (res.data.success) {
                 setStep(2);
@@ -56,7 +56,7 @@ const Page = () => {
         setMessage('');
         // console.log('Verifying OTP:', { email, otp });
         try {
-            const res = await axios.post('http://api.biziffy.com/api/auth/verify-otp', { email, otp });
+            const res = await axios.post('https://api.biziffy.com/api/auth/verify-otp', { email, otp });
             // console.log('Verify OTP response:', res.data);
             if (res.data.success) {
                 setStep(3);
@@ -80,7 +80,7 @@ const Page = () => {
         }
         // console.log('Resetting password for:', email);
         try {
-            const res = await axios.post('http://api.biziffy.com/api/auth/reset-password', {
+            const res = await axios.post('https://api.biziffy.com/api/auth/reset-password', {
                 email,
                 newPassword
             });
