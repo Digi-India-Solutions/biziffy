@@ -71,7 +71,7 @@ const Page = () => {
     try {
       const { email } = formData;
       setLoading(true)
-      const response = await axios.post("http://localhost:18001/api/auth/send-otp-user-signup", { email });
+      const response = await axios.post("http://api.biziffy.com/api/auth/send-otp-user-signup", { email });
       // console.log("XXXXXXXXXXX", response)
       if (response?.data?.status) {
         setOpenOtp(true);

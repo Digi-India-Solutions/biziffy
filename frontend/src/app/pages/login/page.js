@@ -66,7 +66,7 @@ const Login = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post('http://localhost:18001/api/auth/user-login', { email: formData.email, password: formData.password, });
+      const response = await axios.post('http://api.biziffy.com/api/auth/user-login', { email: formData.email, password: formData.password, });
       // console.log("API Response:", response);
       if (response?.data?.status) {
 
@@ -100,7 +100,7 @@ const Login = () => {
     // console.log("Google Login Success:", response);
 
     try {
-      const res = await fetch("http://localhost:18001/api/user/google-login", {
+      const res = await fetch("http://api.biziffy.com/api/user/google-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
