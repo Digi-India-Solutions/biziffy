@@ -24,7 +24,7 @@ const UpgradeListing = ({formData, setFormData ,handleListingSubmit}) => {
     
     handleListingSubmit();
     // try {
-    //   const response = await fetch("https://api.biziffy.com/api/business/upgrade", {
+    //   const response = await fetch("http://localhost:18001/api/business/upgrade", {
     //     method: "POST",
     //     headers: {
     //       "Content-Type": "application/json",

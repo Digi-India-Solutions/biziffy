@@ -3,7 +3,10 @@ import breadbg from "../../Images/HeroBanner.jpg";
 import Image from "next/image";
 import Link from "next/link";
 import "./earnWithUs.css";
-import EarnWithUs from "../../Images/EarnWithUs.png";
+import EarnWithUs1 from "../../Images/earn1.png";
+import EarnWithUs2 from "../../Images/earn2.jpg";
+import EarnWithUs3 from "../../Images/earn3.jpg";
+import EarnWithUs4 from "../../Images/earn4.jpg";
 import Head from "next/head";
 
 const page = () => {
@@ -12,23 +15,23 @@ const page = () => {
   const Earnperson = [
     {
       id: 1,
-      name: "Digital Marketing Agencies",
-      image: EarnWithUs,
+      name: "Sales & Marketing Professionals",
+      image: EarnWithUs1,
     },
     {
       id: 2,
-      name: "Web Designer",
-      image: EarnWithUs,
+      name: "Digital Marketing Companies",
+      image: EarnWithUs2,
     },
     {
       id: 3,
-      name: "Web Designer",
-      image: EarnWithUs,
+      name: "Web Designers & Developers",
+      image: EarnWithUs3,
     },
     {
       id: 4,
-      name: "Web Designer",
-      image: EarnWithUs,
+      name: "Retail & Wholesale Traders",
+      image: EarnWithUs4,
     },
   ];
 

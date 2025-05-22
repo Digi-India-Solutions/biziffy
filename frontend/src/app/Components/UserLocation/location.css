@@ -1,0 +1,25 @@
+.location-detact{
+      width: 120px;
+      white-space: nowrap;
+      overflow: hidden;
+      position: relative;
+      display: inline-block;
+      color: #000;    
+      text-align: start;
+}
+
+@media only screen and (max-width:768px) {
+    .location-detact {
+      width: 40px;
+    }
+    
+    .location-detact::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 20px; /* blur width */
+      height: 100%;
+      background: transparent
+    }
+}

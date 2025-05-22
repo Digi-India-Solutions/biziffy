@@ -25,7 +25,7 @@
 
 //   useEffect(() => {
 //     const fetchPinCodes = async () => {
-//         const response = await axios.get("https://api.biziffy.com/api/pincode/get-all-pin-codes");
+//         const response = await axios.get("http://localhost:18001/api/pincode/get-all-pin-codes");
 //         console.log('response', response.data.pinCodes);
 //         if (response.data?.status) {
 //           setPinCodes(response?.data?.pinCodes);
@@ -234,7 +234,7 @@ const Hero = () => {
   useEffect(() => {
     const fetchPinCodes = async () => {
       try {
-        const response = await axios.get("https://api.biziffy.com/api/pincode/get-all-pin-codes");
+        const response = await axios.get("http://localhost:18001/api/pincode/get-all-pin-codes");
         if (response.data?.status) {
           setPinCodes(response.data.pinCodes);
         }
