@@ -1,4 +1,4 @@
-// 'use client';
+'use client';
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import "./businessListing.css";
@@ -14,7 +14,7 @@ import banner2 from "../../Images/slide2.webp";
 import banner3 from "../../Images/slide3.webp";
 import PaidListing from "../paid-listing/PaidListing"
 
-const bussinesslisting = () => {
+const page = () => {
   const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
   const [pincode, setPincode] = useState("");
@@ -431,4 +431,4 @@ const bussinesslisting = () => {
   );
 };
 
-export default bussinesslisting;
+export default page;
