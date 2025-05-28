@@ -547,7 +547,7 @@ const ProfilePage = () => {
                       <div className="profile-listing mb-3" key={listing?._id}>
                         <div className="row listing-item">
                           <div className="col-md-3">
-                            <Image src={listing?.businessCategory?.businessImages[0]} width={200} height={200} alt={listing.title} className="listing-img" />
+                            <Image className="listing-img"  src={listing?.businessCategory?.businessImages[0]} alt={listing.title} width={200} height={200}  />
                           </div>
                           <div className="col-md-9">
                             <h4 className="text-primary">{listing?.businessDetails?.businessName}</h4>

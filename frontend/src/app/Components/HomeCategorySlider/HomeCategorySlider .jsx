@@ -19,12 +19,12 @@ import HomeServices from "../../Images/HomeServices.png";
 import Heading from "../Heading/SecHeading";
 
 const cards = [
-  { id: 1, title: "Automobile ", image: Automobile, link: "/Automobile" },
-  { id: 2, title: "Education ", image: Education, link: "/Education" },
-  { id: 3, title: "Healthcare ", image: Healthcare, link: "/Healthcare" },
-  { id: 4, title: "Retail & Local Shops", image: Retail, link: "/Retail" },
-  { id: 5, title: "Real Estate ", image: Estate, link: "/Estate" },
-  { id: 6, title: "Home Services", image: HomeServices, link: "/HomeServices" },
+  { id: 1, title: "Automobile ", image: Automobile, link: "/#" },
+  { id: 2, title: "Education ", image: Education, link: "/#" },
+  { id: 3, title: "Healthcare ", image: Healthcare, link: "/#" },
+  { id: 4, title: "Retail & Local Shops", image: Retail, link: "/#" },
+  { id: 5, title: "Real Estate ", image: Estate, link: "/#" },
+  { id: 6, title: "Home Services", image: HomeServices, link: "/#" },
 ];
 
 const HomeCategorySlider = () => {
