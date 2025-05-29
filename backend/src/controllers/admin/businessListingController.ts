@@ -553,10 +553,67 @@ export const getAllListingsByUserId = async (req: Request, res: Response) => {
   }
 };
 
+// export const searchBusinessListings = async (req: Request, res: Response) => {
+//   const { query = "", pincode, title = '' } = req.query;
+
+//   // console.log("Incoming search:", { query, pincode, title });
+
+//   if (!pincode || typeof pincode !== "string") {
+//     return res.status(400).json({ status: false, error: "'pincode' is required." });
+//   }
+
+//   try {
+//     const regex = new RegExp(query as string, "i");
+//     let listings: any[] = [];
+
+//     if (title === "CityPage") {
+//       // console.log("CityPage")
+//       // Fetch all listings with the given pincode
+//       const allByPincode = await BusinessListing.find({
+//         "businessDetails.pinCode": pincode
+//       }).populate("businessCategory.category businessCategory.subCategory");
+
+//       listings = allByPincode.filter((listing: any) => {
+//         return (
+//           listing?.businessCategory?.category?.name?.toLowerCase() === (query as string).toLowerCase()
+//         );
+//       });
+//     } else {
+//       // console.log("CityPage console.log(CityPage)")
+//       // General search by text query and pincode
+//       listings = await BusinessListing.find({
+//         $and: [
+//           {
+//             $or: [
+//               { "businessDetails.businessName": regex },
+//               { "businessCategory.about": regex },
+//               { "businessCategory.keywords": { $in: [regex] } },
+//               { "businessCategory.businessService": regex },
+//               { "businessCategory.serviceArea": { $in: [regex] } }
+//             ]
+//           },
+//           { "businessDetails.pinCode": pincode }
+//         ]
+//       }).populate("businessCategory.category businessCategory.subCategory");
+//     }
+
+//     // Only include Published or Approved listings
+//     const filteredListings = listings.filter((listing: any) => {
+//       const status = listing?.businessDetails?.status;
+//       return status === "Published" || status === "Approved";
+//     });
+
+//     // console.log("filteredListings", filteredListings)
+//     return res.status(200).json({ status: true, data: filteredListings });
+//   } catch (error: any) {
+//     console.error("Search error:", error.message);
+//     return res.status(500).json({ status: false, message: "Internal server error", error: error.message });
+//   }
+// };
+
+
 export const searchBusinessListings = async (req: Request, res: Response) => {
   const { query = "", pincode, title = '' } = req.query;
-
-  // console.log("Incoming search:", { query, pincode, title });
 
   if (!pincode || typeof pincode !== "string") {
     return res.status(400).json({ status: false, error: "'pincode' is required." });
@@ -567,10 +624,12 @@ export const searchBusinessListings = async (req: Request, res: Response) => {
     let listings: any[] = [];
 
     if (title === "CityPage") {
-      // console.log("CityPage")
-      // Fetch all listings with the given pincode
+      // Fetch all listings with the given pincode (in businessDetails or serviceArea)
       const allByPincode = await BusinessListing.find({
-        "businessDetails.pinCode": pincode
+        $or: [
+          { "businessDetails.pinCode": pincode },
+          { "businessCategory.serviceArea": { $elemMatch: { $regex: pincode, $options: 'i' } } }
+        ]
       }).populate("businessCategory.category businessCategory.subCategory");
 
       listings = allByPincode.filter((listing: any) => {
@@ -579,8 +638,7 @@ export const searchBusinessListings = async (req: Request, res: Response) => {
         );
       });
     } else {
-      // console.log("CityPage console.log(CityPage)")
-      // General search by text query and pincode
+      // General search by text query and pincode (including serviceArea check)
       listings = await BusinessListing.find({
         $and: [
           {
@@ -592,24 +650,29 @@ export const searchBusinessListings = async (req: Request, res: Response) => {
               { "businessCategory.serviceArea": { $in: [regex] } }
             ]
           },
-          { "businessDetails.pinCode": pincode }
+          {
+            $or: [
+              { "businessDetails.pinCode": pincode },
+              { "businessCategory.serviceArea": { $elemMatch: { $regex: pincode, $options: 'i' } } }
+            ]
+          }
         ]
       }).populate("businessCategory.category businessCategory.subCategory");
     }
 
-    // Only include Published or Approved listings
+    // Only include listings with status Published or Approved
     const filteredListings = listings.filter((listing: any) => {
       const status = listing?.businessDetails?.status;
       return status === "Published" || status === "Approved";
     });
 
-    // console.log("filteredListings", filteredListings)
     return res.status(200).json({ status: true, data: filteredListings });
   } catch (error: any) {
     console.error("Search error:", error.message);
     return res.status(500).json({ status: false, message: "Internal server error", error: error.message });
   }
 };
+
 
 export const increaseClickCount = async (req: Request, res: Response) => {
   try {
