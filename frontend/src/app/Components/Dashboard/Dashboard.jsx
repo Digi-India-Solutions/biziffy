@@ -293,7 +293,7 @@ const Dashboard = ({ businessListing }) => {
                 title: ["Listings", "Whatsapp", "Website", "Contact", "Share", "Direction"][i],
                 count: 0,
               };
-              console.log("data=>", data.user)
+              console.log("data=>", data?.user)
               return (
                 <div key={i} className="col-md-3" onClick={() => setType(data)}>
                   <div className="card shadow-sm border-0">

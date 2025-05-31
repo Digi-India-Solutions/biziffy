@@ -11,13 +11,13 @@ const path_1 = __importDefault(require("path"));
  * @param filePath - Relative path from the `src` folder
  */
 const deleteLocalFile = (filePath) => {
-    // console.log("SSSSSSSDDDDDSS:-", filePath);
+    console.log("SSSSSSSDDDDDSS:-", filePath);
     try {
         const fileToDelete = path_1.default.join(__dirname, "../../", filePath);
-        // console.log("SSSSSSSDDDDDSS22222:-", fileToDelete);
+        console.log("SSSSSSSDDDDDSS22222:-", fileToDelete);
         if (fs_1.default.existsSync(fileToDelete)) {
             fs_1.default.unlinkSync(fileToDelete);
-            // console.log(`Deleted local file: ${fileToDelete}`);
+            console.log(`Deleted local file: ${fileToDelete}`);
         }
         else {
             console.warn(`File not found: ${fileToDelete}`);

@@ -14,7 +14,7 @@ import banner2 from "../../Images/slide2.webp";
 import banner3 from "../../Images/slide3.webp";
 import PaidListing from "../paid-listing/PaidListing"
 
-const page = () => {
+const Page = () => {
   const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
   const [pincode, setPincode] = useState("");
@@ -30,7 +30,6 @@ const page = () => {
   const [loginError, setLoginError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
 
   useEffect(() => {
     const token = localStorage.getItem("biziffyToken");
@@ -63,12 +62,12 @@ const page = () => {
   //   try {
   //     let response;
   //     if (pincode || query || title) {
-  //       response = await axios.get("https://api.biziffy.com/api/search-listings", {
+  //       response = await axios.get("http://localhost:18001/api/search-listings", {
   //         params: { pincode, query, title },
   //       });
   //     }
   //     // else {
-  //     //   response = await axios.get("https://api.biziffy.com/api/get-all-listings");
+  //     //   response = await axios.get("http://localhost:18001/api/get-all-listings");
   //     // }
   //     console.log("FFFFFFFFFFF", response?.data)
   //     setBusinesses(response?.data?.data || []);
@@ -81,7 +80,7 @@ const page = () => {
   //   try {
   //     let response;
   //     if (pincode || query || title) {
-  //       response = await axios.get("https://api.biziffy.com/api/admin/search-website-listings", {
+  //       response = await axios.get("http://localhost:18001/api/admin/search-website-listings", {
   //         params: { pincode, query, title },
   //       });
   //     }
@@ -100,7 +99,7 @@ const page = () => {
     try {
       let response;
       if (pincode || query || title) {
-        response = await axios.get("https://api.biziffy.com/api/search-listings", {
+        response = await axios.get("http://localhost:18001/api/search-listings", {
           params: { pincode, query, title },
         });
       }
@@ -115,7 +114,7 @@ const page = () => {
     try {
       let response;
       if (pincode || query || title) {
-        response = await axios.get("https://api.biziffy.com/api/admin/search-website-listings", {
+        response = await axios.get("http://localhost:18001/api/admin/search-website-listings", {
           params: { pincode, query, title },
         });
       }
@@ -149,7 +148,7 @@ const page = () => {
 
     if (!lastClickDay || parseInt(lastClickDay) < currentDay) {
 
-      axios.post(`https://api.biziffy.com/api/increase-click-count/${businessId}`, { type, user })
+      axios.post(`http://localhost:18001/api/increase-click-count/${businessId}`, { type, user })
         .then(() => { console.log(`${type} click counted`); localStorage.setItem(key, currentDay.toString()); })
         .catch((err) => { console.error("Error increasing count", err) });
     } else {
@@ -245,7 +244,7 @@ const page = () => {
 
                     setIsLoading(true);
                     try {
-                      const response = await axios.post('https://api.biziffy.com/api/auth/user-login', { email: formData.email, password: formData.password, });
+                      const response = await axios.post('http://localhost:18001/api/auth/user-login', { email: formData.email, password: formData.password, });
                       // console.log("API Response:", response.data.token);
                       if (response?.data?.status) {
 
@@ -431,4 +430,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

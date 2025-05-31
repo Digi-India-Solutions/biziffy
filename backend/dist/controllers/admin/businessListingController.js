@@ -263,7 +263,7 @@ const getAllListings = (req, res) => __awaiter(void 0, void 0, void 0, function*
             .sort({ createdAt: -1 })
             .populate('businessCategory.category')
             .populate('businessCategory.subCategory');
-        // console.log("XXXXXXXX", listings);
+        // console.log("XXXXXXXX", listings)
         res.status(200).json({ status: true, message: "Listings fetched successfully", data: listings });
     }
     catch (error) {
@@ -361,7 +361,7 @@ const deleteBusinessListing = (req, res) => __awaiter(void 0, void 0, void 0, fu
         const images = ((_a = listing.businessCategory) === null || _a === void 0 ? void 0 : _a.businessImages) || [];
         images.forEach((img) => {
             const filePath = path_1.default.join(__dirname, `/uploads/${img}`);
-            // console.log("HHHHHHHH", filePath);
+            // console.log("HHHHHHHH", filePath)
             try {
                 if (fs_1.default.existsSync(filePath)) {
                     fs_1.default.unlinkSync(filePath);
@@ -429,7 +429,7 @@ exports.changePublishStatus = changePublishStatus;
 const listingBulkAction = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { ids, action } = req.body;
-        // console.log("action:-", ids, action);
+        // console.log("action:-", ids, action)
         if (!ids || !action) {
             return res.status(400).json({ status: false, message: "Ids and action are required" });
         }
@@ -478,29 +478,81 @@ const getAllListingsByUserId = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.getAllListingsByUserId = getAllListingsByUserId;
+// export const searchBusinessListings = async (req: Request, res: Response) => {
+//   const { query = "", pincode, title = '' } = req.query;
+//   // console.log("Incoming search:", { query, pincode, title });
+//   if (!pincode || typeof pincode !== "string") {
+//     return res.status(400).json({ status: false, error: "'pincode' is required." });
+//   }
+//   try {
+//     const regex = new RegExp(query as string, "i");
+//     let listings: any[] = [];
+//     if (title === "CityPage") {
+//       // console.log("CityPage")
+//       // Fetch all listings with the given pincode
+//       const allByPincode = await BusinessListing.find({
+//         "businessDetails.pinCode": pincode
+//       }).populate("businessCategory.category businessCategory.subCategory");
+//       listings = allByPincode.filter((listing: any) => {
+//         return (
+//           listing?.businessCategory?.category?.name?.toLowerCase() === (query as string).toLowerCase()
+//         );
+//       });
+//     } else {
+//       // console.log("CityPage console.log(CityPage)")
+//       // General search by text query and pincode
+//       listings = await BusinessListing.find({
+//         $and: [
+//           {
+//             $or: [
+//               { "businessDetails.businessName": regex },
+//               { "businessCategory.about": regex },
+//               { "businessCategory.keywords": { $in: [regex] } },
+//               { "businessCategory.businessService": regex },
+//               { "businessCategory.serviceArea": { $in: [regex] } }
+//             ]
+//           },
+//           { "businessDetails.pinCode": pincode }
+//         ]
+//       }).populate("businessCategory.category businessCategory.subCategory");
+//     }
+//     // Only include Published or Approved listings
+//     const filteredListings = listings.filter((listing: any) => {
+//       const status = listing?.businessDetails?.status;
+//       return status === "Published" || status === "Approved";
+//     });
+//     // console.log("filteredListings", filteredListings)
+//     return res.status(200).json({ status: true, data: filteredListings });
+//   } catch (error: any) {
+//     console.error("Search error:", error.message);
+//     return res.status(500).json({ status: false, message: "Internal server error", error: error.message });
+//   }
+// };
 const searchBusinessListings = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { query = "", pincode, title = '' } = req.query;
-    // console.log("Incoming search:", { query, pincode, title });
+    const { query = "", pincode, title = "" } = req.query;
     if (!pincode || typeof pincode !== "string") {
         return res.status(400).json({ status: false, error: "'pincode' is required." });
     }
     try {
         const regex = new RegExp(query, "i");
+        const pincodeRegex = new RegExp(`\\b${pincode}\\b`, "i");
         let listings = [];
+        // Case 1: CityPage — match by pincode and category name
         if (title === "CityPage") {
-            // console.log("CityPage");
-            // Fetch all listings with the given pincode
             const allByPincode = yield BusinessListing_1.default.find({
-                "businessDetails.pinCode": pincode
+                $or: [
+                    { "businessDetails.pinCode": pincode },
+                    { "businessCategory.serviceArea": { $elemMatch: { $regex: pincodeRegex } } },
+                ],
             }).populate("businessCategory.category businessCategory.subCategory");
             listings = allByPincode.filter((listing) => {
                 var _a, _b, _c;
-                return (((_c = (_b = (_a = listing === null || listing === void 0 ? void 0 : listing.businessCategory) === null || _a === void 0 ? void 0 : _a.category) === null || _b === void 0 ? void 0 : _b.name) === null || _c === void 0 ? void 0 : _c.toLowerCase()) === query.toLowerCase());
+                return (((_c = (_b = (_a = listing === null || listing === void 0 ? void 0 : listing.businessCategory) === null || _a === void 0 ? void 0 : _a.category) === null || _b === void 0 ? void 0 : _b.name) === null || _c === void 0 ? void 0 : _c.toLowerCase()) ===
+                    query.toLowerCase());
             });
         }
         else {
-            // console.log("CityPage console.log(CityPage)");
-            // General search by text query and pincode
+            // Case 2: General search
             listings = yield BusinessListing_1.default.find({
                 $and: [
                     {
@@ -509,25 +561,31 @@ const searchBusinessListings = (req, res) => __awaiter(void 0, void 0, void 0, f
                             { "businessCategory.about": regex },
                             { "businessCategory.keywords": { $in: [regex] } },
                             { "businessCategory.businessService": regex },
-                            { "businessCategory.serviceArea": { $in: [regex] } }
-                        ]
+                            { "businessCategory.serviceArea": { $elemMatch: { $regex: regex } } },
+                        ],
                     },
-                    { "businessDetails.pinCode": pincode }
-                ]
+                    {
+                        $or: [
+                            { "businessDetails.pinCode": pincode },
+                            { "businessCategory.serviceArea": { $elemMatch: { $regex: pincodeRegex } } },
+                        ],
+                    },
+                ],
             }).populate("businessCategory.category businessCategory.subCategory");
         }
-        // Only include Published or Approved listings
+        // Filter: only listings with status Approved or Published
         const filteredListings = listings.filter((listing) => {
             var _a;
             const status = (_a = listing === null || listing === void 0 ? void 0 : listing.businessDetails) === null || _a === void 0 ? void 0 : _a.status;
             return status === "Published" || status === "Approved";
         });
-        // console.log("filteredListings", filteredListings);
         return res.status(200).json({ status: true, data: filteredListings });
     }
     catch (error) {
         console.error("Search error:", error.message);
-        return res.status(500).json({ status: false, message: "Internal server error", error: error.message });
+        return res
+            .status(500)
+            .json({ status: false, message: "Internal server error", error: error.message });
     }
 });
 exports.searchBusinessListings = searchBusinessListings;

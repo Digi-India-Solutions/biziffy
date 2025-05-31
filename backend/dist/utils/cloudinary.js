@@ -21,7 +21,7 @@ cloudinary_1.v2.config({
 const uploadImage = (file) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield cloudinary_1.v2.uploader.upload(file);
-        // console.log(result);
+        console.log(result);
         return result.secure_url;
     }
     catch (error) {
@@ -40,7 +40,7 @@ const deleteImage = (imageUrls) => __awaiter(void 0, void 0, void 0, function* (
                 const publicId = filename === null || filename === void 0 ? void 0 : filename.split(".")[0];
                 if (publicId) {
                     yield cloudinary_1.v2.uploader.destroy(publicId);
-                    // console.log(`Image deleted successfully: ${publicId}`);
+                    console.log(`Image deleted successfully: ${publicId}`);
                 }
                 else {
                     console.warn(`Could not extract publicId from URL: ${url}`);

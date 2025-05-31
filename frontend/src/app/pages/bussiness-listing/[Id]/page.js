@@ -1,45 +1,52 @@
-'use client'
+'use client';
 
-import Businesslistingdetails from "../../../Components/Businesslistingdetails/Businesslistingdetails";
-import React, { use, useEffect, useState } from "react";
-import axios from "axios";
-import { useParams } from "next/navigation";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useParams } from 'next/navigation';
+import Businesslistingdetails from '../../../Components/Businesslistingdetails/Businesslistingdetails';
 
-const Page = ({ params }) => {
-  const { Id } = use(params);
+const Page = () => {
+  const params = useParams();
+  const Id = params?.Id;
+
   const [businesses, setBusinesses] = useState([]);
- 
-  // console.log("Received ID:", Id);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchBusinessDetails = async () => {
       try {
-        const response = await axios.get(`https://api.biziffy.com/api/get-all-listings-by-id/${Id}`);
-        // console.log("API Response:", response.data);
-        if (response.status) {
-          setBusinesses(response?.data?.data);
+        const response = await axios.get(`http://localhost:18001/api/get-all-listings-by-id/${Id}`);
+        if (response.status === 200) {
+          setBusinesses(response.data?.data || []);
+        } else {
+          setError('Failed to fetch data.');
         }
-      } catch (error) {
-        console.error("Error fetching business details:", error);
+      } catch (err) {
+        setError('Error fetching business details.');
+        console.error('API Error:', err);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
     if (Id) {
-      fetchBusinessDetails()
+      fetchBusinessDetails();
     }
   }, [Id]);
 
-
-
-
   return (
-    <>
-      <div className="container">
-        <div className="row">
+    <div className="container">
+      <div className="row">
+        {loading ? (
+          <p>Loading business details...</p>
+        ) : error ? (
+          <p style={{ color: 'red' }}>{error}</p>
+        ) : (
           <Businesslistingdetails businesses={businesses} />
-        </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 

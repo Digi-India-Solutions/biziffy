@@ -74,7 +74,7 @@ const ProfilePage = () => {
     const fetchUserData = async () => {
       if (!userId) return;
       try {
-        const res = await axios.get(`https://api.biziffy.com/api/auth/get-user-by-id/${userId}`);
+        const res = await axios.get(`http://localhost:18001/api/auth/get-user-by-id/${userId}`);
         // console.log("req.params.id:-", res.data)
         if (res.data.status === true) {
           setProfileData(res.data.user);
@@ -90,7 +90,7 @@ const ProfilePage = () => {
     const fetchBussinessListing = async () => {
       if (!userId) return;
       try {
-        const res = await axios.get(`https://api.biziffy.com/api/get-all-listings-by-user-id/${userId}`);
+        const res = await axios.get(`http://localhost:18001/api/get-all-listings-by-user-id/${userId}`);
         // console.log("Business Listings", res?.data?.data);
         if (res?.data?.status === true) {
           setBusinessListing(res?.data?.data);
@@ -105,7 +105,7 @@ const ProfilePage = () => {
     const fetchWebsiteListing = async () => {
       if (!userId) return;
       try {
-        const res = await axios.get(`https://api.biziffy.com/api/admin/get-all-website-listings-by-user-id/${userId}`);
+        const res = await axios.get(`http://localhost:18001/api/admin/get-all-website-listings-by-user-id/${userId}`);
         // console.log("Website Listings", res?.data?.data);
         if (res?.data?.status === true) {
           setWebsiteListing(res?.data?.data);
@@ -155,7 +155,7 @@ const ProfilePage = () => {
 
   // const confirmDelete = (id) => {
   //   try {
-  //     const response = axios.delete(`https://api.biziffy.com/api/delete-business-listing/${id}`);
+  //     const response = axios.delete(`http://localhost:18001/api/delete-business-listing/${id}`);
   //     if (response.status === true) {
   //       setListings((prev) => prev.filter((item) => item.id !== id));
   //       toast.success("Listing deleted successfully!", { position: "top-right", autoClose: 3000 });
@@ -198,7 +198,7 @@ const ProfilePage = () => {
   const handleSaveChanges = async () => {
     try {
       if (profileData && profileData._id) {
-        const response = await axios.post(`https://api.biziffy.com/api/auth/update-user/${profileData._id}`, profileData);
+        const response = await axios.post(`http://localhost:18001/api/auth/update-user/${profileData._id}`, profileData);
         if (response.data.status) {
           localStorage.setItem("biziffyUser", JSON.stringify(response.data.user));
           toast.success("Profile updated successfully!");
@@ -230,7 +230,7 @@ const ProfilePage = () => {
     const formData = new FormData();
     formData.append("image", selectedFile);
     try {
-      const res = await axios.post(`https://api.biziffy.com/api/auth/upload-profile-image/${profileData._id}`, formData);
+      const res = await axios.post(`http://localhost:18001/api/auth/upload-profile-image/${profileData._id}`, formData);
 
       if (res.data.status) {
         setIsEditing(false);
@@ -631,7 +631,7 @@ const ProfilePage = () => {
 
               {activeTab === "edit-website" && (
                 <>
-                  {/* <EditWebsiteProfile listingId={listingId} /> */}
+                  <EditWebsiteProfile listingId={listingId} />
                 </>
               )}
 

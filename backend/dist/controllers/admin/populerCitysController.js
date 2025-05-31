@@ -19,7 +19,7 @@ const populerCitysModels_1 = __importDefault(require("../../models/populerCitysM
 const addPopularCity = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { city, category, color, abouteCity, isActive } = req.body;
-        // console.log("XXXXXXXXXX", req.file);
+        console.log("XXXXXXXXXX", req.file);
         const bannerFile = req.file;
         if (!bannerFile) {
             res.status(400).json({ status: false, message: "Banner is required" });

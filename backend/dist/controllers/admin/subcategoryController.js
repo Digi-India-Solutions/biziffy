@@ -159,7 +159,7 @@ exports.updateSubcategories = updateSubcategories;
 const getSubcategoriesByCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const category = req.params.id;
-        // console.log("FFFFFFFFFFFFFFFF:--", category);
+        console.log("FFFFFFFFFFFFFFFF:--", category);
         const subcategories = yield Subcategory_1.default.find({ category }).populate("category");
         if (!subcategories) {
             return res.status(404).json({ message: "Subcategories not found" });

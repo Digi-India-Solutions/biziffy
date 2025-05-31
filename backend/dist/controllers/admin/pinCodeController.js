@@ -131,7 +131,7 @@ exports.getAllPinCodes = getAllPinCodes;
 const createPincode = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { stateName, area, pinCode } = req.body;
-        // console.log("BODY:- ", req.body);
+        console.log("BODY:- ", req.body);
         const newPin = yield PinCodeModel_1.default.create({ stateName, area, pinCode, });
         return res.status(200).json({ status: true, message: "Pin code created successfully", data: newPin, });
     }
@@ -178,7 +178,7 @@ exports.deletePincode = deletePincode;
 const getAreapincodeByState = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { state } = req === null || req === void 0 ? void 0 : req.query;
-        // console.log("state-state-", state);
+        console.log("state-state-", state);
         if (!state) {
             return res.status(400).json({ message: "State is required" });
         }

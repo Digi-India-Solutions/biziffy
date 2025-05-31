@@ -18,7 +18,7 @@ const cloudinary_1 = require("../../utils/cloudinary");
 const deleteImageFromLocalFolder_1 = require("../../utils/deleteImageFromLocalFolder");
 const createCity = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // console.log("req.body", req.body);
+        console.log("req.body", req.body);
         const { name, state, color, topCity, badge, isActive, pinCode } = req.body;
         // Check required fields
         if (!name || !state || !color || !pinCode) {

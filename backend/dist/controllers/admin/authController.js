@@ -162,13 +162,13 @@ exports.loginUser = loginUser;
 const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { fullName, email, phone, address, city, state, whatsappNumber } = req.body;
-        // console.log("userId:-", req.params.id);
+        // console.log("userId:-", req.params.id)
         if (!req.params.id) {
             res.status(400).json({ status: false, message: "User ID is required" });
             return;
         }
         const user = yield authModel_1.default.findById(req.params.id);
-        // console.log("user:-", user);
+        // console.log("user:-", user)
         if (!user) {
             res.status(404).json({ status: false, message: "User not found" });
             return;
@@ -198,7 +198,7 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.updateUser = updateUser;
 const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // console.log("req.params.id:-", req.params.id);
+        console.log("req.params.id:-", req.params.id);
         const user = yield authModel_1.default.findById(req.params.id);
         if (!user) {
             res.status(404).json({ status: false, message: "User not found" });

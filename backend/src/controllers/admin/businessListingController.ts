@@ -613,7 +613,7 @@ export const getAllListingsByUserId = async (req: Request, res: Response) => {
 
 
 export const searchBusinessListings = async (req: Request, res: Response) => {
-  const { query = "", pincode, title = '' } = req.query;
+  const { query = "", pincode, title = "" } = req.query;
 
   if (!pincode || typeof pincode !== "string") {
     return res.status(400).json({ status: false, error: "'pincode' is required." });
@@ -621,24 +621,26 @@ export const searchBusinessListings = async (req: Request, res: Response) => {
 
   try {
     const regex = new RegExp(query as string, "i");
+    const pincodeRegex = new RegExp(`\\b${pincode}\\b`, "i");
     let listings: any[] = [];
 
+    // Case 1: CityPage — match by pincode and category name
     if (title === "CityPage") {
-      // Fetch all listings with the given pincode (in businessDetails or serviceArea)
       const allByPincode = await BusinessListing.find({
         $or: [
           { "businessDetails.pinCode": pincode },
-          { "businessCategory.serviceArea": { $elemMatch: { $regex: pincode, $options: 'i' } } }
-        ]
+          { "businessCategory.serviceArea": { $elemMatch: { $regex: pincodeRegex } } },
+        ],
       }).populate("businessCategory.category businessCategory.subCategory");
 
       listings = allByPincode.filter((listing: any) => {
         return (
-          listing?.businessCategory?.category?.name?.toLowerCase() === (query as string).toLowerCase()
+          listing?.businessCategory?.category?.name?.toLowerCase() ===
+          (query as string).toLowerCase()
         );
       });
     } else {
-      // General search by text query and pincode (including serviceArea check)
+      // Case 2: General search
       listings = await BusinessListing.find({
         $and: [
           {
@@ -647,20 +649,20 @@ export const searchBusinessListings = async (req: Request, res: Response) => {
               { "businessCategory.about": regex },
               { "businessCategory.keywords": { $in: [regex] } },
               { "businessCategory.businessService": regex },
-              { "businessCategory.serviceArea": { $in: [regex] } }
-            ]
+              { "businessCategory.serviceArea": { $elemMatch: { $regex: regex } } },
+            ],
           },
           {
             $or: [
               { "businessDetails.pinCode": pincode },
-              { "businessCategory.serviceArea": { $elemMatch: { $regex: pincode, $options: 'i' } } }
-            ]
-          }
-        ]
+              { "businessCategory.serviceArea": { $elemMatch: { $regex: pincodeRegex } } },
+            ],
+          },
+        ],
       }).populate("businessCategory.category businessCategory.subCategory");
     }
 
-    // Only include listings with status Published or Approved
+    // Filter: only listings with status Approved or Published
     const filteredListings = listings.filter((listing: any) => {
       const status = listing?.businessDetails?.status;
       return status === "Published" || status === "Approved";
@@ -669,7 +671,9 @@ export const searchBusinessListings = async (req: Request, res: Response) => {
     return res.status(200).json({ status: true, data: filteredListings });
   } catch (error: any) {
     console.error("Search error:", error.message);
-    return res.status(500).json({ status: false, message: "Internal server error", error: error.message });
+    return res
+      .status(500)
+      .json({ status: false, message: "Internal server error", error: error.message });
   }
 };
 

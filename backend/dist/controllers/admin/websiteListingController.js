@@ -18,7 +18,7 @@ const deleteImageFromLocalFolder_1 = require("../../utils/deleteImageFromLocalFo
 const WebsiteListingModel_1 = __importDefault(require("../../models/WebsiteListingModel"));
 const createDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // console.log("BODY:-", req.body);
+        console.log("BODY:-", req.body);
         const { companyName, website, shortDescription, 
         // aboutBusiness, 
         // area,
@@ -65,7 +65,7 @@ const createDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.createDetails = createDetails;
 const createAdditionalInformation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // console.log("BODY:-", req.body);
+        console.log("BODY:-", req.body);
         const { category, subCategory, serviceArea, listingId } = req.body;
         // Validate required fields
         if (!category || !subCategory || !serviceArea || !listingId) {
@@ -115,7 +115,7 @@ const getAllWebsiteListings = (req, res) => __awaiter(void 0, void 0, void 0, fu
             .populate('subCategory')
             .populate("userId")
             .populate("cliCkCount.websiteClick.user");
-        // console.log("XXXXXXXX", listings);
+        console.log("XXXXXXXX", listings);
         res.status(200).json({ status: true, message: "Listings fetched successfully", data: listings });
     }
     catch (error) {
@@ -193,7 +193,7 @@ exports.updateWebsiteListingStatus = updateWebsiteListingStatus;
 const listingBulkAction = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { ids, action } = req.body;
-        // console.log("action:-", ids, action);
+        console.log("action:-", ids, action);
         if (!ids || !action) {
             return res.status(400).json({ status: false, message: "Ids and action are required" });
         }
@@ -214,7 +214,7 @@ const listingBulkAction = (req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.listingBulkAction = listingBulkAction;
 const searchWebsiteListings = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { query = "", pincode, title = '' } = req.query;
-    // console.log("Incoming search:", { query, pincode, title });
+    console.log("Incoming search:", { query, pincode, title });
     if (!pincode || typeof pincode !== "string") {
         return res.status(400).json({ status: false, error: "'pincode' is required." });
     }
@@ -222,7 +222,7 @@ const searchWebsiteListings = (req, res) => __awaiter(void 0, void 0, void 0, fu
         const regex = new RegExp(query, "i");
         let listings = [];
         if (title === "CityPage") {
-            // console.log("CityPage");
+            console.log("CityPage");
             // Fetch all listings with the given pincode
             const allByPincode = yield WebsiteListingModel_1.default.find({ "serviceArea": pincode }).populate("category subCategory");
             listings = allByPincode.filter((listing) => {
@@ -231,7 +231,7 @@ const searchWebsiteListings = (req, res) => __awaiter(void 0, void 0, void 0, fu
             });
         }
         else {
-            // console.log("CityPage console.log(CityPage)");
+            console.log("CityPage console.log(CityPage)");
             // General search by text query and pincode
             listings = yield WebsiteListingModel_1.default.find({
                 $and: [
@@ -252,7 +252,7 @@ const searchWebsiteListings = (req, res) => __awaiter(void 0, void 0, void 0, fu
             const status = listing === null || listing === void 0 ? void 0 : listing.status;
             return status === "Approved";
         });
-        // console.log("filteredListings", filteredListings);
+        console.log("filteredListings", filteredListings);
         return res.status(200).json({ status: true, data: filteredListings });
     }
     catch (error) {

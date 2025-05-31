@@ -412,7 +412,10 @@ const Page = () => {
                     </ul>
                   </div>
                   <div className="d-flex justify-content-center">
-                    <Link href={'/pages/checkout'} className="login-btn">Buy Plan</Link>
+                    <Link href={'/pages/checkout'} className="login-btn">
+                    {/* Buy Plan */}
+                    Free Free
+                    </Link>
                   </div>
                 </div>
               </div>

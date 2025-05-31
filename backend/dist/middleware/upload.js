@@ -9,14 +9,14 @@ const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
-        // console.log("file file file file file file", file);
+        console.log("file file file file file file", file);
         const uploadPath = path_1.default.join(__dirname, "../upload");
         if (!fs_1.default.existsSync(uploadPath))
             fs_1.default.mkdirSync(uploadPath);
         cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
-        // console.log("file file file file file file", file);
+        console.log("file file file file file file", file);
         const unique = `${Date.now()}-${file.originalname}`;
         cb(null, unique);
     },

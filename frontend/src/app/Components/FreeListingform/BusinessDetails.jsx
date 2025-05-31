@@ -127,7 +127,7 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
 
   const validateForm = () => {
     const requiredFields = [
-      "businessName", "building", "street", "area", "landmark",
+      "businessName", "building", "street",  "landmark",
       "state", "city", "pinCode"
     ];
     for (let field of requiredFields) {
@@ -157,7 +157,7 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
 
   const fetchState = async () => {
     try {
-      const response = await axios.get("https://api.biziffy.com/api/state/get-all-states");
+      const response = await axios.get("http://localhost:18001/api/state/get-all-states");
       console.log("XXXXXXXXXXXXXXX", response.data.data)
 
       if (response.data.status) {
@@ -183,7 +183,7 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
         { label: "Business Name", name: "businessName" },
         { label: "Building/Block No", name: "building" },
         { label: "Street/Colony Name", name: "street" },
-        { label: "Area", name: "area" },
+        // { label: "Area", name: "area" },
         { label: "Landmark", name: "landmark" },
 
       ].map((field) => (

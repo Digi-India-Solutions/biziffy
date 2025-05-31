@@ -121,5 +121,5 @@ app.use("/api/user", userRoutes); // <- this part must match
 
 
 app.listen(PORT, () => {
-  // console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

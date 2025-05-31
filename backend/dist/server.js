@@ -37,14 +37,17 @@ const websiteListingRoutes_1 = __importDefault(require("./routes/admin/websiteLi
 const authRoutes_2 = __importDefault(require("./routes/admin/authRoutes"));
 const app = (0, express_1.default)();
 app.use((0, morgan_1.default)("dev"));
-const PORT = process.env.PORT || 17001;
+const PORT = process.env.PORT || 18001;
 (0, db_1.connectDB)();
 const allowedOrigins = [
     "http://localhost:3000",
     "http://localhost:3001",
-    "http://localhost:8080",
-    "http://localhost:5173",
+    // "http://localhost:8080",
+    // "http://localhost:5173",
+    "http://localhost:18000",
+    "http://localhost:18001",
     "https://biziffy.com",
+    "https://www.biziffy.com",
     "https://api.biziffy.com",
     "https://admin.biziffy.com",
     "https://www.biziffy.com"
@@ -93,5 +96,5 @@ app.use("/api/admin/auth", authRoutes_2.default); // 👈 This is crucial
 // google login
 app.use("/api/user", authRoutes_1.default); // <- this part must match
 app.listen(PORT, () => {
-    // console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

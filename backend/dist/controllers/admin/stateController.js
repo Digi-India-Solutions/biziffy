@@ -47,7 +47,7 @@ exports.createState = createState;
 const getAllState = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const state = yield StateModel_1.default.find().sort({ createdAt: -1 });
-        // console.log("state-", state);
+        console.log("state-", state);
         res.status(200).json({ status: true, message: "State fetched successfully", data: state });
     }
     catch (error) {

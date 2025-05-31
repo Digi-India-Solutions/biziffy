@@ -47,7 +47,7 @@ const BusinessListingPage = () => {
       form.append("logo", logoFile);
     }
 
-    const res = await axios.post('https://api.biziffy.com/api/admin/createListing', form);
+    const res = await axios.post('http://localhost:18001/api/admin/createListing', form);
     // console.log("res:-", res.data.data);
     if (res?.data.status === true) {
       setLoading(false)
@@ -78,7 +78,7 @@ const BusinessListingPage = () => {
         form.append("businessPhotos[]", file);
       });
     }
-    const res = await axios.post('https://api.biziffy.com/api/admin/createAdditionalInformation', form);
+    const res = await axios.post('http://localhost:18001/api/admin/createAdditionalInformation', form);
     // console.log("res:-", res.data);
     if (res?.data?.status === true) {
       setLoading(false)
@@ -119,7 +119,7 @@ const BusinessListingPage = () => {
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const response = await axios.get("https://api.biziffy.com/api/categories");
+        const response = await axios.get("http://localhost:18001/api/categories");
         setCategoryList(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -132,7 +132,7 @@ const BusinessListingPage = () => {
     if (formData?.category) {
       const fetchSubCategory = async () => {
         try {
-          const response = await axios.get(`https://api.biziffy.com/api/admin/get-Subcategories-by-category/${formData?.category}`);
+          const response = await axios.get(`http://localhost:18001/api/admin/get-Subcategories-by-category/${formData?.category}`);
           setSubCategoryList(response.data);
         } catch (error) {
           console.error("Error fetching subcategories:", error);
@@ -300,7 +300,7 @@ const BusinessListingPage = () => {
                     {/* Service Area */}
                     <div className="mb-3">
                       <label className="form-label">Service Area / Pincode</label>
-                      <input type="text" className="form-control" required placeholder="e.g. 400059" value={formData.serviceArea || ""} onChange={(e) => setFormData({ ...formData, serviceArea: e.target.value })} />
+                      <input type="text" className="form-control" required placeholder="e.g. 400059" value={formData?.serviceArea || ""} onChange={(e) => setFormData({ ...formData, serviceArea: e.target.value })} />
                       <div className="invalid-feedback">
                         Service area or pincode is required.
                       </div>
