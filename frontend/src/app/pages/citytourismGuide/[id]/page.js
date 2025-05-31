@@ -77,9 +77,8 @@ const Page = () => {
               <div key={index} className="col-md-2 col-sm-3 col-4">
                 <div className="city-category-select-data">
                   <Link
-                    href={`/pages/bussiness-listing?query=${
-                      category?.name
-                    }&pincode=${data?.city?.pinCode}&title=${"CityPage"}`}
+                    href={`/pages/bussiness-listing?query=${category?.name
+                      }&pincode=${data?.city?.pinCode}&title=${"CityPage"}`}
                   >
                     <div className="city-category-img">
                       <Image
@@ -108,8 +107,8 @@ const Page = () => {
                   src={data?.city?.cityImage}
                   alt="About Mumbai"
                   className="city-about-image"
-                   height={100}
-                        width={100}
+                  height={100}
+                  width={100}
                 />
               </div>
             </div>
@@ -117,7 +116,7 @@ const Page = () => {
               <div className="city-about-content">
                 <h1 className="city-about-title">About {data?.cityName}</h1>
                 <p className="city-about-text">
-                  {data?.description ||
+                  {data?.abouteCity ||
                     `Explore the best businesses and attractions in ${data?.cityName}.`}
                 </p>
               </div>
