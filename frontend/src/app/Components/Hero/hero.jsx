@@ -356,7 +356,8 @@ const Hero = () => {
                                 type="button"
                                 onClick={() => handleSelect(loc)}
                               >
-                                {loc?.area}, {loc?.stateName}
+                                {loc?.area}
+                                {/* , {loc?.stateName} */}
                               </button>
                             </li>
                           ))

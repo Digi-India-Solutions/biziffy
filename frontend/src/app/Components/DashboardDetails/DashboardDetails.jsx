@@ -18,7 +18,7 @@ const DashboardDetails = ({ type }) => {
             <div className="container mt-4">
                 <div className="card shadow-sm border-0 rounded-4">
                     <div className="card-header bg-primary text-white rounded-top-4">
-                        <p className="mb-0"><i className="bi bi-people-fill"></i> {title} ({users.length})</p>
+                        <p className="mb-0"><i className="bi bi-people-fill"></i> {title} ({users?.length})</p>
                     </div>
                     <div className="card-body p-0">
                         <div>

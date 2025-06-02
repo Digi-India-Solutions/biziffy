@@ -371,7 +371,8 @@ const BusinessNavbar = () => {
                     filteredLocations.map((loc, i) => (
                       <li key={i}>
                         <button className="dropdown-item" onClick={() => handleSelect(loc)}>
-                          {loc.area}, {loc.stateName}
+                          {loc.area}
+                          {/* , {loc.stateName} */}
                         </button>
                       </li>
                     ))

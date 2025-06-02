@@ -44,7 +44,7 @@ const allowedOrigins = [
     "http://localhost:3001",
     // "http://localhost:8080",
     // "http://localhost:5173",
-    "http://localhost:18000",
+    "http://localhost:18001",
     "http://localhost:18001",
     "https://biziffy.com",
     "https://www.biziffy.com",
