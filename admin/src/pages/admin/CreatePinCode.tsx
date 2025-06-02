@@ -25,7 +25,7 @@ const CreatePinCode = () => {
     useEffect(() => {
         const fetchStates = async () => {
             try {
-                const res = await axios.get("https://api.biziffy.comapi/state/get-all-states");
+                const res = await axios.get("https://api.biziffy.com/api/state/get-all-states");
                 // console.log("res", res?.data);
                 if (res?.data?.status) {
                     setStateList(res?.data?.data);
@@ -51,7 +51,7 @@ const CreatePinCode = () => {
         setLoading(true);
 
         try {
-            const res = await axios.post("https://api.biziffy.comapi/pincode/create-pincode", formData);
+            const res = await axios.post("https://api.biziffy.com/api/pincode/create-pincode", formData);
             if (res.data.status) {
                 toast({ title: "Success", description: "PinCode added successfully!", });
                 navigate("/admin/pincode");

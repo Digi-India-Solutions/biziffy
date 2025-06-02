@@ -45,7 +45,7 @@ const Membership = () => {
   useEffect(() => {
     const fetchMemberships = async () => {
       try {
-        const res = await axios.get("https://api.biziffy.comapi/admin/memberships");
+        const res = await axios.get("https://api.biziffy.com/api/admin/memberships");
         setMemberships(res.data);
       } catch (err) {
         console.error(err);
@@ -114,7 +114,7 @@ const Membership = () => {
   // Handle delete with backend call and UI update
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`https://api.biziffy.comapi/admin/memberships/${id}`); // API call to delete
+      await axios.delete(`https://api.biziffy.com/api/admin/memberships/${id}`); // API call to delete
       setMemberships((prev) => prev.filter((item) => item._id !== id)); // Remove from UI
       setDeletePopup(null);
       toast({ title: "Deleted", description: "Membership successfully deleted." });

@@ -22,7 +22,7 @@ const Enquiries = () => {
   useEffect(() => {
     const loadEnquiries = async () => {
       try {
-        const response = await fetch("https://api.biziffy.comapi/enquiries");
+        const response = await fetch("https://api.biziffy.com/api/enquiries");
         const data = await response.json();
         setEnquiries(data);
       } catch (error) {

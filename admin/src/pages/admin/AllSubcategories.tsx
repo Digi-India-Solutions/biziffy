@@ -13,7 +13,7 @@ const AllSubcategories = () => {
   useEffect(() => {
     const fetchSubcategories = async () => {
       try {
-        const response = await axios.get("https://api.biziffy.comapi/admin/subcategories");
+        const response = await axios.get("https://api.biziffy.com/api/admin/subcategories");
 
         // console.log("Response Data:", response.data);
 
@@ -45,7 +45,7 @@ const AllSubcategories = () => {
   // Handle delete of a subcategory
   const handleDelete = async (id: string) => {
     try {
-      const response = await axios.delete(`https://api.biziffy.comapi/admin/delete-subcategory/${id}`);
+      const response = await axios.delete(`https://api.biziffy.com/api/admin/delete-subcategory/${id}`);
 
       if (response.status) {
         // Filter the subcategories array to remove the deleted subcategory

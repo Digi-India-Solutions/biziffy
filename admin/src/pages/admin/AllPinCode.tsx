@@ -26,7 +26,7 @@ const AllPinCode = () => {
     const fetchPinCodes = async () => {
         setLoading(true);
         try {
-            const response = await axios.get("https://api.biziffy.comapi/pincode/get-all-pin-codes");
+            const response = await axios.get("https://api.biziffy.com/api/pincode/get-all-pin-codes");
             // console.log('response', response.data.pinCodes);
             if (response.data?.status) {
                 setPinCodes(response?.data?.pinCodes);
@@ -63,7 +63,7 @@ const AllPinCode = () => {
     const handleDelete = async (id: string) => {
         if (!window.confirm("Are you sure you want to delete this city?")) return;
         try {
-            await axios.get(`https://api.biziffy.comapi/pincode/delete-Pincode/${id}`);
+            await axios.get(`https://api.biziffy.com/api/pincode/delete-Pincode/${id}`);
             setPinCodes(prev => prev.filter(c => c._id !== id));
             toast({ title: "Deleted", description: "PinCode deleted successfully." });
         } catch (err) {
@@ -140,7 +140,7 @@ const AllPinCode = () => {
     
             setExcelLoading(true);
     
-            const response = await axios.post("https://api.biziffy.comapi/pincode/create-pincode-by-excel", excelData);
+            const response = await axios.post("https://api.biziffy.com/api/pincode/create-pincode-by-excel", excelData);
             const { status, created, duplicates, invalid, createdCount, duplicateCount, invalidCount } = response?.data;
     
             if (status === true) {

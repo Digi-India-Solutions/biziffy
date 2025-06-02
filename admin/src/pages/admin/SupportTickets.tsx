@@ -35,7 +35,7 @@ const SupportTickets = () => {
 
   const fetchSupportTickets = async () => {
     try {
-      const res = await axios.get("https://api.biziffy.comapi/admin/support-tickets");
+      const res = await axios.get("https://api.biziffy.com/api/admin/support-tickets");
       setSupportTicketsData(res.data.data);
     } catch (error) {
       console.error("Error fetching support tickets:", error);
@@ -105,7 +105,7 @@ const SupportTickets = () => {
   const confirmDelete = async () => {
     if (!selectedTicket) return;
     try {
-      await axios.delete(`https://api.biziffy.comapi/admin/support-tickets/${selectedTicket._id}`);
+      await axios.delete(`https://api.biziffy.com/api/admin/support-tickets/${selectedTicket._id}`);
       toast({ title: "Deleted", description: `Ticket deleted successfully.` });
       setDeleteModal(false);
       fetchSupportTickets();
@@ -117,7 +117,7 @@ const SupportTickets = () => {
   const handleStatusChange = async (newStatus: string) => {
     if (!selectedTicket) return;
     try {
-      await axios.put(`https://api.biziffy.comapi/admin/support-tickets/${selectedTicket._id}`, {
+      await axios.put(`https://api.biziffy.com/api/admin/support-tickets/${selectedTicket._id}`, {
         status: newStatus,
       });
       toast({ title: "Updated", description: `Ticket status changed to ${newStatus}` });

@@ -26,7 +26,7 @@ const DeactivatedUsers = () => {
   useEffect(() => {
     const fetchDeactivatedUsers = async () => {
       try {
-        const response = await axios.get("https://api.biziffy.comapi/admin/users/deactivated");
+        const response = await axios.get("https://api.biziffy.com/api/admin/users/deactivated");
         const data = Array.isArray(response.data) ? response.data : response.data.users;
         setUsers(data);
       } catch (error) {

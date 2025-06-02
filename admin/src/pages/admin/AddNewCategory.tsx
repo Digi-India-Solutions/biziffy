@@ -68,7 +68,7 @@ const AddNewCategory = () => {
     }
 
     try {
-      const response = await fetch("https://api.biziffy.comapi/create-categories", { method: "POST", body: formData, });
+      const response = await fetch("https://api.biziffy.com/api/create-categories", { method: "POST", body: formData, });
       // console.log("XXXXXXX____XXXXXXX____XXXX___:-", response)
       if (!response.ok) {
         let errorText = "Failed to create category.";

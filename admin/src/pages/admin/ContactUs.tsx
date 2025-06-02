@@ -33,7 +33,7 @@
 //   useEffect(() => {
 //     const fetchContacts = async () => {
 //       try {
-//         const res = await axios.get("https://api.biziffy.comapi/contactus/get-all-contact");
+//         const res = await axios.get("https://api.biziffy.com/api/contactus/get-all-contact");
 //         console.log("GGGGGG", res)
 //         if (res?.data?.status === true) {
 //           setContactData(res?.data?.data);
@@ -90,7 +90,7 @@
 //   const handleUpdateStatus = async (id: string, newStatus: string) => {
 //     // console.log("XXXXXXXXXXXXXXXXXXXXXXXX----", newStatus)
 //     try {
-//       await axios.post(`https://api.biziffy.comapi/update-business-listing-status/${id}`, { status: newStatus });
+//       await axios.post(`https://api.biziffy.com/api/update-business-listing-status/${id}`, { status: newStatus });
 //       setFullListings(
 //         fullListings.map((listing) => {
 //           if (listing._id === id && listing.businessDetails) {
@@ -310,7 +310,7 @@ const ContactUs = () => {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const res = await axios.get("https://api.biziffy.comapi/contactus/get-all-contact");
+        const res = await axios.get("https://api.biziffy.com/api/contactus/get-all-contact");
         if (res?.data?.status === true) {
           setContactData(res?.data?.data);
         }
@@ -363,7 +363,7 @@ const ContactUs = () => {
 
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     try {
-      await axios.post(`https://api.biziffy.comapi/contactus/update-status/${id}`, { status: newStatus, });
+      await axios.post(`https://api.biziffy.com/api/contactus/update-status/${id}`, { status: newStatus, });
       setContactData((prev) =>
         prev.map((contact) =>
           contact._id === id ? { ...contact, status: newStatus } : contact

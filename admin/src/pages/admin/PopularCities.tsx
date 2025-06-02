@@ -50,7 +50,7 @@ const PopularCities = () => {
   const fetchCities = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("https://api.biziffy.comapi/populerCity/get-all-popular-cities");
+      const response = await axios.get("https://api.biziffy.com/api/populerCity/get-all-popular-cities");
 
       if (response.data?.status && Array.isArray(response.data.data)) {
         const normalized: City[] = response.data.data.map((item: any) => ({
@@ -102,7 +102,7 @@ const PopularCities = () => {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this city?")) return;
     try {
-      await axios.get(`https://api.biziffy.comapi/populerCity/delete-popular-city/${id}`);
+      await axios.get(`https://api.biziffy.com/api/populerCity/delete-popular-city/${id}`);
       setCities(prev => prev.filter(c => c.id !== id));
       toast({ title: "Deleted", description: "City deleted successfully." });
     } catch (err) {
