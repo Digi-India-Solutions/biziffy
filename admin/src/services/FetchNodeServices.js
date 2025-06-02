@@ -1,5 +1,5 @@
 import axios from "axios";
-const serverURL = "https://api.biziffy.com/";
+const serverURL = "https://api.biziffy.com";
 // const serverURL ="https://api.sddipl.com"
 
 
