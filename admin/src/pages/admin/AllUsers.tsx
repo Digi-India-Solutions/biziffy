@@ -82,7 +82,7 @@ const AllUsers = () => {
     if (!confirmed) return;
 
     try {
-      const response = await axios.delete(`https://api.biziffy.com/api/admin/auth/all/${userId}`);
+      const response = await axios.delete(`https://api.biziffy.comapi/admin/auth/all/${userId}`);
       if (response.status !== 200) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

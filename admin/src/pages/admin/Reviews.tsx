@@ -34,7 +34,7 @@ const Reviews = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await axios.get("https://api.biziffy.com/api/reviews");
+        const res = await axios.get("https://api.biziffy.comapi/reviews");
         setReviews(res.data);
       } catch (err) {
         toast({

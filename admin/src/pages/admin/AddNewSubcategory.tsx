@@ -49,7 +49,7 @@ const AddNewSubcategory = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("https://api.biziffy.com/api/categories");
+        const res = await axios.get("https://api.biziffy.comapi/categories");
         setCategories(res.data);
       } catch (err) {
         console.error("Failed to fetch categories", err);
@@ -125,7 +125,7 @@ const AddNewSubcategory = () => {
     // });
 
     try {
-      await axios.post("https://api.biziffy.com/api/admin/create-subcategories", formData);
+      await axios.post("https://api.biziffy.comapi/admin/create-subcategories", formData);
       toast({ title: "Subcategory created successfully." });
       navigate("/admin/subcategories");
     } catch (error) {

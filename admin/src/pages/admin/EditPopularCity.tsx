@@ -44,7 +44,7 @@ const EditPopularCity = () => {
 
       try {
         setLoading(true);
-        const res = await axios.get(`https://api.biziffy.com/api/populerCity/get-popular-city-by-id/${id}`);
+        const res = await axios.get(`https://api.biziffy.comapi/populerCity/get-popular-city-by-id/${id}`);
         const data = res.data?.data;
         // console.log("res:====", res?.data.data);
         if (res.data?.status) {
@@ -78,8 +78,8 @@ const EditPopularCity = () => {
     const fetchInitialData = async () => {
       try {
         const [cityRes, catRes] = await Promise.all([
-          axios.get("https://api.biziffy.com/api/city/get-all-city"),
-          axios.get("https://api.biziffy.com/api/categories"),
+          axios.get("https://api.biziffy.comapi/city/get-all-city"),
+          axios.get("https://api.biziffy.comapi/categories"),
         ]);
 
         if (cityRes?.data?.status) setCityList(cityRes.data.data);
@@ -134,7 +134,7 @@ const EditPopularCity = () => {
       form.append("isActive", String(formData?.isActive));
       formData.category.forEach((cat) => form.append("category", cat));
 
-      const res = await axios.post(`https://api.biziffy.com/api/populerCity/update-popular-city/${id}`, form);
+      const res = await axios.post(`https://api.biziffy.comapi/populerCity/update-popular-city/${id}`, form);
       if (res?.data?.status) {
         toast({ title: "Success", description: "City updated successfully!" });
         navigate("/admin/popular-cities");

@@ -46,7 +46,7 @@ const EditSubCategory = () => {
     useEffect(() => {
         const fetchSubCategory = async () => {
             try {
-                const { data } = await axios.get(`https://api.biziffy.com/api/admin/get-subcategory-by-id/${id}`);
+                const { data } = await axios.get(`https://api.biziffy.comapi/admin/get-subcategory-by-id/${id}`);
                 // console.log("datadatadata:----", data)
                 form.setValue("name", data.name);
                 form.setValue("status", data.status);
@@ -61,7 +61,7 @@ const EditSubCategory = () => {
 
         const fetchCategories = async () => {
             try {
-                const res = await axios.get("https://api.biziffy.com/api/categories");
+                const res = await axios.get("https://api.biziffy.comapi/categories");
                 setCategories(res.data);
             } catch (err) {
                 console.error("Failed to fetch categories", err);
@@ -112,7 +112,7 @@ const EditSubCategory = () => {
         }
 
         try {
-            await axios.post(`https://api.biziffy.com/api/admin/update-subcategories/${id}`, formData);
+            await axios.post(`https://api.biziffy.comapi/admin/update-subcategories/${id}`, formData);
             toast({ title: "Subcategory updated successfully." });
             navigate("/admin/subcategories");
         } catch (error) {

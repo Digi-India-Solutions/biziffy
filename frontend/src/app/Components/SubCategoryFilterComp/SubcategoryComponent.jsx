@@ -20,7 +20,7 @@ const SubcategoryComponent = () => {
     const fetchCategoryDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:18001/api/categories/${categoryId}`
+          `https://api.biziffy.com/api/categories/${categoryId}`
         );
         // console.log("API Response:", response.data);
 

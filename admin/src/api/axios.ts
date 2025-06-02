@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "https://api.biziffy.com/api", // Replace with your backend URL
+  baseURL: "https://api.biziffy.comapi", // Replace with your backend URL
   headers: {
     "Content-Type": "application/json",
   },
