@@ -217,59 +217,100 @@ export const listingBulkAction = async (req: Request, res: Response) => {
     }
 };
 export const searchWebsiteListings = async (req: Request, res: Response) => {
-    const { query = "", pincode, title = '' } = req.query;
-
-    console.log("Incoming search:", { query, pincode, title });
-
-    if (!pincode || typeof pincode !== "string") {
-        return res.status(400).json({ status: false, error: "'pincode' is required." });
-    }
-
+    const { query = "", pincode, state = "", title = "" } = req.query;
+  
+    console.log("Incoming search:", { query, pincode, title, state });
+  
+    // if (!pincode || typeof pincode !== "string") {
+    //   return res.status(400).json({ status: false, error: "'pincode' is required." });
+    // }
+  
     try {
-        const regex = new RegExp(query as string, "i");
-        let listings: any[] = [];
-
-        if (title === "CityPage") {
-            console.log("CityPage")
-            // Fetch all listings with the given pincode
-            const allByPincode = await WebsiteListing.find({ "serviceArea": pincode }).populate("category subCategory");
-
-            listings = allByPincode.filter((listing: any) => {
-                return (
-                    listing?.category?.name?.toLowerCase() === (query as string).toLowerCase()
-                );
-            });
-        } else {
-            console.log("CityPage console.log(CityPage)")
-            // General search by text query and pincode
-            listings = await WebsiteListing.find({
-                $and: [
-                    {
-                        $or: [
-                            { "companyName": regex },
-                            // { "area": regex },
-                            { "service": { $in: [regex] } },
-                            { "serviceArea": regex },
-                        ]
-                    },
-                    { "serviceArea": pincode }
-                ]
-            }).populate("category subCategory userId");
-        }
-
-        // Only include Published or Approved listings
-        const filteredListings = listings.filter((listing: any) => {
-            const status = listing?.status;
-            return status === "Approved";
+      const regex = new RegExp(query as string, "i");
+      let listings: any[] = [];
+  
+      // Helper to filter Approved only
+      const filterApproved = (data: any[]) =>
+        data.filter((listing: any) => listing?.status === "Approved");
+  
+      if (title === "CityPage") {
+        // 1. First try to fetch by exact pincode and category match
+        const byPincode = await WebsiteListing.find({
+          serviceArea: pincode,
+        }).populate("category subCategory");
+  
+        const matched = byPincode.filter((listing: any) => {
+          return listing?.category?.name?.toLowerCase() === (query as string).toLowerCase();
         });
-
-        console.log("filteredListings", filteredListings)
-        return res.status(200).json({ status: true, data: filteredListings });
+  
+        const approvedListings = filterApproved(matched);
+  
+        // 2. If not found, fallback to state
+        if (approvedListings.length > 0) {
+          return res.status(200).json({ status: true, data: approvedListings });
+        }
+  
+        if (state) {
+          const byState = await WebsiteListing.find({
+            state: state,
+          }).populate("category subCategory");
+  
+          const stateMatched = byState.filter((listing: any) => {
+            return listing?.category?.name?.toLowerCase() === (query as string).toLowerCase();
+          });
+  
+          const stateApproved = filterApproved(stateMatched);
+  
+          return res.status(200).json({ status: true, data: stateApproved });
+        }
+  
+        return res.status(200).json({ status: true, data: [] });
+      } else {
+        // General search — try by pincode first
+        const pincodeResults = await WebsiteListing.find({
+          $and: [
+            {
+              $or: [
+                { companyName: regex },
+                { service: { $in: [regex] } },
+                { serviceArea: regex },
+              ],
+            },
+            { serviceArea: pincode },
+          ],
+        }).populate("category subCategory userId");
+  
+        let finalResults = filterApproved(pincodeResults);
+  
+        // If none, fallback to state
+        if (finalResults.length === 0 && state) {
+          const stateResults = await WebsiteListing.find({
+            $and: [
+              {
+                $or: [
+                  { companyName: regex },
+                  { service: { $in: [regex] } },
+                  { serviceArea: regex },
+                ],
+              },
+              { state: state },
+            ],
+          }).populate("category subCategory userId");
+  
+          finalResults = filterApproved(stateResults);
+        }
+  
+        return res.status(200).json({ status: true, data: finalResults });
+      }
     } catch (error: any) {
-        console.error("Search error:", error.message);
-        return res.status(500).json({ status: false, message: "Internal server error", error: error.message });
+      console.error("Search error:", error.message);
+      return res.status(500).json({
+        status: false,
+        message: "Internal server error",
+        error: error.message,
+      });
     }
-};
+  };
 
 export const getAllWebsiteListingsByUserId = async (req: Request, res: Response) => {
     try {

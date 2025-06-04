@@ -15,7 +15,7 @@ export default function CityCards() {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const res = await axios.get("https://api.biziffy.com/api/populerCity/get-all-popular-cities");
+        const res = await axios.get("http://localhost:18001/api/populerCity/get-all-popular-cities");
         console.log("res->", res?.data);
         if (res?.data?.status === true) {
           setCityData(res?.data?.data);

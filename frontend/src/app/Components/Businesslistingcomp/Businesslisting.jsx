@@ -16,10 +16,11 @@ import banner3 from "../../Images/slide3.webp";
 import PaidListing from "../../pages/paid-listing/PaidListing"
 
 const Businesslisting = () => {
-     const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
   const [pincode, setPincode] = useState("");
   const [title, setTitle] = useState("");
+  const [state, setState] = useState("");
   const [visibleCount, setVisibleCount] = useState(4);
   const [businesses, setBusinesses] = useState([]);
   const [websiteList, setWebsiteList] = useState([]);
@@ -44,9 +45,11 @@ const Businesslisting = () => {
     const q = searchParams.get("query") || "";
     const pin = searchParams.get("pincode") || "";
     const title = searchParams.get("title")
+    const st = searchParams.get("state") || "";
     setQuery(q);
     setPincode(pin);
     setTitle(title);
+    setState(st);
   }, [searchParams]);
 
   const bannerImages = [banner1, banner2, banner3];
@@ -59,49 +62,12 @@ const Businesslisting = () => {
     }
   };
 
-  // const fetchBusinessesListing = useCallback(async() => {
-  //   try {
-  //     let response;
-  //     if (pincode || query || title) {
-  //       response = await axios.get("https://api.biziffy.com/api/search-listings", {
-  //         params: { pincode, query, title },
-  //       });
-  //     }
-  //     // else {
-  //     //   response = await axios.get("https://api.biziffy.com/api/get-all-listings");
-  //     // }
-  //     console.log("FFFFFFFFFFF", response?.data)
-  //     setBusinesses(response?.data?.data || []);
-  //   } catch (error) {
-  //     console.error("Failed to fetch listings:", error);
-  //   }
-  // }, [pincode, query]);
-
-  // const fetchWebsiteListing = useCallback(async() => {
-  //   try {
-  //     let response;
-  //     if (pincode || query || title) {
-  //       response = await axios.get("https://api.biziffy.com/api/admin/search-website-listings", {
-  //         params: { pincode, query, title },
-  //       });
-  //     }
-  //     console.log("FFFFFFFFFFFWebsite", response?.data)
-  //     if (response?.data?.status) {
-  //       setWebsiteList(response?.data?.data || []);
-  //     }
-
-  //   } catch (error) {
-  //     console.error("Failed to fetch listings:", error);
-  //   }
-  // }, [pincode, query])
-
-
   const fetchBusinessesListing = useCallback(async () => {
     try {
       let response;
-      if (pincode || query || title) {
-        response = await axios.get("https://api.biziffy.com/api/search-listings", {
-          params: { pincode, query, title },
+      if (pincode || query || title || state) {
+        response = await axios.get("http://localhost:18001/api/search-listings", {
+          params: { pincode, query, title, state },
         });
       }
       console.log("FFFFFFFFFFF", response?.data);
@@ -109,14 +75,14 @@ const Businesslisting = () => {
     } catch (error) {
       console.error("Failed to fetch listings:", error);
     }
-  }, [pincode, query, title]);  // ✅ add 'title'
+  }, [pincode, query, title, state]);  // ✅ add 'title'
 
   const fetchWebsiteListing = useCallback(async () => {
     try {
       let response;
-      if (pincode || query || title) {
-        response = await axios.get("https://api.biziffy.com/api/admin/search-website-listings", {
-          params: { pincode, query, title },
+      if (pincode || query || title || state) {
+        response = await axios.get("http://localhost:18001/api/admin/search-website-listings", {
+          params: { pincode, query, title, state },
         });
       }
       console.log("FFFFFFFFFFFWebsite", response?.data);
@@ -149,7 +115,7 @@ const Businesslisting = () => {
 
     if (!lastClickDay || parseInt(lastClickDay) < currentDay) {
 
-      axios.post(`https://api.biziffy.com/api/increase-click-count/${businessId}`, { type, user })
+      axios.post(`http://localhost:18001/api/increase-click-count/${businessId}`, { type, user })
         .then(() => { console.log(`${type} click counted`); localStorage.setItem(key, currentDay.toString()); })
         .catch((err) => { console.error("Error increasing count", err) });
     } else {
@@ -160,7 +126,7 @@ const Businesslisting = () => {
 
   return (
     <>
- <section className="business-listing-page">
+      <section className="business-listing-page">
         {/* Banner Section */}
         <div className="container">
           <div className="listing-banner">
@@ -242,7 +208,8 @@ const Businesslisting = () => {
 
                       setIsLoading(true);
                       try {
-                        const response = await axios.post('https://api.biziffy.com/api/auth/user-login', { email: formData.email, password: formData.password, });
+                        // http://localhost:18001/
+                        const response = await axios.post('http://localhost:18001/api/auth/user-login', { email: formData.email, password: formData.password, });
                         // console.log("API Response:", response.data.token);
                         if (response?.data?.status) {
 

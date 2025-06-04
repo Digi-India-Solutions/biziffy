@@ -133,7 +133,7 @@ const Businesslistingdetails = ({ businesses }) => {
 
     if (!lastClickDay || parseInt(lastClickDay) < currentDay) {
 
-      axios.post(`https://api.biziffy.com/api/increase-click-count/${businessId}`, { type, user })
+      axios.post(`http://localhost:18001/api/increase-click-count/${businessId}`, { type, user })
         .then(() => { console.log(`${type} click counted`); localStorage.setItem(key, currentDay.toString()); })
         .catch((err) => { console.error("Error increasing count", err) });
     } else {
