@@ -14,7 +14,7 @@ body {
 }
 
 
-.validation-text{
+.validation-text {
   color: red !important;
   font-size: 12px !important;
   margin-top: -12px !important;
@@ -61,6 +61,7 @@ body {
   color: white;
   border: none;
 }
+
 .black-btn:hover {
   background-color: var(--black);
   color: white;
@@ -80,8 +81,10 @@ body {
 .bread-overlay {
   height: 350px;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-  position: absolute; /* Make it sit on top */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent black */
+  position: absolute;
+  /* Make it sit on top */
   top: 0;
   left: 0;
   z-index: 2;
@@ -90,8 +93,10 @@ body {
 .city-bread-overlay {
   height: 350px;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent black */
-  position: absolute; /* Make it sit on top */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Semi-transparent black */
+  position: absolute;
+  /* Make it sit on top */
   top: 0;
   left: 0;
   z-index: 2;
@@ -99,11 +104,13 @@ body {
 
 .bread-content {
   position: relative;
-  z-index: 3; /* Ensure it sits above the overlay */
+  z-index: 3;
+  /* Ensure it sits above the overlay */
   max-width: 50%;
   text-align: center;
   margin: auto;
-  color: white; /* Ensure text is visible */
+  color: white;
+  /* Ensure text is visible */
   top: 100px;
 }
 
@@ -169,6 +176,7 @@ body {
   width: 90%;
   margin: auto;
 }
+
 .hero-location-picker {
   position: relative;
   border-right: 1px solid #ddd;
@@ -245,6 +253,7 @@ body {
   color: var(--blue);
 }
 
+
 @media (max-width: 768px) {
   .some-page-hero-content {
     padding: 2rem 0px 0px;
@@ -266,13 +275,16 @@ body {
   .container {
     padding: 0 12px;
   }
+
   .bread-content {
     max-width: 100%;
     top: 50px;
   }
+
   .bread-overlay {
     height: 220px;
   }
+
   .all-breadcrumb {
     height: 220px;
   }
@@ -295,7 +307,7 @@ body {
 
   .location-detact {
     font-size: 11px;
-    
+
   }
 
   .black-btn {
@@ -303,6 +315,7 @@ body {
     border: 1px solid var(--black);
     padding: 5px 10px;
   }
+
   .login-btn {
     font-size: 12px;
   }

@@ -142,7 +142,7 @@ const page = () => {
 
       <section className="citys-section">
         <div className="container">
-          <div className="row justify-content-center">
+          <div className="row justify-content-start">
             <div className="col-md-12">
               <div className="citys-section-head">
                 <h1 className="citys-section-heading">
@@ -159,8 +159,6 @@ const page = () => {
                         src={category.image}
                         alt={category.title}
                         className="city-category-round-img"
-                        height={100}
-                        width={100}
                       />
                     </div>
                   </Link>

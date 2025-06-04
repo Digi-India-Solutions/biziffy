@@ -9,6 +9,7 @@ import axios from "axios";
 import "../../pages/login/login.css";
 import "./signup.css";
 import VerifyOtpPage from "../verify-otp/VerifyOtpPage";
+import LoadingComponent from "../../Components/loadingcomponent/Loadingcomponent";
 
 const Page = () => {
   const [loading, setLoading] = useState(false);
@@ -221,7 +222,7 @@ const Page = () => {
                   {errors.confirmPassword && <p className="validation-text">{errors.confirmPassword}</p>}
 
                   <button onClick={handleSubmit} className="login-btn bg-dark text-white border-0 w-100 mb-3">
-                    {loading ? "Loading..." : "Get Started"}
+                    {loading ? <LoadingComponent /> : "Get Started"}
                   </button>
 
                   <p className="text-center">

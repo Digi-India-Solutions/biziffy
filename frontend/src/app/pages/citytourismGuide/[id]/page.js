@@ -7,7 +7,7 @@ import Head from "next/head";
 import { useParams } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
-
+import LoadingComponent from "../../../Components/loadingcomponent/Loadingcomponent"
 const Page = () => {
   const { id } = useParams(); // ✅ get dynamic route param
   const [data, setData] = useState(null);
@@ -32,7 +32,7 @@ const Page = () => {
     fetchTopCity();
   }, [id]);
 
-  if (!data) return <div>Loading...</div>; // Optional loading state
+  if (!data) return <LoadingComponent />;
 
   return (
     <>
@@ -65,7 +65,7 @@ const Page = () => {
 
       <section className="citys-section">
         <div className="container">
-          <div className="row justify-content-center">
+          <div className="row justify-content-start">
             <div className="col-md-12">
               <div className="citys-section-head">
                 <h1 className="citys-section-heading">

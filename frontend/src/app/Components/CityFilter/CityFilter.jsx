@@ -7,7 +7,7 @@ import Link from "next/link";
 import Heading from "../Heading/SecHeading";
 import Image from "next/image";
 import axios from "axios";
-
+import LoadingComponent from "../loadingcomponent/Loadingcomponent";
 export default function CityCards() {
   const [cityData, setCityData] = useState([]);
   const [hoveredCard, setHoveredCard] = useState(null);
@@ -40,7 +40,7 @@ export default function CityCards() {
       <div className="container">
         <div className="row g-4">
           {cityData?.length === 0 ? (
-            <p>Loading...</p>
+            <LoadingComponent />
           ) : (
             cityData?.map((city) => {
               console.log("City:", city); // Debug: Check city object
