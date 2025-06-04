@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
-
+import LoadingComponent from "../../Components/loadingcomponent/Loadingcomponent";
 const VerifyOtpPage = ({ formData, title, openOtp, setOpenOtp, loading, setLoading }) => {
   const router = useRouter();
   const [otp, setOtp] = useState("");
@@ -50,7 +50,7 @@ const VerifyOtpPage = ({ formData, title, openOtp, setOpenOtp, loading, setLoadi
           />
           {error && <p className="validation-text text-danger">{error}</p>}
 
-          <button className="login-btn w-100">{loading ? "Loading..." : "Verify & Continue"}</button>
+          <button className="login-btn w-100">{loading ? <LoadingComponent /> : "Verify & Continue"}</button>
         </form>
       </div>
     </div>

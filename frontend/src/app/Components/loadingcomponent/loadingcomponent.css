@@ -1,0 +1,50 @@
+
+#loadcontainer {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.loadbox {
+  width: 20px;
+  height: 40px;
+  background-color: #383636;
+  border-radius: 50px;
+  animation: loader 1s linear infinite;
+}
+
+#loader1 {
+  animation-delay: .1s;
+}
+
+#loader2 {
+  animation-delay: .2s;
+}
+
+#loader3 {
+  animation-delay: .3s;
+}
+
+#loader4 {
+  animation-delay: .4s;
+}
+
+#loader5 {
+  animation-delay: .5s;
+}
+
+@keyframes loader {
+
+  0%,
+  100% {
+    height: 90px;
+  }
+
+  50% {
+    height: 20px;
+  }
+}

@@ -64,9 +64,10 @@ const SubcategoryComponent = () => {
                 <div key={sub._id} className="col-md-3 col-sm-4 col-6">
                   <div className="subcategory-card">
                     <Link
-                      href={`/subcategory/${sub.name
-                        .toLowerCase()
-                        .replace(/\s/g, "-")}`}
+                    href={`/pages/bussiness-listing?query=${sub?.name}${categoryId}`}
+                      // href={`/pages/subcategory/${sub.name
+                      //   .toLowerCase()
+                      //   .replace(/\s/g, "-")}`}
                     >
                       <div className="subcategory-filter-img">
                         <Image
