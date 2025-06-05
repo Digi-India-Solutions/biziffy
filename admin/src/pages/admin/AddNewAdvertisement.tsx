@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
+import { postData } from "@/services/FetchNodeServices";
 
 export interface AdvertisementData {
   title: string;
@@ -44,40 +45,32 @@ const AddNewAdvertisement: React.FC = () => {
     }
   };
 
-  
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
 
-  try {
-    const formPayload = new FormData();
-    formPayload.append("title", formData.title);
-    formPayload.append("type", formData.type);
-    formPayload.append("businessCategory", formData.businessCategory);
-    formPayload.append("subCategory", formData.subCategory);
-    formPayload.append("childCategory", formData.childCategory);
-    formPayload.append("redirectUrl", formData.redirectUrl);
-    formPayload.append("status", formData.status);
-    if (formData.image) {
-      formPayload.append("image", formData.image);
-    }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-
-    await axios.post(
-      "https://api.biziffy.com/api/advertisements/create-Advertisements", // ✅ FIXED route
-      formPayload,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+    try {
+      const formPayload = new FormData();
+      formPayload.append("title", formData.title);
+      formPayload.append("type", formData.type);
+      formPayload.append("businessCategory", formData.businessCategory);
+      formPayload.append("subCategory", formData.subCategory);
+      formPayload.append("childCategory", formData.childCategory);
+      formPayload.append("redirectUrl", formData.redirectUrl);
+      formPayload.append("status", formData.status);
+      if (formData.image) {
+        formPayload.append("image", formData.image);
       }
-    );
 
-    navigate("/admin/advertisements");
-  } catch (error) {
-    console.error("Error uploading advertisement:", error);
-    alert("Error uploading advertisement");
-  }
-};
+
+      await postData("advertisements/create-Advertisements", formPayload);
+
+      navigate("/admin/advertisements");
+    } catch (error) {
+      console.error("Error uploading advertisement:", error);
+      alert("Error uploading advertisement");
+    }
+  };
 
   return (
     <AdminLayout title="Add New Advertisement">
