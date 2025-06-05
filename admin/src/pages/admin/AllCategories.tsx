@@ -20,6 +20,7 @@ interface Category {
   _id: string;
   name: string;
   icon?: string | File;
+  banner?: string | File;
   status: string;
   createDate: string;
 }
@@ -77,7 +78,10 @@ const AllCategories = () => {
       if (editCategory.icon instanceof File) {
         formData.append("icon", editCategory.icon);
       }
-
+      if (editCategory.banner instanceof File) {
+        formData.append("banner", editCategory.banner);
+      }
+      
       await axios.put(`http://localhost:18001/api/categories/${editCategory._id}`, formData);
 
       toast({
@@ -240,29 +244,29 @@ const AllCategories = () => {
 
 
       {isDeleteConfirmOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-start pt-24 z-50">
-    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-auto p-6 border-t-8 border-red-600 animate-slide-down">
-      <h2 className="text-xl font-bold text-red-600 mb-2">⚠️ Confirm Deletion</h2>
-      <p className="text-gray-700 mb-4">
-        Are you absolutely sure you want to delete this category? This action cannot be undone.
-      </p>
-      <div className="flex justify-end space-x-3">
-        <button
-          onClick={() => setIsDeleteConfirmOpen(false)}
-          className="px-4 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={confirmDelete}
-          className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
-        >
-          Yes, Delete
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-start pt-24 z-50">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-auto p-6 border-t-8 border-red-600 animate-slide-down">
+            <h2 className="text-xl font-bold text-red-600 mb-2">⚠️ Confirm Deletion</h2>
+            <p className="text-gray-700 mb-4">
+              Are you absolutely sure you want to delete this category? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setIsDeleteConfirmOpen(false)}
+                className="px-4 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
 
 
@@ -326,6 +330,33 @@ const AllCategories = () => {
                 />
               )}
             </div>
+
+            <div>
+              <Label>Banner</Label>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  setEditCategory((prev) =>
+                    prev && e.target.files
+                      ? { ...prev, banner: e.target.files[0] }
+                      : prev
+                  )
+                }
+              />
+              {editCategory?.banner && (
+                <img
+                  src={
+                    typeof editCategory.banner === "string"
+                      ? editCategory.banner
+                      : URL.createObjectURL(editCategory.banner)
+                  }
+                  alt="Preview"
+                  className="h-12 w-12 mt-2 rounded border"
+                />
+              )}
+            </div>
+
           </div>
           <DialogFooter className="mt-4">
             <Button onClick={handleEditSubmit}>Save</Button>

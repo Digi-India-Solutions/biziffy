@@ -67,39 +67,48 @@ export const getAllCategories = async (req: Request, res: Response) => {
 export const updateCategoryById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name } = req.body;
-    const icon = req.file ? req.file.filename : undefined;
+    const { name, status } = req.body;
+
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+console.log("req.files",req.files)
+    const iconFile = files?.["icon"]?.[0];
+    const bannerFile = files?.["banner"]?.[0];
 
     const existingCategory = await Category.findById(id);
-
-    let updatedImageUrl: string | null = null;
-
-    if (req.file) {
-      if (existingCategory?.icon) {
-        await deleteImage(existingCategory.icon);
-      }
-      updatedImageUrl = await uploadImage(req.file.path);
-      deleteLocalFile(req.file.path);
+    if (!existingCategory) {
+      return res.status(404).json({ success: false, message: "Category not found" });
     }
 
-    const updateData: any = { name };
-    if (updatedImageUrl) updateData.icon = updatedImageUrl;
+    let iconUrl = existingCategory.icon;
+    let bannerUrl = existingCategory?.banner;
 
-    const updatedCategory = await Category.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
-
-    if (!updatedCategory) {
-      return res.status(404).json({ message: "Category not found" });
+    if (iconFile) {
+      if (existingCategory.icon) await deleteImage(existingCategory.icon);
+      iconUrl = await uploadImage(iconFile.path);
+      deleteLocalFile(iconFile.path);
     }
 
-    res.status(200).json(updatedCategory);
+    if (bannerFile) {
+      if (existingCategory?.banner) await deleteImage(existingCategory.banner);
+      bannerUrl = await uploadImage(bannerFile.path);
+      deleteLocalFile(bannerFile.path);
+    }
+
+    const updateData = {
+      name: name || existingCategory.name,
+      status: status || existingCategory.status,
+      icon: iconUrl,
+      banner: bannerUrl,
+    };
+
+    const updatedCategory = await Category.findByIdAndUpdate(id, updateData, { new: true });
+
+    res.status(200).json({ success: true, message: "Category updated successfully", category: updatedCategory, });
   } catch (error) {
     console.error("Error updating category:", error);
-    res.status(500).json({ message: "Failed to update category" });
+    res.status(500).json({ success: false, message: "Failed to update category", error: (error as Error).message, });
   }
 };
-
 
 
 export const deleteCategoryById = async (req: Request, res: Response) => {

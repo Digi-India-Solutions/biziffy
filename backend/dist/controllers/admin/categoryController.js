@@ -73,33 +73,44 @@ const getAllCategories = (req, res) => __awaiter(void 0, void 0, void 0, functio
 exports.getAllCategories = getAllCategories;
 // Update category by ID
 const updateCategoryById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     try {
         const { id } = req.params;
-        const { name } = req.body;
-        const icon = req.file ? req.file.filename : undefined;
+        const { name, status } = req.body;
+        const files = req.files;
+        console.log("req.files", req.files);
+        const iconFile = (_a = files === null || files === void 0 ? void 0 : files["icon"]) === null || _a === void 0 ? void 0 : _a[0];
+        const bannerFile = (_b = files === null || files === void 0 ? void 0 : files["banner"]) === null || _b === void 0 ? void 0 : _b[0];
         const existingCategory = yield Category_1.default.findById(id);
-        let updatedImageUrl = null;
-        if (req.file) {
-            if (existingCategory === null || existingCategory === void 0 ? void 0 : existingCategory.icon) {
+        if (!existingCategory) {
+            return res.status(404).json({ success: false, message: "Category not found" });
+        }
+        let iconUrl = existingCategory.icon;
+        let bannerUrl = existingCategory === null || existingCategory === void 0 ? void 0 : existingCategory.banner;
+        if (iconFile) {
+            if (existingCategory.icon)
                 yield (0, cloudinary_1.deleteImage)(existingCategory.icon);
-            }
-            updatedImageUrl = yield (0, cloudinary_1.uploadImage)(req.file.path);
-            (0, deleteImageFromLocalFolder_1.deleteLocalFile)(req.file.path);
+            iconUrl = yield (0, cloudinary_1.uploadImage)(iconFile.path);
+            (0, deleteImageFromLocalFolder_1.deleteLocalFile)(iconFile.path);
         }
-        const updateData = { name };
-        if (updatedImageUrl)
-            updateData.icon = updatedImageUrl;
-        const updatedCategory = yield Category_1.default.findByIdAndUpdate(id, updateData, {
-            new: true,
-        });
-        if (!updatedCategory) {
-            return res.status(404).json({ message: "Category not found" });
+        if (bannerFile) {
+            if (existingCategory === null || existingCategory === void 0 ? void 0 : existingCategory.banner)
+                yield (0, cloudinary_1.deleteImage)(existingCategory.banner);
+            bannerUrl = yield (0, cloudinary_1.uploadImage)(bannerFile.path);
+            (0, deleteImageFromLocalFolder_1.deleteLocalFile)(bannerFile.path);
         }
-        res.status(200).json(updatedCategory);
+        const updateData = {
+            name: name || existingCategory.name,
+            status: status || existingCategory.status,
+            icon: iconUrl,
+            banner: bannerUrl,
+        };
+        const updatedCategory = yield Category_1.default.findByIdAndUpdate(id, updateData, { new: true });
+        res.status(200).json({ success: true, message: "Category updated successfully", category: updatedCategory, });
     }
     catch (error) {
         console.error("Error updating category:", error);
-        res.status(500).json({ message: "Failed to update category" });
+        res.status(500).json({ success: false, message: "Failed to update category", error: error.message, });
     }
 });
 exports.updateCategoryById = updateCategoryById;

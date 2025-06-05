@@ -71,7 +71,7 @@
 //     }
 
 //     // try {
-//     //   const res = await axios.get("https://api.biziffy.com/api/search", {
+//     //   const res = await axios.get("http://localhost:18001/api/search", {
 //     //     params: {
 //     //       query: searchText.trim(),
 //     //       pincode: location.pincode,
@@ -235,7 +235,7 @@ const BusinessNavbar = () => {
   useEffect(() => {
     const fetchPinCodes = async () => {
       try {
-        const response = await axios.get("https://api.biziffy.com/api/pincode/get-all-pin-codes");
+        const response = await axios.get("http://localhost:18001/api/pincode/get-all-pin-codes");
         if (response.data?.status) {
           setPinCodes(response.data.pinCodes);
         }
@@ -246,7 +246,7 @@ const BusinessNavbar = () => {
 
     const fetchCategorys = async () => {
       try {
-        const res = await axios.get("https://api.biziffy.com/api/categories");
+        const res = await axios.get("http://localhost:18001/api/categories");
         setCategoryList(res.data || []);
       } catch (error) {
         console.error("Error fetching pin codes:", error);
@@ -255,7 +255,7 @@ const BusinessNavbar = () => {
 
     // const fetchSubCategorys = async () => {
     //   try {
-    //     const response = await axios.get("https://api.biziffy.com/api/pincode/get-all-pin-codes");
+    //     const response = await axios.get("http://localhost:18001/api/pincode/get-all-pin-codes");
     //     if (response.data?.status) {
     //       setPinCodes(response.data.pinCodes);
     //     }
@@ -267,7 +267,7 @@ const BusinessNavbar = () => {
     fetchCategorys();
     // fetchSubCategorys()
   }, []);
-console.log("DDDD:=",categoryList)
+  // console.log("DDDD:=", categoryList)
   const extractPincode = (pinCodeStr) => {
     const pincode = pinCodeStr?.match(/\d{6}$/);
     return pincode ? pincode[0] : "";

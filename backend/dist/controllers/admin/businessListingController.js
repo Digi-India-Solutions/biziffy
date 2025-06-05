@@ -468,7 +468,7 @@ const searchBusinessListings = (req, res) => __awaiter(void 0, void 0, void 0, f
         if (locationFilters.length) {
             baseQuery.$and = [{ $or: locationFilters }];
         }
-        console.log("baseQuery:==", baseQuery);
+        // console.log("baseQuery:==",baseQuery)
         let listings = yield BusinessListing_1.default.find(baseQuery)
             .populate("businessCategory.category businessCategory.subCategory");
         // .lean(); // Lean for performance
@@ -482,6 +482,7 @@ const searchBusinessListings = (req, res) => __awaiter(void 0, void 0, void 0, f
             const status = (_a = listing.businessDetails) === null || _a === void 0 ? void 0 : _a.status;
             return status === "Published" || status === "Approved";
         });
+        // console.log('XXXXXXXXXXXXX:---',filteredListings)
         return res.status(200).json({
             status: true,
             data: filteredListings,
@@ -497,94 +498,6 @@ const searchBusinessListings = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.searchBusinessListings = searchBusinessListings;
-// export const searchBusinessListings = async (req: Request, res: Response) => {
-//   const { query = "", pincode = "", state = "", title = "" } = req.query;
-//   try {
-//     const keywordRegex = new RegExp(query as string, "i");
-//     const pincodeRegex = new RegExp(`\\b${pincode}\\b`, "i");
-//     const isObjectId = mongoose.Types.ObjectId.isValid(query as string);
-//     const baseQuery: any = {
-//       $and: [],
-//     };
-//     const orConditions: any[] = [];
-//     // If query is a string, match by name/text
-//     if (query && !isObjectId) {
-//       orConditions.push(
-//         { "businessDetails.businessName": keywordRegex },
-//         { "businessCategory.about": keywordRegex },
-//         { "businessCategory.keywords": { $in: [keywordRegex] } },
-//         { "businessCategory.businessService": keywordRegex },
-//         { "businessCategory.serviceArea": { $elemMatch: { $regex: keywordRegex } } }
-//       );
-//     }
-//     // If query is an ObjectId, match category or subcategory by ID
-//     if (isObjectId) {
-//       const objectIdQuery = new mongoose.Types.ObjectId(query as string);
-//       orConditions.push(
-//         { "businessCategory.category": objectIdQuery },
-//         { "businessCategory.subCategory": objectIdQuery }
-//       );
-//     }
-//     // Add OR conditions to base query
-//     if (orConditions.length > 0) {
-//       baseQuery.$and.push({ $or: orConditions });
-//     }
-//     // Pincode and state filters
-//     const locationFilters: any[] = [];
-//     if (pincode) {
-//       locationFilters.push(
-//         { "businessDetails.pinCode": pincode },
-//         { "businessCategory.serviceArea": { $elemMatch: { $regex: pincodeRegex } } }
-//       );
-//     }
-//     if (state) {
-//       locationFilters.push({
-//         "businessDetails.state": new RegExp(state as string, "i"),
-//       });
-//     }
-//     if (locationFilters.length > 0) {
-//       baseQuery.$and.push({ $or: locationFilters });
-//     }
-//     // If no filters applied at all, remove $and to prevent empty condition
-//     if (baseQuery.$and.length === 0) {
-//       delete baseQuery.$and;
-//     }
-//     let listings = await BusinessListing.find(baseQuery)
-//       .populate("businessCategory.category")
-//       .populate("businessCategory.subCategory");
-//     // If on CityPage, filter by exact category name (after population)
-//     if (title === "CityPage" && query && !isObjectId) {
-//       listings = listings.filter(
-//         (listing: any) =>
-//           listing.businessCategory?.category?.name?.toLowerCase() ===
-//           (query as string).toLowerCase()
-//       );
-//     }
-//     // Extra filter by populated category/subCategory name (optional)
-//     if (query && !isObjectId) {
-//       listings = listings.filter((listing: any) => {
-//         const categoryMatch = listing.businessCategory?.category?.name?.match(keywordRegex);
-//         const subCategoryMatch = listing.businessCategory?.subCategory?.some(
-//           (sub: any) => sub?.name?.match(keywordRegex)
-//         );
-//         return categoryMatch || subCategoryMatch;
-//       });
-//     }
-//     // Filter by status
-//     const filteredListings = listings.filter((listing: any) => {
-//       const status = listing.businessDetails?.status;
-//       return status === "Published" || status === "Approved";
-//     });
-//     return res.status(200).json({ status: true, data: filteredListings });
-//   } catch (error: any) {
-//     console.error("❌ Search Error:", error.message);
-//     return res.status(500).json({
-//       status: false,
-//       message: "Internal server error",
-//       error: error.message,
-//     });
-//   }
-// };
 const increaseClickCount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const allowedClickTypes = ["direction", "share", "contact", "website", "whatsapp", "listings"];

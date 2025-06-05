@@ -168,7 +168,7 @@ export default function EditBusinessProfile({ listingId }) {
     form.append("upgradeListing[twitter]", formData?.twitter);
 
     try {
-      const response = await axios.post(`https://api.biziffy.com/api/update-listings-by-id/${listingId?._id}`, form);
+      const response = await axios.post(`http://localhost:18001/api/update-listings-by-id/${listingId?._id}`, form);
       console.log("response:-", response)
       if (response)
         alert("Profile updated successfully!");
@@ -201,7 +201,7 @@ export default function EditBusinessProfile({ listingId }) {
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const response = await axios.get("https://api.biziffy.com/api/categories");
+        const response = await axios.get("http://localhost:18001/api/categories");
         setCategoryList(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -215,7 +215,7 @@ export default function EditBusinessProfile({ listingId }) {
       const fetchSubCategory = async () => {
         try {
           console.log("CCCCCCCCCCCCC", formData.businessCategory)
-          const response = await axios.get(`https://api.biziffy.com/api/admin/get-Subcategories-by-category/${formData.businessCategory}`);
+          const response = await axios.get(`http://localhost:18001/api/admin/get-Subcategories-by-category/${formData.businessCategory}`);
           setSubCategoryList(response.data);
         } catch (error) {
           console.error("Error fetching subcategories:", error);
@@ -277,7 +277,7 @@ export default function EditBusinessProfile({ listingId }) {
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const res = await axios.get(`https://api.biziffy.com/api/pincode/get-areapincode-by-state`, {
+        const res = await axios.get(`http://localhost:18001/api/pincode/get-areapincode-by-state`, {
           params: { state: formData?.state }
         });
         console.log("DADAhhh",

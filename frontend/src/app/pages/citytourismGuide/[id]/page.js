@@ -17,7 +17,7 @@ const Page = () => {
     const fetchTopCity = async () => {
       try {
         const res = await axios.get(
-          `https://api.biziffy.com/api/populerCity/get-popular-city-by-id/${id}`
+          `http://localhost:18001/api/populerCity/get-popular-city-by-id/${id}`
         );
         const result = res.data?.data;
         // console.log("res:====", res?.data.data);

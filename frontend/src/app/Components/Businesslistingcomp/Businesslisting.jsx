@@ -46,6 +46,7 @@ const Businesslisting = () => {
     const pin = searchParams.get("pincode") || "";
     const title = searchParams.get("title")
     const st = searchParams.get("state") || "";
+
     setQuery(q);
     setPincode(pin);
     setTitle(title);
@@ -65,11 +66,11 @@ const Businesslisting = () => {
   const fetchBusinessesListing = useCallback(async () => {
     try {
       let response;
-      if (pincode || query || title || state) {
-        response = await axios.get("https://api.biziffy.com/api/search-listings", {
-          params: { pincode, query, title, state },
-        });
-      }
+      // if (pincode || query ) {
+      response = await axios.get("https://api.biziffy.com/api/search-listings", {
+        params: { pincode, query, title, state },
+      });
+      // }
       console.log("FFFFFFFFFFF", response?.data);
       setBusinesses(response?.data?.data || []);
     } catch (error) {
@@ -80,11 +81,11 @@ const Businesslisting = () => {
   const fetchWebsiteListing = useCallback(async () => {
     try {
       let response;
-      if (pincode || query || title || state) {
-        response = await axios.get("https://api.biziffy.com/api/admin/search-website-listings", {
-          params: { pincode, query, title, state },
-        });
-      }
+      // if (pincode || query ) {
+      response = await axios.get("https://api.biziffy.com/api/admin/search-website-listings", {
+        params: { pincode, query, title, state },
+      });
+      // }
       console.log("FFFFFFFFFFFWebsite", response?.data);
       if (response?.data?.status) {
         setWebsiteList(response?.data?.data || []);
@@ -94,12 +95,12 @@ const Businesslisting = () => {
     }
   }, [pincode, query, title]);
 
-  console.log("websiteList:=", websiteList)
+  // console.log("websiteList:=", websiteList)
 
   useEffect(() => {
     fetchBusinessesListing();
     fetchWebsiteListing();
-  }, [fetchBusinessesListing, fetchWebsiteListing]);
+  }, [fetchBusinessesListing, fetchWebsiteListing, pincode, query]);
 
 
   const handleCountClick = (type, businessId) => {
@@ -123,7 +124,7 @@ const Businesslisting = () => {
     }
   };
   const visibleBusinesses = businesses.slice(0, visibleCount);
-
+  console.log("CONSLOENNNNNNN:===>", pincode, query, title, state)
   return (
     <>
       <section className="business-listing-page">

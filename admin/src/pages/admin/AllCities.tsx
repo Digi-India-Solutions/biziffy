@@ -129,7 +129,7 @@ const AllCities = () => {
                   <div
                     className="h-[120px] bg-cover bg-center"
                     style={{
-                      backgroundImage: `url(${city.cityImage || '/placeholder.svg'})`,
+                      backgroundImage: `url(${city?.cityImage || '/placeholder.svg'})`,
                       backgroundColor: city.color || '#f3f4f6',
                     }}
                   />

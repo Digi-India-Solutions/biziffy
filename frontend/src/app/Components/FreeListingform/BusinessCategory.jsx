@@ -24,7 +24,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const res = await axios.get(`https://api.biziffy.com/api/pincode/get-areapincode-by-state`, {
+        const res = await axios.get(`http://localhost:18001/api/pincode/get-areapincode-by-state`, {
           params: { state: formData?.businessDetails?.state }
         });
         console.log("DADAhhh", res?.data)
@@ -41,7 +41,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const response = await axios.get("https://api.biziffy.com/api/categories");
+        const response = await axios.get("http://localhost:18001/api/categories");
         setCategoryList(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -54,7 +54,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
     if (category) {
       const fetchSubCategory = async () => {
         try {
-          const response = await axios.get(`https://api.biziffy.com/api/admin/get-Subcategories-by-category/${category}`);
+          const response = await axios.get(`http://localhost:18001/api/admin/get-Subcategories-by-category/${category}`);
           setSubCategoryList(response.data);
         } catch (error) {
           console.error("Error fetching subcategories:", error);

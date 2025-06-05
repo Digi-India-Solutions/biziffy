@@ -33,7 +33,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   };
 
   const handleViewSite = () => {
-    window.location.href = "https://classified.dextrous.co.in/";
+    window.location.href = "https://biziffy.com/";
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
