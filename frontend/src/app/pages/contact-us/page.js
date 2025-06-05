@@ -250,7 +250,7 @@ const Page = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:18001/api/contactus/create-contact", payload);
+      const response = await axios.post("https://api.biziffy.com/api/contactus/create-contact", payload);
       // console.log("Submission response:", response.data);
       alert("Your message has been sent successfully!");
       setFormData({ name: "", email: "", phone: "", city: "", state: '', inquiryType: "", termsAccepted: false, });

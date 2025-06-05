@@ -74,7 +74,7 @@ const ProfilePage = () => {
     const fetchUserData = async () => {
       if (!userId) return;
       try {
-        const res = await axios.get(`http://localhost:18001/api/auth/get-user-by-id/${userId}`);
+        const res = await axios.get(`https://api.biziffy.com/api/auth/get-user-by-id/${userId}`);
         // console.log("req.params.id:-", res.data)
         if (res.data.status === true) {
           setProfileData(res.data.user);
@@ -90,7 +90,7 @@ const ProfilePage = () => {
     const fetchBussinessListing = async () => {
       if (!userId) return;
       try {
-        const res = await axios.get(`http://localhost:18001/api/get-all-listings-by-user-id/${userId}`);
+        const res = await axios.get(`https://api.biziffy.com/api/get-all-listings-by-user-id/${userId}`);
         // console.log("Business Listings", res?.data?.data);
         if (res?.data?.status === true) {
           setBusinessListing(res?.data?.data);
@@ -105,7 +105,7 @@ const ProfilePage = () => {
     const fetchWebsiteListing = async () => {
       if (!userId) return;
       try {
-        const res = await axios.get(`http://localhost:18001/api/admin/get-all-website-listings-by-user-id/${userId}`);
+        const res = await axios.get(`https://api.biziffy.com/api/admin/get-all-website-listings-by-user-id/${userId}`);
         // console.log("Website Listings", res?.data?.data);
         if (res?.data?.status === true) {
           setWebsiteListing(res?.data?.data);
@@ -155,7 +155,7 @@ const ProfilePage = () => {
 
   // const confirmDelete = (id) => {
   //   try {
-  //     const response = axios.delete(`http://localhost:18001/api/delete-business-listing/${id}`);
+  //     const response = axios.delete(`https://api.biziffy.com/api/delete-business-listing/${id}`);
   //     if (response.status === true) {
   //       setListings((prev) => prev.filter((item) => item.id !== id));
   //       toast.success("Listing deleted successfully!", { position: "top-right", autoClose: 3000 });
@@ -198,7 +198,7 @@ const ProfilePage = () => {
   const handleSaveChanges = async () => {
     try {
       if (profileData && profileData._id) {
-        const response = await axios.post(`http://localhost:18001/api/auth/update-user/${profileData._id}`, profileData);
+        const response = await axios.post(`https://api.biziffy.com/api/auth/update-user/${profileData._id}`, profileData);
         if (response.data.status) {
           localStorage.setItem("biziffyUser", JSON.stringify(response.data.user));
           toast.success("Profile updated successfully!");
@@ -230,7 +230,7 @@ const ProfilePage = () => {
     const formData = new FormData();
     formData.append("image", selectedFile);
     try {
-      const res = await axios.post(`http://localhost:18001/api/auth/upload-profile-image/${profileData._id}`, formData);
+      const res = await axios.post(`https://api.biziffy.com/api/auth/upload-profile-image/${profileData._id}`, formData);
 
       if (res.data.status) {
         setIsEditing(false);
@@ -304,7 +304,7 @@ const ProfilePage = () => {
                     />
                   ) : (
                     <Image
-                      src="/default-profile.png" 
+                      src="/default-profile.png"
                       alt="Default Profile"
                       className="profile-img rounded-circle"
                       width={150}
@@ -542,30 +542,33 @@ const ProfilePage = () => {
                   </div>
                   <hr />
                   <ToastContainer />
-                  {businessListing.length > 0 ? (
-                    businessListing.map((listing) => (
-                      <div className="profile-listing mb-3" key={listing?._id}>
-                        <div className="row listing-item">
-                          <div className="col-md-3">
-                            <Image className="listing-img"  src={listing?.businessCategory?.businessImages[0]} alt={listing.title} width={200} height={200}  />
-                          </div>
-                          <div className="col-md-9">
-                            <h4 className="text-primary">{listing?.businessDetails?.businessName}</h4>
-                            <p className="text-success">{[listing?.businessDetails?.area, listing?.businessDetails?.city, listing?.businessDetails?.state, listing?.businessDetails?.pinCode].filter(Boolean).join(", ")}</p>
-                            <Link href="/pages/free-listing#paidlisting" className="login-btn me-2" >
-                              Advertise Now
-                            </Link>
-                            <button className={`black-btn ${activeTab === "edit-business" ? "active" : ""}`} onClick={() => { setActiveTab("edit-business"), setListingId(listing) }}>
-                              Edit Business
-                            </button>
+                  {businessListing?.length > 0 ? (
+                    businessListing?.map((listing) => {
+                      const msc = listing?.businessCategory?.businessImages[0] || profileImage
+                      return (
+                        <div className="profile-listing mb-3" key={listing?._id}>
+                          <div className="row listing-item">
+                            <div className="col-md-3">
+                              <Image className="listing-img" src={msc} alt={listing?.title || "Listing image"} width={200} height={200} />
+                            </div>
+                            <div className="col-md-9">
+                              <h4 className="text-primary">{listing?.businessDetails?.businessName}</h4>
+                              <p className="text-success">{[listing?.businessDetails?.area, listing?.businessDetails?.city, listing?.businessDetails?.state, listing?.businessDetails?.pinCode].filter(Boolean).join(", ")}</p>
+                              <Link href="/pages/free-listing#paidlisting" className="login-btn me-2" >
+                                Advertise Now
+                              </Link>
+                              <button className={`black-btn ${activeTab === "edit-business" ? "active" : ""}`} onClick={() => { setActiveTab("edit-business"), setListingId(listing) }}>
+                                Edit Business
+                              </button>
 
-                            {/* <button className="btn btn-danger" onClick={() => handleDelete(listing?._id)}>
+                              {/* <button className="btn btn-danger" onClick={() => handleDelete(listing?._id)}>
                               <i className="bi bi-trash"></i>
                             </button> */}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))
+                      )
+                    })
                   ) : (
                     <p className="no-listing">
                       You have no listings. Please go to the listing page.
@@ -594,7 +597,7 @@ const ProfilePage = () => {
                       <div className="profile-listing mb-3" key={listing?._id}>
                         <div className="row listing-item">
                           <div className="col-md-3">
-                            <Image src={listing?.logo} alt={listing?.companyName}  width = {100} height = {100} className="listing-img" />
+                            <Image src={listing?.logo} alt={listing?.companyName} width={100} height={100} className="listing-img" />
                           </div>
                           <div className="col-md-9">
                             <h4 className="text-primary">{listing?.companyName}</h4>

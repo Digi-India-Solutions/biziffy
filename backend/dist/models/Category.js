@@ -12,9 +12,7 @@ const CategorySchema = new mongoose_1.default.Schema({
     icon: {
         type: String,
     },
-    banner: {
-        type: String, // URL of the banner image
-    },
+    banner: { type: String, },
     status: {
         type: String,
         enum: ["active", "inactive"],

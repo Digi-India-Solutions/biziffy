@@ -25,7 +25,7 @@
 
 //   useEffect(() => {
 //     const fetchPinCodes = async () => {
-//         const response = await axios.get("http://localhost:18001/api/pincode/get-all-pin-codes");
+//         const response = await axios.get("https://api.biziffy.com/api/pincode/get-all-pin-codes");
 //         console.log('response', response.data.pinCodes);
 //         if (response.data?.status) {
 //           setPinCodes(response?.data?.pinCodes);
@@ -235,7 +235,7 @@ const Hero = () => {
   useEffect(() => {
     const fetchPinCodes = async () => {
       try {
-        const response = await axios.get("http://localhost:18001/api/pincode/get-all-pin-codes");
+        const response = await axios.get("https://api.biziffy.com/api/pincode/get-all-pin-codes");
         if (response.data?.status) {
           setPinCodes(response.data.pinCodes);
         }
@@ -263,16 +263,17 @@ const Hero = () => {
 
   const handleSearch = () => {
     const pincode = selectedLocation?.pincode || location?.pincode;
-
+    const state = selectedLocation?.stateName || location?.state;
     if (!pincode || !searchText.trim()) {
       alert("Please wait for location and enter a search term.");
       return;
     }
 
     router.push(
-      `/pages/bussiness-listing?query=${searchText.trim()}&pincode=${pincode}`
+      `/pages/bussiness-listing?query=${searchText.trim()}&pincode=${pincode}&state=${state}`
     );
   };
+
   console.log("CCCCCCCC:-", pinCodes)
   const filteredLocations = pinCodes.filter((loc) => {
     const lowerSearch = searchTerm.toLowerCase();

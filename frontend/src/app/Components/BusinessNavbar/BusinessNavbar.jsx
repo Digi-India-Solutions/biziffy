@@ -71,7 +71,7 @@
 //     }
 
 //     // try {
-//     //   const res = await axios.get("http://localhost:18001/api/search", {
+//     //   const res = await axios.get("https://api.biziffy.com/api/search", {
 //     //     params: {
 //     //       query: searchText.trim(),
 //     //       pincode: location.pincode,
@@ -229,12 +229,13 @@ const BusinessNavbar = () => {
   const [pinCodes, setPinCodes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [categoryList, setCategoryList] = useState([])
 
   // Fetch PIN codes
   useEffect(() => {
     const fetchPinCodes = async () => {
       try {
-        const response = await axios.get("http://localhost:18001/api/pincode/get-all-pin-codes");
+        const response = await axios.get("https://api.biziffy.com/api/pincode/get-all-pin-codes");
         if (response.data?.status) {
           setPinCodes(response.data.pinCodes);
         }
@@ -242,9 +243,31 @@ const BusinessNavbar = () => {
         console.error("Error fetching pin codes:", error);
       }
     };
-    fetchPinCodes();
-  }, []);
 
+    const fetchCategorys = async () => {
+      try {
+        const res = await axios.get("https://api.biziffy.com/api/categories");
+        setCategoryList(res.data || []);
+      } catch (error) {
+        console.error("Error fetching pin codes:", error);
+      }
+    };
+
+    // const fetchSubCategorys = async () => {
+    //   try {
+    //     const response = await axios.get("https://api.biziffy.com/api/pincode/get-all-pin-codes");
+    //     if (response.data?.status) {
+    //       setPinCodes(response.data.pinCodes);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching pin codes:", error);
+    //   }
+    // };
+    fetchPinCodes();
+    fetchCategorys();
+    // fetchSubCategorys()
+  }, []);
+console.log("DDDD:=",categoryList)
   const extractPincode = (pinCodeStr) => {
     const pincode = pinCodeStr?.match(/\d{6}$/);
     return pincode ? pincode[0] : "";
@@ -317,12 +340,12 @@ const BusinessNavbar = () => {
 
   const handleSearch = () => {
     const finalPincode = selectedLocation?.pinCode || location?.pincode;
-    if (!finalPincode) {
-      alert("Please select or allow location.");
+    if (!finalPincode || !searchText.trim()) {
+      alert("Please wait for location and enter a search term.");
       return;
     }
     const finalState = selectedLocation?.stateName || location?.state;
-    console.log("LOCATION:=>", finalPincode, "LOCATION 2:=>",location);
+    console.log("LOCATION:=>", finalPincode, "LOCATION 2:=>", location);
     router.push(`/pages/bussiness-listing?query=${searchText.trim()}&pincode=${finalPincode}&state=${finalState}`);
   };
 

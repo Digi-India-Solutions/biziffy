@@ -66,7 +66,7 @@ const Businesslisting = () => {
     try {
       let response;
       if (pincode || query || title || state) {
-        response = await axios.get("http://localhost:18001/api/search-listings", {
+        response = await axios.get("https://api.biziffy.com/api/search-listings", {
           params: { pincode, query, title, state },
         });
       }
@@ -81,7 +81,7 @@ const Businesslisting = () => {
     try {
       let response;
       if (pincode || query || title || state) {
-        response = await axios.get("http://localhost:18001/api/admin/search-website-listings", {
+        response = await axios.get("https://api.biziffy.com/api/admin/search-website-listings", {
           params: { pincode, query, title, state },
         });
       }
@@ -115,7 +115,7 @@ const Businesslisting = () => {
 
     if (!lastClickDay || parseInt(lastClickDay) < currentDay) {
 
-      axios.post(`http://localhost:18001/api/increase-click-count/${businessId}`, { type, user })
+      axios.post(`https://api.biziffy.com/api/increase-click-count/${businessId}`, { type, user })
         .then(() => { console.log(`${type} click counted`); localStorage.setItem(key, currentDay.toString()); })
         .catch((err) => { console.error("Error increasing count", err) });
     } else {
@@ -208,8 +208,8 @@ const Businesslisting = () => {
 
                       setIsLoading(true);
                       try {
-                        // http://localhost:18001/
-                        const response = await axios.post('http://localhost:18001/api/auth/user-login', { email: formData.email, password: formData.password, });
+                        // https://api.biziffy.com/
+                        const response = await axios.post('https://api.biziffy.com/api/auth/user-login', { email: formData.email, password: formData.password, });
                         // console.log("API Response:", response.data.token);
                         if (response?.data?.status) {
 

@@ -38,7 +38,7 @@ const AddPopularCity = () => {
   useEffect(() => {
     const fetchCity = async () => {
       try {
-        const res = await axios.get("https://api.biziffy.com/api/city/get-all-city");
+        const res = await axios.get("http://localhost:18001/api/city/get-all-city");
         if (res?.data?.status) setCityList(res.data.data);
       } catch (error) {
         console.error("Failed to fetch cities:", error);
@@ -47,7 +47,7 @@ const AddPopularCity = () => {
 
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("https://api.biziffy.com/api/categories");
+        const res = await axios.get("http://localhost:18001/api/categories");
         if (res?.status) setCategoryList(res.data);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
@@ -101,7 +101,7 @@ const AddPopularCity = () => {
       form.append("isActive", String(formData.isActive));
       formData.category.forEach((cat) => form.append("category", cat));
 
-      const res = await axios.post("https://api.biziffy.com/api/populerCity/create-add", form);
+      const res = await axios.post("http://localhost:18001/api/populerCity/create-add", form);
       // console.log("resKKKK:-= " , res);
       toast({ title: "Success", description: "City added successfully!" });
       navigate("/admin/popular-cities");

@@ -16,9 +16,9 @@ const storage = multer_1.default.diskStorage({
     },
 });
 const upload = (0, multer_1.default)({ storage });
-router.post("/create-categories", upload.single("icon"), categoryController_1.createCategory);
+router.post("/create-categories", upload.fields([{ name: "icon", maxCount: 1 }, { name: "banner", maxCount: 1 }]), categoryController_1.createCategory);
 router.get("/categories", categoryController_1.getAllCategories);
-router.put("/categories/:id", upload.single("icon"), categoryController_1.updateCategoryById);
+router.put("/categories/:id", upload.fields([{ name: "icon", maxCount: 1 }, { name: "banner", maxCount: 1 }]), categoryController_1.updateCategoryById);
 router.delete("/categories/:id", categoryController_1.deleteCategoryById); // ✅ Delete route
 router.get("/categories/:id", categoryController_1.getCategoryById); // ✅ Add this
 exports.default = router;

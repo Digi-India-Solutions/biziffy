@@ -40,7 +40,7 @@ const Page = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:18001/api/createBusinessListing", form);
+      const response = await axios.post("https://api.biziffy.com/api/createBusinessListing", form);
 
       if (response.status) {
         // const data = await response.json();

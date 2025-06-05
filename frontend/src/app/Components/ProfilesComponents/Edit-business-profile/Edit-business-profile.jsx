@@ -30,7 +30,7 @@ export default function EditBusinessProfile({ listingId }) {
     businessname: "", businessCategory: "", businessSubCategory: [], services: [], businessArea: [], Building: "",
     Street: "", Area: "", Landmark: "", city: "", state: "", pincode: "", phone: "", about: "", image: null,
     images: [], email: "", experience: "", whatsapp: "", websiteURL: "", googlemap: "", facebook: "", instagram: "",
-    twitter: "", linkedin: "", faq: [{ question: "", answer: "" }],yib:'',
+    twitter: "", linkedin: "", faq: [{ question: "", answer: "" }], yib: '',
   });
 
   console.log("XXXXXXXXXXXXXlistingId:-", listingId);
@@ -52,7 +52,8 @@ export default function EditBusinessProfile({ listingId }) {
         state: listingId.businessDetails?.state || "", pincode: listingId.businessDetails?.pinCode || "",
         yib: listingId.businessDetails?.yib || "",
         // Business Category & Subcategory
-        businessCategory: listingId.businessCategory?.category._id || "", businessSubCategory: listingId.businessCategory?.subCategory.map((item) => item._id) || [],
+        businessCategory: listingId?.businessCategory?.category?._id || "",
+        businessSubCategory: listingId?.businessCategory?.subCategory?.map((item) => item?._id) || [],
         // Images
         images: listingId.businessCategory?.businessImages || [],
 
@@ -122,11 +123,16 @@ export default function EditBusinessProfile({ listingId }) {
 
     // Business Category
     form.append("businessCategory[category]", formData?.businessCategory);
+    form.append("businessCategory[categoryName]", formData?.categoryName);
 
     (formData?.businessSubCategory || []).forEach((id, index) => {
       form.append(`businessCategory[subCategory][${index}]`, id);
     });
 
+    (formData?.subCategoryName || []).forEach((id, index) => {
+      form.append(`businessCategory[subCategoryName][${index}]`, id);
+    });
+    
     (formData?.keywords || []).forEach((keyword, index) => {
       form.append(`businessCategory[keywords][${index}]`, keyword);
     });
@@ -162,7 +168,7 @@ export default function EditBusinessProfile({ listingId }) {
     form.append("upgradeListing[twitter]", formData?.twitter);
 
     try {
-      const response = await axios.post(`http://localhost:18001/api/update-listings-by-id/${listingId?._id}`, form);
+      const response = await axios.post(`https://api.biziffy.com/api/update-listings-by-id/${listingId?._id}`, form);
       console.log("response:-", response)
       if (response)
         alert("Profile updated successfully!");
@@ -195,7 +201,7 @@ export default function EditBusinessProfile({ listingId }) {
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const response = await axios.get("http://localhost:18001/api/categories");
+        const response = await axios.get("https://api.biziffy.com/api/categories");
         setCategoryList(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -209,7 +215,7 @@ export default function EditBusinessProfile({ listingId }) {
       const fetchSubCategory = async () => {
         try {
           console.log("CCCCCCCCCCCCC", formData.businessCategory)
-          const response = await axios.get(`http://localhost:18001/api/admin/get-Subcategories-by-category/${formData.businessCategory}`);
+          const response = await axios.get(`https://api.biziffy.com/api/admin/get-Subcategories-by-category/${formData.businessCategory}`);
           setSubCategoryList(response.data);
         } catch (error) {
           console.error("Error fetching subcategories:", error);
@@ -224,6 +230,8 @@ export default function EditBusinessProfile({ listingId }) {
   const handleSubCategoryChange = (e) => {
     const values = Array.from(e.target.selectedOptions, (o) => o.value);
     setFormData((prev) => ({ ...prev, businessSubCategory: values }));
+
+
   };
 
   const removeItem = (itemToRemove) => {
@@ -266,24 +274,24 @@ export default function EditBusinessProfile({ listingId }) {
 
 
 
- useEffect(() => {
-     const fetchAreas = async () => {
-       try {
-         const res = await axios.get(`http://localhost:18001/api/pincode/get-areapincode-by-state`, {
-           params: { state: formData?.state }
-         });
-         console.log("DADAhhh", 
-          // res?.data
+  useEffect(() => {
+    const fetchAreas = async () => {
+      try {
+        const res = await axios.get(`https://api.biziffy.com/api/pincode/get-areapincode-by-state`, {
+          params: { state: formData?.state }
+        });
+        console.log("DADAhhh",
+          // res?.data,
           formData?.state
         )
-         const areaList = res.data.map((user) => `${user.area} ${user.pinCode}`);
-         setAreas(areaList);
-       } catch (error) {
-         console.error("Error fetching areas:", error);
-       }
-     };
-     fetchAreas();
-   }, [formData.state]);
+        const areaList = res?.data.map((user) => `${user?.area} ${user?.pinCode}`);
+        setAreas(areaList);
+      } catch (error) {
+        console.error("Error fetching areas:", error);
+      }
+    };
+    fetchAreas();
+  }, [formData.state]);
 
   const filteredAreas = areas.filter(
     (area) =>
@@ -308,6 +316,20 @@ export default function EditBusinessProfile({ listingId }) {
 
 
   console.log("FORMDATA:___---:-", formData);
+
+  useEffect(() => {
+    // Get the category name
+    const Cname = categoryList?.find((cl) => cl?._id === formData?.businessCategory);
+
+    // Get all selected subcategory names
+    const SCN = formData?.businessSubCategory?.map((id) => {
+      const match = subCategoryList?.find((sc) => sc?._id === id);
+      return match?.name || "";
+    });
+
+    // Update both values in one setFormData call
+    setFormData((prev) => ({ ...prev, categoryName: Cname?.name || "", subCategoryName: SCN, }));
+  }, [formData?.businessCategory, formData?.businessSubCategory]);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -480,6 +502,7 @@ export default function EditBusinessProfile({ listingId }) {
                   onChange={(e) =>
                     setFormData({ ...formData, businessCategory: e.target.value, businessSubCategory: [] })
                   }
+
                 >
                   <option value="">Select Your Category</option>
                   {categoryList.map((cat) => (
@@ -497,24 +520,23 @@ export default function EditBusinessProfile({ listingId }) {
                 </label>
                 <select
                   className="form-control"
-                  // multiple
                   required
-                  value={formData.businessSubCategory || []}
+                  value={formData?.businessSubCategory || ""}
                   onChange={handleSubCategoryChange}
                 >
-                  {subCategoryList.map((sub) => (
-                    <option key={sub._id} value={sub._id}>
-                      {sub.name}
+                  {subCategoryList?.map((sub) => (
+                    <option key={sub?._id} value={sub?._id}>
+                      {sub?.name}
                     </option>
                   ))}
                 </select>
 
                 {/* Selected badges */}
                 <div className="mt-2">
-                  {(formData.businessSubCategory || []).map((catId) => {
-                    const sub = subCategoryList.find((s) => s._id === catId);
+                  {(formData?.businessSubCategory || []).map((catId) => {
+                    const sub = subCategoryList?.find((s) => s?._id === catId);
                     return (
-                      <span key={catId._id} className="badge bg-primary me-2 mb-2 p-2">
+                      <span key={catId?._id} className="badge bg-primary me-2 mb-2 p-2">
                         {sub?.name || catId?.name}
                         <button type="button" className="btn-close btn-close-white ms-2" style={{ fontSize: "0.6rem" }} onClick={() => removeItem(catId)} aria-label="Remove" />
                       </span>

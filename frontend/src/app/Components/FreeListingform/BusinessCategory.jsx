@@ -5,6 +5,8 @@ import "../../pages/freelistingform/freelistingform.css";
 
 const BusinessCategory = ({ setKey, formData, setFormData }) => {
   const [category, setCategory] = useState(formData?.businessCategory?.category || "");
+  const [categoryName, setCategoryName] = useState("");
+  const [subCategoryName, setSubCategoryName] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
   const [subCategory, setSubCategory] = useState(formData?.businessCategory?.subCategory || []);
@@ -18,10 +20,11 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
   const [bImage, setBImage] = useState([]);
 
   console.log("DADADADADADADADADA:= ", formData.businessDetails?.state)
+
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const res = await axios.get(`http://localhost:18001/api/pincode/get-areapincode-by-state`, {
+        const res = await axios.get(`https://api.biziffy.com/api/pincode/get-areapincode-by-state`, {
           params: { state: formData?.businessDetails?.state }
         });
         console.log("DADAhhh", res?.data)
@@ -38,7 +41,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const response = await axios.get("http://localhost:18001/api/categories");
+        const response = await axios.get("https://api.biziffy.com/api/categories");
         setCategoryList(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -51,7 +54,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
     if (category) {
       const fetchSubCategory = async () => {
         try {
-          const response = await axios.get(`http://localhost:18001/api/admin/get-Subcategories-by-category/${category}`);
+          const response = await axios.get(`https://api.biziffy.com/api/admin/get-Subcategories-by-category/${category}`);
           setSubCategoryList(response.data);
         } catch (error) {
           console.error("Error fetching subcategories:", error);
@@ -107,7 +110,9 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
       about,
       keywords,
       // businessService: input,
-      serviceArea
+      serviceArea,
+      categoryName,
+      subCategoryName
     };
 
     setFormData((prev) => ({
@@ -136,6 +141,18 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
       area.toLowerCase().includes(serviceAreainput.toLowerCase()) &&
       !serviceArea.includes(area)
   );
+
+  useEffect(() => {
+    const Cname = categoryList.filter((cl) => cl?._id === category)
+    setCategoryName(Cname[0]?.name)
+
+    const SCN = subCategory.map((item) => subCategoryList.filter((cl) => cl?._id === item))
+    setSubCategoryName(SCN.map((item) => item[0]?.name))
+    // console.log("SCN", SCN)
+
+  }, [category, subCategory])
+
+  // console.log("XXXXXXXXXX:--categoryName", subCategoryName)
 
   return (
     <form onSubmit={handleSubmit}>

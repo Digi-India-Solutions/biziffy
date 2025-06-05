@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { AdminLayout } from "@/components/Layout/AdminLayout";
@@ -25,37 +25,46 @@ import {
 } from "@/components/ui/select";
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  icon: z.any(),
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  icon: z.any().refine((file) => file?.length > 0, { message: "Icon is required" }),
+  banner: z.any().refine((file) => file?.length > 0, { message: "Banner is required" }),
   status: z.enum(["active", "inactive"]),
 });
 
-interface FormValues extends z.infer<typeof formSchema> { }
+type FormValues = z.infer<typeof formSchema>;
 
 const AddNewCategory = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [iconPreview, setIconPreview] = useState<string | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", icon: null, status: "active", },
+    defaultValues: {
+      name: "",
+      icon: null,
+      banner: null,
+      status: "active",
+    },
   });
 
-  const handleIconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setPreview: React.Dispatch<React.SetStateAction<string | null>>,
+    setField: (value: any) => void
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setIconPreview(reader.result as string);
+        setPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
-      form.setValue("icon", e.target.files);
+      setField(e.target.files);
     } else {
-      setIconPreview(null);
-      form.setValue("icon", null);
+      setPreview(null);
+      setField(null);
     }
   };
 
@@ -63,29 +72,21 @@ const AddNewCategory = () => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("status", data.status);
-    if (data.icon && data.icon[0]) {
-      formData.append("icon", data.icon[0]);
-    }
+    if (data.icon?.[0]) formData.append("icon", data.icon[0]);
+    if (data.banner?.[0]) formData.append("banner", data.banner[0]);
 
     try {
-      const response = await fetch("https://api.biziffy.com/api/create-categories", { method: "POST", body: formData, });
-      // console.log("XXXXXXX____XXXXXXX____XXXX___:-", response)
-      if (!response.ok) {
-        let errorText = "Failed to create category.";
-        try {
-          const errorJson = await response.json();
-          if (errorJson.message) {
-            errorText = errorJson.message;
-          } else {
-            errorText = JSON.stringify(errorJson) || "Unknown server error";
-          }
-        } catch (e) {
-          errorText = await response.text();
-        }
-        throw new Error(errorText);
+      const res = await fetch("https://api.biziffy.com/api/create-categories", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Failed to create category.");
       }
 
-      const result = await response.json();
+      const result = await res.json();
 
       toast({
         title: "Category Created",
@@ -94,12 +95,12 @@ const AddNewCategory = () => {
 
       form.reset();
       setIconPreview(null);
+      setBannerPreview(null);
       navigate("/admin/categories");
     } catch (error: any) {
-      console.error("Create category error:", error);
       toast({
         title: "Error",
-        description: error.message || "Unable to create category. Please try again.",
+        description: error.message || "Something went wrong.",
         variant: "destructive",
       });
     }
@@ -107,9 +108,11 @@ const AddNewCategory = () => {
 
   return (
     <AdminLayout title="Add New Category">
-      <div className="bg-white p-6 rounded-lg shadow-sm">
+      <div className="bg-white p-6 rounded-lg shadow-sm  mx-auto">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
+            {/* Name Field */}
             <FormField
               control={form.control}
               name="name"
@@ -125,30 +128,67 @@ const AddNewCategory = () => {
               )}
             />
 
-            <FormItem>
-              <FormLabel>Category Icon</FormLabel>
-              <div className="flex items-center gap-4">
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleIconChange}
-                  className="max-w-xs"
-                />
-                {iconPreview && (
-                  <div className="h-16 w-16 relative">
-                    <img
-                      src={iconPreview}
-                      alt="Icon preview"
-                      className="h-full w-full object-cover rounded-md"
+            {/* Icon Upload */}
+            <Controller
+              control={form.control}
+              name="icon"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category Icon</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageChange(e, setIconPreview, field.onChange)}
+                      className="max-w-xs"
                     />
-                  </div>
-                )}
-              </div>
-              <FormDescription>
-                Upload an icon for this category (recommended size: 64x64px).
-              </FormDescription>
-            </FormItem>
+                  </FormControl>
+                  {iconPreview && (
+                    <div className="mt-2 h-16 w-16 relative">
+                      <img
+                        src={iconPreview}
+                        alt="Icon Preview"
+                        className="h-full w-full object-cover rounded-md"
+                      />
+                    </div>
+                  )}
+                  <FormDescription>Upload an icon (recommended size: 64x64px).</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
+            {/* Banner Upload */}
+            <Controller
+              control={form.control}
+              name="banner"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category Banner</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageChange(e, setBannerPreview, field.onChange)}
+                      className="max-w-xs"
+                    />
+                  </FormControl>
+                  {bannerPreview && (
+                    <div className="mt-2 h-16 w-16 relative">
+                      <img
+                        src={bannerPreview}
+                        alt="Banner Preview"
+                        className="h-full w-full object-cover rounded-md"
+                      />
+                    </div>
+                  )}
+                  <FormDescription>Upload a banner (recommended size: 64x64px).</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Status */}
             <FormField
               control={form.control}
               name="status"
@@ -166,15 +206,14 @@ const AddNewCategory = () => {
                       <SelectItem value="inactive">Inactive</SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormDescription>
-                    Set whether this category is active or inactive.
-                  </FormDescription>
+                  <FormDescription>Set this category's visibility status.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <div className="flex justify-end space-x-2">
+            {/* Buttons */}
+            <div className="flex justify-end gap-3 pt-4">
               <Button type="button" variant="outline" asChild>
                 <Link to="/admin/categories">Cancel</Link>
               </Button>

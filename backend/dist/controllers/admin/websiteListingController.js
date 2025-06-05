@@ -213,51 +213,67 @@ const listingBulkAction = (req, res) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.listingBulkAction = listingBulkAction;
 const searchWebsiteListings = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { query = "", pincode, title = '' } = req.query;
-    console.log("Incoming search:", { query, pincode, title });
-    if (!pincode || typeof pincode !== "string") {
-        return res.status(400).json({ status: false, error: "'pincode' is required." });
-    }
+    const { query = "", pincode = "", state = "", title = "" } = req.query;
+    // console.log("Incoming search:", { query, pincode, state, title });
     try {
         const regex = new RegExp(query, "i");
         let listings = [];
+        // Helper to filter only Approved listings
+        const filterApproved = (data) => data.filter((listing) => (listing === null || listing === void 0 ? void 0 : listing.status) === "Approved");
+        // ===== Case 1: CityPage =====
         if (title === "CityPage") {
-            console.log("CityPage");
-            // Fetch all listings with the given pincode
-            const allByPincode = yield WebsiteListingModel_1.default.find({ "serviceArea": pincode }).populate("category subCategory");
-            listings = allByPincode.filter((listing) => {
-                var _a, _b;
-                return (((_b = (_a = listing === null || listing === void 0 ? void 0 : listing.category) === null || _a === void 0 ? void 0 : _a.name) === null || _b === void 0 ? void 0 : _b.toLowerCase()) === query.toLowerCase());
-            });
+            const cityConditions = [];
+            if (pincode) {
+                cityConditions.push({ serviceArea: pincode });
+            }
+            if (state) {
+                cityConditions.push({ state });
+            }
+            // Search if any location condition is present
+            if (cityConditions.length > 0) {
+                const cityResults = yield WebsiteListingModel_1.default.find({
+                    $or: cityConditions,
+                }).populate("category subCategory");
+                const matched = cityResults.filter((listing) => { var _a, _b; return ((_b = (_a = listing === null || listing === void 0 ? void 0 : listing.category) === null || _a === void 0 ? void 0 : _a.name) === null || _b === void 0 ? void 0 : _b.toLowerCase()) === query.toLowerCase(); });
+                const approved = filterApproved(matched);
+                return res.status(200).json({ status: true, data: approved });
+            }
+            // If no pincode or state, return empty
+            return res.status(200).json({ status: true, data: [] });
+        }
+        // ===== Case 2: General Search =====
+        const baseSearchConditions = {
+            $or: [
+                { companyName: regex },
+                { service: { $in: [regex] } },
+                { serviceArea: regex },
+            ],
+        };
+        const locationConditions = [];
+        if (pincode) {
+            locationConditions.push({ serviceArea: pincode });
+        }
+        if (state) {
+            locationConditions.push({ area: state });
+        }
+        let finalResults = [];
+        if (locationConditions.length > 0) {
+            // Try location-based search
+            const searchResults = yield WebsiteListingModel_1.default.find({
+                $and: [baseSearchConditions, { $or: locationConditions }],
+            }).populate("category subCategory userId");
+            finalResults = filterApproved(searchResults);
         }
         else {
-            console.log("CityPage console.log(CityPage)");
-            // General search by text query and pincode
-            listings = yield WebsiteListingModel_1.default.find({
-                $and: [
-                    {
-                        $or: [
-                            { "companyName": regex },
-                            // { "area": regex },
-                            { "service": { $in: [regex] } },
-                            { "serviceArea": regex },
-                        ]
-                    },
-                    { "serviceArea": pincode }
-                ]
-            }).populate("category subCategory userId");
+            // No pincode/state provided, just text search
+            const searchResults = yield WebsiteListingModel_1.default.find(baseSearchConditions).populate("category subCategory userId");
+            finalResults = filterApproved(searchResults);
         }
-        // Only include Published or Approved listings
-        const filteredListings = listings.filter((listing) => {
-            const status = listing === null || listing === void 0 ? void 0 : listing.status;
-            return status === "Approved";
-        });
-        console.log("filteredListings", filteredListings);
-        return res.status(200).json({ status: true, data: filteredListings });
+        return res.status(200).json({ status: true, data: finalResults });
     }
     catch (error) {
         console.error("Search error:", error.message);
-        return res.status(500).json({ status: false, message: "Internal server error", error: error.message });
+        return res.status(500).json({ status: false, message: "Internal server error", error: error.message, });
     }
 });
 exports.searchWebsiteListings = searchWebsiteListings;

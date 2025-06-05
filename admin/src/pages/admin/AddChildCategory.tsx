@@ -45,7 +45,7 @@ const AddChildCategory = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post("https://api.biziffy.com/api/admin/child-categories", data);
+      const response = await axios.post("http://localhost:18001/api/admin/child-categories", data);
       toast({
         title: "Success",
         description: response.data.message || "Child category created successfully.",

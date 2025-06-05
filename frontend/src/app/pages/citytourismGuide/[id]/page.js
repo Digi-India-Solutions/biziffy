@@ -17,7 +17,7 @@ const Page = () => {
     const fetchTopCity = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:18001/api/populerCity/get-popular-city-by-id/${id}`
+          `https://api.biziffy.com/api/populerCity/get-popular-city-by-id/${id}`
         );
         const result = res.data?.data;
         // console.log("res:====", res?.data.data);
@@ -77,8 +77,7 @@ const Page = () => {
               <div key={index} className="col-md-2 col-sm-3 col-4">
                 <div className="city-category-select-data">
                   <Link
-                    href={`/pages/bussiness-listing?query=${category?.name
-                      }&pincode=${data?.city?.pinCode}&title=${"CityPage"}`}
+                    href={`/pages/bussiness-listing?query=${category?.name}&pincode=${data?.city?.pinCode}&title=${"CityPage"}`}
                   >
                     <div className="city-category-img">
                       <Image

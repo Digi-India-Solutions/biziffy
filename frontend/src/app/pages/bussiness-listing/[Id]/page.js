@@ -16,7 +16,7 @@ const Page = () => {
   useEffect(() => {
     const fetchBusinessDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:18001/api/get-all-listings-by-id/${Id}`);
+        const response = await axios.get(`https://api.biziffy.com/api/get-all-listings-by-id/${Id}`);
         if (response.status === 200) {
           setBusinesses(response.data?.data || []);
         } else {

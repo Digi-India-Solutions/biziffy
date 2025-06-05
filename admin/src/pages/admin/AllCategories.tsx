@@ -39,7 +39,7 @@ const AllCategories = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("https://api.biziffy.com/api/categories");
+      const res = await axios.get("http://localhost:18001/api/categories");
       setCategories(res.data);
     } catch (error) {
       toast({
@@ -78,7 +78,7 @@ const AllCategories = () => {
         formData.append("icon", editCategory.icon);
       }
 
-      await axios.put(`https://api.biziffy.com/api/categories/${editCategory._id}`, formData);
+      await axios.put(`http://localhost:18001/api/categories/${editCategory._id}`, formData);
 
       toast({
         title: "Category Updated",
@@ -104,7 +104,7 @@ const AllCategories = () => {
   const confirmDelete = async () => {
     if (!categoryToDelete) return;
     try {
-      await axios.delete(`https://api.biziffy.com/api/categories/${categoryToDelete}`);
+      await axios.delete(`http://localhost:18001/api/categories/${categoryToDelete}`);
       setCategories(prev => prev.filter(cat => cat._id !== categoryToDelete));
       toast({ title: "Category Deleted", description: "Category deleted successfully." });
     } catch {

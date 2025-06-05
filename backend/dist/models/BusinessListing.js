@@ -82,6 +82,8 @@ const TimingSchema = new mongoose_1.default.Schema({
 const BusinessCategorySchema = new mongoose_1.default.Schema({
     category: { type: mongoose_2.Schema.Types.ObjectId, ref: "Category", required: true, },
     subCategory: [{ type: mongoose_2.Schema.Types.ObjectId, ref: "Subcategory", }],
+    categoryName: { type: String, required: true },
+    subCategoryName: [{ type: String }],
     businessImages: [{ type: String }],
     about: { type: String },
     keywords: [{ type: String }],

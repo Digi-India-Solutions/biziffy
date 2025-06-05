@@ -6,23 +6,49 @@ import { deleteLocalFile } from "../../utils/deleteImageFromLocalFolder";
 // Create new category
 export const createCategory = async (req: Request, res: Response) => {
   try {
-    const { name } = req.body;
-    // const icon = req.file ? req.file.filename : "";
+    const { name, status = "active" } = req.body;
 
-    let imageUrl: string | null = null;
-    if (req.file) {
-      imageUrl = await uploadImage(req.file.path);
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-      deleteLocalFile(req.file.path);
+    // Initialize file paths
+    const iconFile = files?.['icon']?.[0];
+    const bannerFile = files?.['banner']?.[0];
+
+    // Upload to cloud (or process)
+    let iconUrl: string | null = null;
+    let bannerUrl: string | null = null;
+
+    if (iconFile) {
+      iconUrl = await uploadImage(iconFile.path);
+      deleteLocalFile(iconFile.path);
     }
 
-    const newCategory = new Category({ name, icon: imageUrl });
+    if (bannerFile) {
+      bannerUrl = await uploadImage(bannerFile.path);
+      deleteLocalFile(bannerFile.path);
+    }
+
+    const newCategory = new Category({
+      name,
+      icon: iconUrl,
+      banner: bannerUrl,
+      status,
+    });
+
     await newCategory.save();
 
-    res.status(201).json(newCategory);
+    res.status(201).json({
+      success: true,
+      message: "Category created successfully",
+      category: newCategory,
+    });
   } catch (error) {
     console.error("Error creating category:", error);
-    res.status(500).json({ message: "Failed to create category" });
+    res.status(500).json({
+      success: false,
+      message: "Failed to create category",
+      error: (error as Error).message,
+    });
   }
 };
 

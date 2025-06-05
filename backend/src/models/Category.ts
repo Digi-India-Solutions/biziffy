@@ -8,9 +8,7 @@ const CategorySchema = new mongoose.Schema({
   icon: {
     type: String,
   },
-  banner: {
-    type: String, // URL of the banner image
-  },
+  banner: { type: String, },
   status: {
     type: String,
     enum: ["active", "inactive"],

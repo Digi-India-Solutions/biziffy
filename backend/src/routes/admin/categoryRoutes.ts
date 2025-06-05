@@ -13,11 +13,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-router.post("/create-categories", upload.single("icon"), createCategory);
+router.post("/create-categories", upload.fields([{ name: "icon", maxCount: 1 }, { name: "banner", maxCount: 1 }]), createCategory);
 
 router.get("/categories", getAllCategories);
 
-router.put("/categories/:id", upload.single("icon"), updateCategoryById);
+router.put("/categories/:id",  upload.fields([{ name: "icon", maxCount: 1 }, { name: "banner", maxCount: 1 }]), updateCategoryById);
 
 router.delete("/categories/:id", deleteCategoryById); // ✅ Delete route
 

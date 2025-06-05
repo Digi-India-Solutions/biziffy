@@ -18,21 +18,44 @@ const cloudinary_1 = require("../../utils/cloudinary");
 const deleteImageFromLocalFolder_1 = require("../../utils/deleteImageFromLocalFolder");
 // Create new category
 const createCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     try {
-        const { name } = req.body;
-        // const icon = req.file ? req.file.filename : "";
-        let imageUrl = null;
-        if (req.file) {
-            imageUrl = yield (0, cloudinary_1.uploadImage)(req.file.path);
-            (0, deleteImageFromLocalFolder_1.deleteLocalFile)(req.file.path);
+        const { name, status = "active" } = req.body;
+        const files = req.files;
+        // Initialize file paths
+        const iconFile = (_a = files === null || files === void 0 ? void 0 : files['icon']) === null || _a === void 0 ? void 0 : _a[0];
+        const bannerFile = (_b = files === null || files === void 0 ? void 0 : files['banner']) === null || _b === void 0 ? void 0 : _b[0];
+        // Upload to cloud (or process)
+        let iconUrl = null;
+        let bannerUrl = null;
+        if (iconFile) {
+            iconUrl = yield (0, cloudinary_1.uploadImage)(iconFile.path);
+            (0, deleteImageFromLocalFolder_1.deleteLocalFile)(iconFile.path);
         }
-        const newCategory = new Category_1.default({ name, icon: imageUrl });
+        if (bannerFile) {
+            bannerUrl = yield (0, cloudinary_1.uploadImage)(bannerFile.path);
+            (0, deleteImageFromLocalFolder_1.deleteLocalFile)(bannerFile.path);
+        }
+        const newCategory = new Category_1.default({
+            name,
+            icon: iconUrl,
+            banner: bannerUrl,
+            status,
+        });
         yield newCategory.save();
-        res.status(201).json(newCategory);
+        res.status(201).json({
+            success: true,
+            message: "Category created successfully",
+            category: newCategory,
+        });
     }
     catch (error) {
         console.error("Error creating category:", error);
-        res.status(500).json({ message: "Failed to create category" });
+        res.status(500).json({
+            success: false,
+            message: "Failed to create category",
+            error: error.message,
+        });
     }
 });
 exports.createCategory = createCategory;

@@ -20,11 +20,11 @@ const SubcategoryComponent = () => {
     const fetchCategoryDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:18001/api/categories/${categoryId}`
+          `https://api.biziffy.com/api/categories/${categoryId}`
         );
         // console.log("API Response:", response.data);
 
-        setCategory(response.data);
+        setCategory(response?.data);
         setSubcategories(response.data.subcategories || []);
       } catch (error) {
         console.error("Error fetching category details:", error);
@@ -42,10 +42,12 @@ const SubcategoryComponent = () => {
       <section>
         <div className="all-breadcrumb position-relative">
           <Image
-            src={category?.bannerUrl || "/images/default-banner.jpg"}
+            src={category?.banner || "/images/default-banner.jpg"}
             alt="Breadcrumb"
             layout="fill"
             objectFit="cover"
+            width={100}
+            height={100}
           />
           <div className="city-bread-overlay"></div>
           <div className="container">
@@ -64,10 +66,10 @@ const SubcategoryComponent = () => {
                 <div key={sub._id} className="col-md-3 col-sm-4 col-6">
                   <div className="subcategory-card">
                     <Link
-                    href={`/pages/bussiness-listing?query=${sub?.name}${categoryId}`}
-                      // href={`/pages/subcategory/${sub.name
-                      //   .toLowerCase()
-                      //   .replace(/\s/g, "-")}`}
+                      href={`/pages/bussiness-listing?query=${sub?.name}`}
+                    // href={`/pages/subcategory/${sub.name
+                    //   .toLowerCase()
+                    //   .replace(/\s/g, "-")}`}
                     >
                       <div className="subcategory-filter-img">
                         <Image
