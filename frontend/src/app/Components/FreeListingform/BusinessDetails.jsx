@@ -157,7 +157,7 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
 
   const fetchState = async () => {
     try {
-      const response = await axios.get("http://localhost:18001/api/state/get-all-states");
+      const response = await axios.get("https://api.biziffy.com/api/state/get-all-states");
       console.log("XXXXXXXXXXXXXXX", response.data.data)
 
       if (response.data.status) {

@@ -15,7 +15,7 @@ const BussinessCategory = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:18001/api/categories");
+        const res = await axios.get("https://api.biziffy.com/api/categories");
         setCategories(res.data); // Assuming res.data is an array of categories
         setLoading(false);
       } catch (error) {
