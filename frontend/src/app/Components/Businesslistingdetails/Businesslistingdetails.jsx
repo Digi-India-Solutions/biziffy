@@ -145,7 +145,7 @@ const Businesslistingdetails = ({ businesses }) => {
   console.log("XXXXXXXXDDDDDDD", businesses)
 
   const handleEnquiryForm = async () => {
-    const respons = axios.post("http://localhost:18001/api/enquiries/create-enquiryform", { ...enquiryForm })
+    const respons = axios.post("https://api.biziffy.com/api/enquiries/create-enquiryform", { ...enquiryForm })
     if (respons?.data?.status) {
       setEnquiryForm({ name: '', phone: '', requirement: '' })
     } else {

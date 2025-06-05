@@ -97,7 +97,7 @@ export const AllListings = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get(`https://api.biziffy.com/api/get-all-listings`);
+      const res = await axios.get(`http://localhost:18001/api/get-all-listings`);
       // console.log("SSSSSSSSSSSS-------", res.data.data)
       setFullListings(res?.data.data || []);
       setTotalPages(
@@ -156,7 +156,7 @@ export const AllListings = () => {
       return;
 
     try {
-      await axios.post(`https://api.biziffy.com/api/listing-bulk-action`, {
+      await axios.post(`http://localhost:18001/api/listing-bulk-action`, {
         ids: selectedListingIds,
         action: selectedAction,
       });
@@ -251,7 +251,7 @@ export const AllListings = () => {
 
   const handleUpdatePublishStatus = async (id: string, newStatus: string) => {
     try {
-      await axios.post(`https://api.biziffy.com/api/change-publish-status/${id}`, { status: newStatus });
+      await axios.post(`http://localhost:18001/api/change-publish-status/${id}`, { status: newStatus });
       setFullListings(
         fullListings.map((listing) =>
           listing._id === id && listing.businessDetails
@@ -284,7 +284,7 @@ export const AllListings = () => {
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     // console.log("XXXXXXXXXXXXXXXXXXXXXXXX----", newStatus)
     try {
-      await axios.post(`https://api.biziffy.com/api/update-business-listing-status/${id}`, { status: newStatus });
+      await axios.post(`http://localhost:18001/api/update-business-listing-status/${id}`, { status: newStatus });
       setFullListings(
         fullListings.map((listing) => {
           if (listing._id === id && listing.businessDetails) {
@@ -329,7 +329,7 @@ export const AllListings = () => {
     }
 
     try {
-      const response = await axios.get(`https://api.biziffy.com/api/delete-business-listing/${id}`);
+      const response = await axios.get(`http://localhost:18001/api/delete-business-listing/${id}`);
       // console.log("Delete Response: ", response);
       fetchFullListings();
     } catch (error) {

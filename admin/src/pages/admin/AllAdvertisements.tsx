@@ -193,8 +193,7 @@ const AllAdvertisements = () => {
             onChange={(e) => {
               setSearchQuery(e.target.value);
               setCurrentPage(1);
-            }}
-          />
+            }}/>
           <select
             className="px-3 py-2 border rounded-md text-sm w-48"
             value={filterCategory}

@@ -66,11 +66,11 @@ const Businesslisting = () => {
   const fetchBusinessesListing = useCallback(async () => {
     try {
       let response;
-      // if (pincode || query ) {
+      if (pincode || query ) {
       response = await axios.get("https://api.biziffy.com/api/search-listings", {
         params: { pincode, query, title, state },
       });
-      // }
+      }
       console.log("FFFFFFFFFFF", response?.data);
       setBusinesses(response?.data?.data || []);
     } catch (error) {
@@ -81,11 +81,11 @@ const Businesslisting = () => {
   const fetchWebsiteListing = useCallback(async () => {
     try {
       let response;
-      // if (pincode || query ) {
+      if (pincode || query ) {
       response = await axios.get("https://api.biziffy.com/api/admin/search-website-listings", {
         params: { pincode, query, title, state },
       });
-      // }
+      }
       console.log("FFFFFFFFFFFWebsite", response?.data);
       if (response?.data?.status) {
         setWebsiteList(response?.data?.data || []);

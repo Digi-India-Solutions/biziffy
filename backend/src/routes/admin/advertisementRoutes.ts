@@ -3,10 +3,10 @@ import multer from "multer";
 import path from "path";
 import {
   createAdvertisement,
-  getAllAdvertisements,
-  deleteAdvertisement,
-  updateAdvertisement,
-  getAdvertisementById,
+  // getAllAdvertisements,
+  // deleteAdvertisement,
+  // updateAdvertisement,
+  // getAdvertisementById,
 } from "../../controllers/admin/advertisementController"; 
 
 const router = express.Router();
@@ -24,10 +24,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Routes
-router.post("/", upload.single("image"), createAdvertisement);           // Create new ad with image
-router.get("/", getAllAdvertisements);                                  // Get all ads
-router.get("/:id", getAdvertisementById);                               // Get ad by ID
-router.put("/:id", upload.single("image"), updateAdvertisement);        // Update ad with new image (optional)
-router.delete("/:id", deleteAdvertisement);                             // Delete ad
+router.post("/create-Advertisements", upload.single("image"), createAdvertisement);           // Create new ad with image
+// router.get("/", getAllAdvertisements);                                  // Get all ads
+// router.get("/:id", getAdvertisementById);                               // Get ad by ID
+// router.put("/:id", upload.single("image"), updateAdvertisement);        // Update ad with new image (optional)
+// router.delete("/:id", deleteAdvertisement);                             // Delete ad
 
 export default router;

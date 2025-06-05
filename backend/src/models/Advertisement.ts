@@ -12,17 +12,12 @@ const AdvertisementSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    businessCategory: {
+    category: {
       type: String,
       required: true,
       trim: true,
     },
     subCategory: {
-      type: String,
-      default: null,
-      trim: true,
-    },
-    childCategory: {
       type: String,
       default: null,
       trim: true,

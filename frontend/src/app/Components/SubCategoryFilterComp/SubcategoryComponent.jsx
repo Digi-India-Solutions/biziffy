@@ -86,9 +86,15 @@ const SubcategoryComponent = () => {
   const handleSubcategoryClick = (sub) => {
     const pincode = location?.pincode || "";
     const state = location?.state || "";
-    router.push(
-      `/pages/bussiness-listing?query=${encodeURIComponent(sub?.name?.trim())}&pincode=${encodeURIComponent(pincode)}&state=${encodeURIComponent(state)}&title=${"category"}`
-    );
+    const catName = sub?.name
+    if (pincode || state) {
+      router.push(
+        `/pages/bussiness-listing?query=${catName?.trim()}&pincode=${pincode}&state=${state}`
+      );
+    } else {
+      alert("Need pinCode Pleas wait")
+    }
+
   };
 
   // Fallback UI
