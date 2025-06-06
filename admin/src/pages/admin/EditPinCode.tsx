@@ -26,7 +26,7 @@ const EditPinCode = () => {
     useEffect(() => {
         const fetchStates = async () => {
             try {
-                const res = await axios.get("http://localhost:18001/api/state/get-all-states");
+                const res = await axios.get("https://api.biziffy.com/api/state/get-all-states");
                 // console.log("res", res?.data);
                 if (res?.data?.status) {
                     setStateList(res?.data?.data);
@@ -40,7 +40,7 @@ const EditPinCode = () => {
 
     const fetchPinCodes = async () => {
         try {
-            const response = await axios.get(`http://localhost:18001/api/pincode/get-all-pin-codes-by-id/${id}`);
+            const response = await axios.get(`https://api.biziffy.com/api/pincode/get-all-pin-codes-by-id/${id}`);
             // console.log('responsesss', response.data.pinCodes);
             if (response.data?.status) {
                 setFormData(response?.data?.pinCodes);
@@ -69,7 +69,7 @@ const EditPinCode = () => {
         setLoading(true);
 
         try {
-            const res = await axios.post(`http://localhost:18001/api/pincode/update-pincode/${id}`, formData);
+            const res = await axios.post(`https://api.biziffy.com/api/pincode/update-pincode/${id}`, formData);
             if (res.data.status) {
                 toast({ title: "Success", description: "PinCode Updated successfully!", });
                 navigate("/admin/pincode");

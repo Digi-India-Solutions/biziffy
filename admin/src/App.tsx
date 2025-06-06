@@ -58,6 +58,7 @@ import CreatePinCode from "./pages/admin/CreatePinCode";
 import EditPinCode from "./pages/admin/EditPinCode";
 import AllWebsiteListing from "./pages/admin/AllWebsiteListing";
 import WebsiteListingDetails from "./pages/admin/WebsiteListingDetails";
+import EditAdvertisements from "./pages/admin/EditAdvertisements";
 
 
 const queryClient = new QueryClient();
@@ -94,6 +95,7 @@ const App = () => (
             {/* <Route path="/admin/child-categories/add" element={<ProtectedRoute><AddChildCategory /></ProtectedRoute>} /> */}
             <Route path="/admin/advertisements" element={<ProtectedRoute><AllAdvertisements /></ProtectedRoute>} />
             <Route path="/admin/advertisements/new" element={<ProtectedRoute><AddNewAdvertisement /></ProtectedRoute>} />
+            <Route path="/admin/advertisements/edit/:id" element={<ProtectedRoute><EditAdvertisements /></ProtectedRoute>} />
             <Route path="/admin/users" element={<ProtectedRoute><AllUsers /></ProtectedRoute>} />
             <Route path="/admin/users/deactivated" element={<ProtectedRoute><DeactivatedUsers /></ProtectedRoute>} />
             <Route path="/admin/categories" element={<ProtectedRoute><AllCategories /></ProtectedRoute>} />

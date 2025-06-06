@@ -14,7 +14,7 @@ import ListingPageFaq from "./ListingPageFaq";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-const Businesslistingdetails = ({ businesses }) => {
+const Businesslistingdetails = ({ businesses, advertisements }) => {
   const router = useRouter()
 
   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium error, odio eos, nostrum animi quae facilis possimus consequatur id ipsum odit iure hic, debitis voluptas iusto eligendi tenetur nam omnis blanditiis quos magni porro? Dolore nostrum voluptatem dolorem natus totam tempore cum distinctio ea excepturi. Consectetur enim dolor ut ea dicta mollitia provident possimus placeat consequatur ab quasi neque laudantium recusandae aliquid nobis sapiente illum eum est reiciendis, rerum perspiciatis, corporis exercitationem. In voluptatum dignissimos quibusdam asperiores exercitationem nobis perferendis voluptate magnam alias beatae accusamus non reprehenderit adipisci placeat ex consequatur, unde eaque enim consequuntur debitis molestiae saepe officiis aut!";
@@ -672,17 +672,15 @@ const Businesslistingdetails = ({ businesses }) => {
               </button>
             </form>
             {/* add section  */}
-
-            <section className="ads-section my-3">
-              <div className="d-flex justify-content-center align-item-center">
-                <Image src={ads} alt="ads" className="img-fluid" />
-              </div>
-            </section>
-            <section className="ads-section my-3">
-              <div className="d-flex justify-content-center align-item-center">
-                <Image src={ads1} alt="ads" className="img-fluid" />
-              </div>
-            </section>
+            {advertisements?.map((ad) => {
+              return (
+                <section className="ads-section my-3">
+                  <div className="d-flex justify-content-center align-item-center">
+                    <Image src={ad?.image} alt="ads" className="img-fluid" width={500} height={500} />
+                  </div>
+                </section>
+              )
+            })}
           </div>
         </div>
       </div>

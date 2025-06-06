@@ -16,11 +16,21 @@ const AdvertisementSchema = new mongoose_1.default.Schema({
         trim: true,
     },
     category: {
-        type: String,
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "Category",
         required: true,
-        trim: true,
     },
     subCategory: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "Subcategory",
+        default: null,
+    },
+    categoryName: {
+        type: String,
+        default: null,
+        trim: true,
+    },
+    subCategoryName: {
         type: String,
         default: null,
         trim: true,

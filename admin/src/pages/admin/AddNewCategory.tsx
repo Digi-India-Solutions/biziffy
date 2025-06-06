@@ -76,7 +76,7 @@ const AddNewCategory = () => {
     if (data.banner?.[0]) formData.append("banner", data.banner[0]);
 
     try {
-      const res = await fetch("http://localhost:18001/api/create-categories", {
+      const res = await fetch("https://api.biziffy.com/api/create-categories", {
         method: "POST",
         body: formData,
       });

@@ -12,6 +12,7 @@ const Page = () => {
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [advertisements, setAdvertisements] = useState([])
 
   useEffect(() => {
     const fetchBusinessDetails = async () => {
@@ -30,8 +31,21 @@ const Page = () => {
       }
     };
 
+    const fetchAdvartisMant = async () => {
+      try {
+        const response = await axios.get("https://api.biziffy.com/api/advertisements/get-all-advertisements");
+        const activeAds = response.data?.filter((ad) => ad?.status === "Active" && ad.type === 'Listing detail Right') || [];
+        setAdvertisements(activeAds);
+        console.log("Filtered active ads:", activeAds);
+      } catch (error) {
+        console.error("Failed to fetch advertisements:", error);
+        setAdvertisements([]);
+      }
+    };
+
     if (Id) {
       fetchBusinessDetails();
+      fetchAdvartisMant();
     }
   }, [Id]);
 
@@ -43,7 +57,7 @@ const Page = () => {
         ) : error ? (
           <p style={{ color: 'red' }}>{error}</p>
         ) : (
-          <Businesslistingdetails businesses={businesses} />
+          <Businesslistingdetails advertisements={advertisements} businesses={businesses} />
         )}
       </div>
     </div>

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
 const instance = axios_1.default.create({
-    baseURL: "https://api.biziffy.comapi", // Replace with your actual backend URL
+    baseURL: "http://localhost:18001api", // Replace with your actual backend URL
     headers: {
         "Content-Type": "application/json",
     },

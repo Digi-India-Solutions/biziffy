@@ -84,7 +84,7 @@ export const AllWebsiteListing = () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await axios.get(`http://localhost:18001/api/admin/get-all-website-listings`);
+            const res = await axios.get(`https://api.biziffy.com/api/admin/get-all-website-listings`);
             // console.log("SSSSSSSSSSSSyyy-------", res.data)
             setFullListings(res?.data.data || []);
             setTotalPages(
@@ -149,7 +149,7 @@ export const AllWebsiteListing = () => {
             return;
 
         try {
-            const data = await axios.post(`http://localhost:18001/api/admin//website-listing-bulk-action`, {
+            const data = await axios.post(`https://api.biziffy.com/api/admin//website-listing-bulk-action`, {
                 ids: selectedListingIds,
                 action: selectedAction,
             });
@@ -246,7 +246,7 @@ export const AllWebsiteListing = () => {
     const handleUpdateStatus = async (id: string, newStatus: string) => {
         // console.log("XXXXXXXXXXXXXXXXXXXXXXXX----", newStatus)
         try {
-            await axios.post(`http://localhost:18001/api/admin/update-website-listing-status/${id}`, { status: newStatus });
+            await axios.post(`https://api.biziffy.com/api/admin/update-website-listing-status/${id}`, { status: newStatus });
             setFullListings(
                 fullListings.map((listing) => {
                     if (listing._id === id && listing) {
@@ -287,7 +287,7 @@ export const AllWebsiteListing = () => {
             return;
         }
         try {
-            const response = await axios.get(`http://localhost:18001/api/admin/delete-website-listing/${id}`);
+            const response = await axios.get(`https://api.biziffy.com/api/admin/delete-website-listing/${id}`);
             // console.log("Delete Response: ", response);
             fetchFullListings();
         } catch (error) {

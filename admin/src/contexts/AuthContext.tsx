@@ -22,8 +22,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Mock admin user for demo purposes
 const ADMIN_USER = {
   id: '1',
-  email: 'aman@bizify.com',
-  password: 'aman123',
+  email: 'biziffy@gmail.com',
+  password: 'Biziffy@123',
   name: 'Admin User',
   role: 'admin' as const
 };

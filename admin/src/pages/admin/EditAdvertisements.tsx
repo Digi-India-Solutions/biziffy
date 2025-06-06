@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { AdminLayout } from "@/components/Layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -19,12 +19,13 @@ interface AdvertisementData {
   subCategory: string;
   redirectUrl: string;
   status: "Active" | "Inactive";
-  image: File | null;
+  image: File | null | string;
   categoryName?: string;
   subCategoryName?: string;
 }
 
-const AddNewAdvertisement: React.FC = () => {
+const EditAdvertisements: React.FC = () => {
+  const { id } = useParams(); // assuming you're passing id via URL params
   const navigate = useNavigate();
   const [categoryList, setCategoryList] = useState<Category[]>([]);
   const [subCategoryList, setSubCategoryList] = useState<Category[]>([]);
@@ -38,51 +39,87 @@ const AddNewAdvertisement: React.FC = () => {
     redirectUrl: "",
     status: "Inactive",
     image: null,
-    categoryName: '',
-    subCategoryName: ''
+    categoryName: "",
+    subCategoryName: ""
   });
 
+  // Load categories
   useEffect(() => {
-    const fetchCategory = async () => {
-      const res = await axios.get("https://api.biziffy.com/api/categories");
-      setCategoryList(res.data || []);
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get("https://api.biziffy.com/api/categories");
+        setCategoryList(res.data || []);
+      } catch (err) {
+        console.error("Failed to fetch categories", err);
+      }
     };
-    fetchCategory();
+    fetchCategories();
   }, []);
 
+  // Load existing advertisement
+  useEffect(() => {
+    const fetchAdvertisement = async () => {
+      if (!id) return;
+      try {
+        const res = await getData(`advertisements/get-advertisements-by-id/${id}`);
+        if (res) {
+          setFormData({
+            ...res,
+            businessCategory: res?.category,
+            image: res?.image,
+            categoryName: res?.categoryName || "",
+            subCategoryName: res?.subCategoryName || "",
+          });
+          setImagePreview(res?.image);
+        }
+      } catch (err) {
+        console.error("Failed to fetch advertisement", err);
+      }
+    };
+    fetchAdvertisement();
+  }, [id]);
+
+  // Load subcategories
   useEffect(() => {
     const fetchSubcategories = async () => {
-      if (formData.businessCategory) {
+      if (!formData.businessCategory) return;
+      try {
         const response = await getData(`admin/get-Subcategories-by-category/${formData.businessCategory}`);
         setSubCategoryList(response || []);
+      } catch (err) {
+        console.error("Failed to fetch subcategories", err);
       }
     };
     fetchSubcategories();
   }, [formData.businessCategory]);
 
+  // Update category and subcategory name in form
   useEffect(() => {
-    const selectedCategory = categoryList.find(item => item?._id === formData.businessCategory);
-    const selectedSubCategory = subCategoryList.find(item => item?._id === formData.subCategory);
+    const selectedCategory = categoryList.find(c => c._id === formData.businessCategory);
+    const selectedSubCategory = subCategoryList.find(s => s._id === formData.subCategory);
     setFormData(prev => ({
       ...prev,
       categoryName: selectedCategory?.name || "",
-      subCategoryName: selectedSubCategory?.name || "",
+      subCategoryName: selectedSubCategory?.name || ""
     }));
   }, [formData.businessCategory, formData.subCategory, categoryList, subCategoryList]);
 
+  // Input change handler
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  // Image change
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setFormData((prev) => ({ ...prev, image: file }));
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData(prev => ({ ...prev, image: file }));
       setImagePreview(URL.createObjectURL(file));
     }
   };
 
+  // Submit form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -90,25 +127,27 @@ const AddNewAdvertisement: React.FC = () => {
       formPayload.append("title", formData.title);
       formPayload.append("type", formData.type);
       formPayload.append("category", formData.businessCategory);
-      formPayload.append("subCategory", formData.subCategory);
-      formPayload.append("categoryName", formData.categoryName);
-      formPayload.append("subCategoryName", formData.subCategoryName);
+      formPayload.append("subCategory", formData.subCategory || "");
+      formPayload.append("categoryName", formData.categoryName || "");
+      formPayload.append("subCategoryName", formData.subCategoryName || "");
       formPayload.append("redirectUrl", formData.redirectUrl);
       formPayload.append("status", formData.status);
-      if (formData.image) formPayload.append("image", formData.image);
+      if (formData.image instanceof File) {
+        formPayload.append("image", formData.image);
+      }
 
-      await postData("advertisements/create-advertisements", formPayload);
+      await postData(`advertisements/update-advertisements/${id}`, formPayload);
       navigate("/admin/advertisements");
     } catch (error) {
-      console.error("Error uploading advertisement:", error);
-      alert("Error uploading advertisement");
+      console.error("Error updating advertisement:", error);
+      alert("Error updating advertisement");
     }
   };
 
   return (
-    <AdminLayout title="Add New Advertisement">
+    <AdminLayout title="Edit Advertisement">
       <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-bold">Add New Advertisement</h1>
+        <h1 className="text-2xl font-bold">Edit Advertisement</h1>
         <Link to="/admin/advertisements">
           <Button className="bg-blue-500 hover:bg-blue-600">
             All Advertisements
@@ -119,6 +158,7 @@ const AddNewAdvertisement: React.FC = () => {
       <div className="bg-white rounded-md border shadow-sm p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
+            {/* Title */}
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
               <Input
@@ -131,6 +171,7 @@ const AddNewAdvertisement: React.FC = () => {
               />
             </div>
 
+            {/* Type */}
             <div className="space-y-2">
               <Label htmlFor="type">Type</Label>
               <select
@@ -148,8 +189,9 @@ const AddNewAdvertisement: React.FC = () => {
               </select>
             </div>
 
+            {/* Category */}
             <div className="space-y-2">
-              <Label htmlFor="businessCategory">Business Category *</Label>
+              <Label htmlFor="businessCategory">Business Category</Label>
               <select
                 id="businessCategory"
                 name="businessCategory"
@@ -159,14 +201,13 @@ const AddNewAdvertisement: React.FC = () => {
                 required
               >
                 <option value="">Select Category</option>
-                {categoryList.map((item) => (
-                  <option key={item._id} value={item._id}>
-                    {item.name}
-                  </option>
+                {categoryList.map(cat => (
+                  <option key={cat._id} value={cat._id}>{cat.name}</option>
                 ))}
               </select>
             </div>
 
+            {/* Sub Category */}
             <div className="space-y-2">
               <Label htmlFor="subCategory">Sub Category</Label>
               <select
@@ -177,14 +218,13 @@ const AddNewAdvertisement: React.FC = () => {
                 onChange={handleInputChange}
               >
                 <option value="">Select Sub Category</option>
-                {subCategoryList.map((item) => (
-                  <option key={item._id} value={item._id}>
-                    {item.name}
-                  </option>
+                {subCategoryList.map(sub => (
+                  <option key={sub._id} value={sub._id}>{sub.name}</option>
                 ))}
               </select>
             </div>
 
+            {/* Redirect URL */}
             <div className="space-y-2">
               <Label htmlFor="redirectUrl">Redirect URL</Label>
               <Input
@@ -193,10 +233,10 @@ const AddNewAdvertisement: React.FC = () => {
                 placeholder="https://example.com"
                 value={formData.redirectUrl}
                 onChange={handleInputChange}
-                required
               />
             </div>
 
+            {/* Status */}
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
               <select
@@ -212,6 +252,7 @@ const AddNewAdvertisement: React.FC = () => {
             </div>
           </div>
 
+          {/* Image Upload */}
           <div className="space-y-2">
             <Label>Advertisement Image</Label>
             <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
@@ -228,10 +269,7 @@ const AddNewAdvertisement: React.FC = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    className="bg-gray-200 hover:bg-gray-300"
-                    onClick={() =>
-                      document.getElementById("imageUpload")?.click()
-                    }
+                    onClick={() => document.getElementById("imageUpload")?.click()}
                   >
                     Upload Image
                   </Button>
@@ -243,15 +281,13 @@ const AddNewAdvertisement: React.FC = () => {
                     className="mx-auto mt-4 w-48 h-32 object-contain border"
                   />
                 )}
-                <p className="text-sm text-gray-500">
-                  Supported formats: JPG, PNG, GIF
-                </p>
+                <p className="text-sm text-gray-500">Supported formats: JPG, PNG, GIF</p>
               </div>
             </div>
           </div>
 
           <Button type="submit" className="bg-blue-500 hover:bg-blue-600 px-6">
-            Submit Advertisement
+            Update Advertisement
           </Button>
         </form>
       </div>
@@ -259,4 +295,4 @@ const AddNewAdvertisement: React.FC = () => {
   );
 };
 
-export default AddNewAdvertisement;
+export default EditAdvertisements;

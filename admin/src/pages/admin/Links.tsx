@@ -16,7 +16,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 
-const API_BASE_URL = "http://localhost:18001/api/links";
+const API_BASE_URL = "https://api.biziffy.com/api/links";
 
 const Links = () => {
   const { toast } = useToast();

@@ -41,7 +41,7 @@ const Departments = () => {
 
   const fetchDepartments = async () => {
     try {
-      const res = await axios.get("http://localhost:18001/api/departments");
+      const res = await axios.get("https://api.biziffy.com/api/departments");
       if (Array.isArray(res.data)) {
         setDepartments(res.data);
       } else if (Array.isArray(res.data.departments)) {
@@ -61,7 +61,7 @@ const Departments = () => {
   const handleAddDepartment = async () => {
     if (!newDepartment.trim()) return;
     try {
-      await axios.post("http://localhost:18001/api/departments", {
+      await axios.post("https://api.biziffy.com/api/departments", {
         department: newDepartment,
         status: "active",
       });
@@ -75,7 +75,7 @@ const Departments = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:18001/api/departments/${id}`);
+      await axios.delete(`https://api.biziffy.com/api/departments/${id}`);
       toast({ title: "Deleted", description: "Department deleted." });
       setEditModalOpen(false);
       fetchDepartments();
@@ -87,7 +87,7 @@ const Departments = () => {
   const handleUpdate = async () => {
     if (!selectedDept) return;
     try {
-      await axios.put(`http://localhost:18001/api/departments/${selectedDept._id}`, {
+      await axios.put(`https://api.biziffy.com/api/departments/${selectedDept._id}`, {
         department: selectedDept.department,
         status: selectedDept.status,
       });

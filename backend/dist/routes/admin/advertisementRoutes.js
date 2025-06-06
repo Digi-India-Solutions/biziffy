@@ -20,9 +20,10 @@ const storage = multer_1.default.diskStorage({
 });
 const upload = (0, multer_1.default)({ storage });
 // Routes
-router.post("/create-Advertisements", upload.single("image"), advertisementController_1.createAdvertisement); // Create new ad with image
-// router.get("/", getAllAdvertisements);                                  // Get all ads
-// router.get("/:id", getAdvertisementById);                               // Get ad by ID
-// router.put("/:id", upload.single("image"), updateAdvertisement);        // Update ad with new image (optional)
-// router.delete("/:id", deleteAdvertisement);                             // Delete ad
+router.post("/create-advertisements", upload.single("image"), advertisementController_1.createAdvertisement); // Create new ad with image
+router.get("/get-all-advertisements", advertisementController_1.getAllAdvertisements); // Get all ads
+router.get("/get-advertisements-by-id/:id", advertisementController_1.getAdvertisementById); // Get ad by ID
+router.post("/update-advertisements/:id", upload.single("image"), advertisementController_1.updateAdvertisement); // Update ad with new image (optional)
+router.get("/delete-advertisements/:id", advertisementController_1.deleteAdvertisement);
+router.post("/change-status/:id", advertisementController_1.changestatus);
 exports.default = router;

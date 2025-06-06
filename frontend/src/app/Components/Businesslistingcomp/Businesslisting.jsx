@@ -32,6 +32,19 @@ const Businesslisting = () => {
   const [loginError, setLoginError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [advertisements, setAdvertisements] = useState([])
+
+  const fetchAdvartisMant = async () => {
+    try {
+      const response = await axios.get("https://api.biziffy.com/api/advertisements/get-all-advertisements");
+      const activeAds = response.data?.filter((ad) => ad?.status === "Active" && ad.type === 'Listing detail center') || [];
+      setAdvertisements(activeAds);
+      console.log("Filtered active ads:", activeAds);
+    } catch (error) {
+      console.error("Failed to fetch advertisements:", error);
+      setAdvertisements([]);
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("biziffyToken");
@@ -39,6 +52,7 @@ const Businesslisting = () => {
     console.log('USER:-', JSON.parse(user)?._id)
     setToken(token);
     setUser(JSON.parse(user)?._id)
+    fetchAdvartisMant()
   }, [])
 
   useEffect(() => {
@@ -53,7 +67,7 @@ const Businesslisting = () => {
     setState(st);
   }, [searchParams]);
 
-  const bannerImages = [banner1, banner2, banner3];
+  // const bannerImages = [banner1, banner2, banner3];
 
   const handleToggleView = () => {
     if (visibleCount >= businesses.length) {
@@ -66,10 +80,10 @@ const Businesslisting = () => {
   const fetchBusinessesListing = useCallback(async () => {
     try {
       let response;
-      if (pincode || query ) {
-      response = await axios.get("https://api.biziffy.com/api/search-listings", {
-        params: { pincode, query, title, state },
-      });
+      if (pincode || query) {
+        response = await axios.get("https://api.biziffy.com/api/search-listings", {
+          params: { pincode, query, title, state },
+        });
       }
       console.log("FFFFFFFFFFF", response?.data);
       setBusinesses(response?.data?.data || []);
@@ -81,10 +95,10 @@ const Businesslisting = () => {
   const fetchWebsiteListing = useCallback(async () => {
     try {
       let response;
-      if (pincode || query ) {
-      response = await axios.get("https://api.biziffy.com/api/admin/search-website-listings", {
-        params: { pincode, query, title, state },
-      });
+      if (pincode || query) {
+        response = await axios.get("https://api.biziffy.com/api/admin/search-website-listings", {
+          params: { pincode, query, title, state },
+        });
       }
       console.log("FFFFFFFFFFFWebsite", response?.data);
       if (response?.data?.status) {
@@ -101,7 +115,6 @@ const Businesslisting = () => {
     fetchBusinessesListing();
     fetchWebsiteListing();
   }, [fetchBusinessesListing, fetchWebsiteListing, pincode, query]);
-
 
   const handleCountClick = (type, businessId) => {
 
@@ -124,6 +137,7 @@ const Businesslisting = () => {
     }
   };
   const visibleBusinesses = businesses.slice(0, visibleCount);
+
   console.log("CONSLOENNNNNNN:===>", pincode, query, title, state)
   return (
     <>
@@ -137,12 +151,14 @@ const Businesslisting = () => {
               loop={true}
               slidesPerView={1}
             >
-              {bannerImages.map((img, index) => (
+              {advertisements.map((img, index) => (
                 <SwiperSlide key={index}>
                   <Image
-                    src={img}
+                    src={img?.image}
                     alt={`Banner ${index + 1}`}
                     className="business-listing-image"
+                    width={100}
+                    height={100}
                   />
                 </SwiperSlide>
               ))}
