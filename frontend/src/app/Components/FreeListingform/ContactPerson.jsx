@@ -113,7 +113,7 @@ const ContactPerson = ({ setKey, formData, setFormData }) => {
           Contact Number<sup>*</sup>
         </label>
         <input
-          type="tel"
+          type="number"
           className="form-control"
           name="contactNumber"
           value={formData.contactNumber}
@@ -127,7 +127,7 @@ const ContactPerson = ({ setKey, formData, setFormData }) => {
           WhatsApp Number<sup>*</sup>
         </label>
         <input
-          type="tel"
+          type="number"
           className="form-control"
           name="whatsappNumber"
           value={formData.whatsappNumber}

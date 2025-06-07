@@ -156,10 +156,13 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h5 className="section-title">Select Business Category<sup>*</sup></h5>
+      <div className="text-center mb-4">
+
+      <h5 className="section-title">Business Category<sup>*</sup></h5>
+      </div>
 
       <div className="mb-3">
-        <label className="form-label">Select Business Category <sup>*</sup></label>
+        <label className="form-label">Business Category <sup>*</sup></label>
         <div className="relative">
           <select
             className="form-control"
@@ -178,7 +181,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
 
       <div className="mb-3">
         <label className="form-label">
-          Select Business SubCategory <sup>*</sup>
+         Business SubCategory <sup>*</sup>
         </label>
 
         {/* Wrapper to prevent select overlap */}
@@ -230,7 +233,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
 
 
       <div className="mb-3">
-        <label className="form-label">Business Services (press Enter to add)<sup>*</sup></label>
+        <label className="form-label">Add Your Business Keywords (press Enter to add)<sup>*</sup></label>
         <input
           type="text"
           value={input}
@@ -241,7 +244,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
         />
         <div className="mt-2">
           {keywords.map((keyword, index) => (
-            <span key={index} className="badge bg-primary m-1 p-2">
+            <span style={{textTransform:"capitalize"}} key={index} className="badge bg-primary m-1 p-2">
               {keyword}
               <button
                 type="button"
@@ -257,7 +260,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
       <div className="mb-3 position-relative">
         <label className="form-label">Services Area/Pincode<sup>*</sup></label>
         <input
-          type="text"
+          type="number"
           className="form-control"
           placeholder="Services Area/Pincode"
           value={serviceAreainput}
@@ -279,7 +282,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
         )}
         <div className="mt-2">
           {serviceArea.map((serarea) => (
-            <span key={serarea} className="badge bg-primary m-1 p-2">
+            <span key={serarea} style={{textTransform:"capitalize"}} className="badge bg-primary m-1 p-2">
               {serarea}
               <button
                 type="button"
