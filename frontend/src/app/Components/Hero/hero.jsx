@@ -220,6 +220,43 @@ const Hero = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [pinCodes, setPinCodes] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const categories = [
+    "Plumber",
+    "Electrician",
+    "Carpenter",
+    "Wedding Planner",
+    "Tutor",
+    "Mechanic",
+    "Painter",
+    "Caterer",
+    "Driver",
+    "Laundry",
+    "Gardener"
+  ];
+
+  // Suggestions update
+  useEffect(() => {
+    if (searchText.trim() === "") {
+      setSuggestions([]);
+      return;
+    }
+
+    const filtered = categories.filter((cat) =>
+      cat.toLowerCase().includes(searchText.toLowerCase())
+    );
+    setSuggestions(filtered);
+  }, [searchText]);
+
+  const handleSuggestionClick = (text) => {
+    setSearchText(text);
+
+    // Delay clearing suggestions to avoid re-trigger from setSearchText
+    setTimeout(() => {
+      setSuggestions([]);
+    }, 50);
+  };
+
 
   const placeholderTexts = [
     "Search for plumbers...",
@@ -369,19 +406,32 @@ const Hero = () => {
                     </div>
 
                     {/* SEARCH INPUT */}
-                    <input
-                      type="text"
-                      className="hero-search-input"
-                      value={searchText}
-                      onChange={(e) => setSearchText(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          handleSearch();
-                        }
-                      }}
-                      placeholder={animatedText}
-                    />
+                    <div style={{ position: "relative", width: "100%" }}>
+                      <input
+                        type="text"
+                        className="hero-search-input"
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleSearch();
+                          }
+                        }}
+                        placeholder="Search categories..."
+                      />
+
+                      {/* Suggestions Dropdown */}
+                      {suggestions.length > 0 && (
+                        <ul className="suggestions-dropdown">
+                          {suggestions.map((item, index) => (
+                            <li key={index} onClick={() => handleSuggestionClick(item)}>
+                            <b> <i class="bi bi-search"></i></b> &nbsp; {item}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
 
                     {/* SEARCH BUTTON */}
                     <button className="hero-search-btn" onClick={handleSearch}>
