@@ -9,7 +9,7 @@ const Loadingcomponent = () => {
         <div className="loadbox" id="loader3"></div>
         <div className="loadbox" id="loader4"></div>
         <div className="loadbox" id="loader5"></div>
-      </div>;
+      </div>
     </>
   )
 }

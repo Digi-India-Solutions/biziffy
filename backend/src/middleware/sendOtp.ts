@@ -10,7 +10,7 @@ export const sendOTP = async (email: string, otp: string): Promise<void> => {
   });
 
   const mailOptions = {
-    from: '"Biziffy" <support@biziffy.com>',
+    from: '"Biziffy" <amankumartiwari5255@gmail.com>',
     to: email,
     subject: "Biziffy - Your OTP for Registration",
     html: `
