@@ -73,7 +73,7 @@ const Page = () => {
       const { email } = formData;
       setLoading(true)
       const response = await axios.post("https://api.biziffy.com/api/auth/send-otp-user-signup", { email });
-      // console.log("XXXXXXXXXXX", response)
+      console.log("XXXXXXXXXXX", response)
       if (response?.data?.status) {
         setOpenOtp(true);
         setLoading(false)
@@ -222,7 +222,7 @@ const Page = () => {
                   {errors.confirmPassword && <p className="validation-text">{errors.confirmPassword}</p>}
 
                   <button onClick={handleSubmit} className="login-btn bg-dark text-white border-0 w-100 mb-3">
-                    {loading ? <LoadingComponent /> : "Get Started"}
+                    {loading ? "Please wait..." : "Get Started"}
                   </button>
 
                   <p className="text-center">
