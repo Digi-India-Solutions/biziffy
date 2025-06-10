@@ -13,8 +13,18 @@ import Choice2 from "../../Images/Choice2.png";
 import Choice3 from "../../Images/Choice3.png";
 import Choice4 from "../../Images/Choice4.png";
 import Heading from "../Heading/SecHeading";
+import { useEffect, useState } from "react";
 
 const TrustPilot = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // ✅ NEW: state for login check
+  useEffect(() => {
+    // ✅ NEW: Check localStorage for token on page load
+    const token = localStorage.getItem("biziffyToken");
+    console.log("Token:", token);
+    setIsLoggedIn(!!token);
+  }, []);
+
+
   return (
 
     <>
@@ -34,23 +44,33 @@ const TrustPilot = () => {
                     difference.
                   </p>
                   <div className="d-flex  login-function align-items-center flex-wrap">
-                    <Link href="/pages/login">
-                      <button className="btn btn-dark rounded-pill px-4 py-2 me-3">
-                        SignIn / SignUp
-                      </button>
-                    </Link>
+                    {!isLoggedIn ? (
 
-                    {/* <div className="social-login login-function d-flex">
-                      <Link href="#" className="social-icon google me-2">
-                        <i className="bi bi-google"></i>
-                      </Link>
-                      <Link href="#" className="social-icon facebook me-2">
-                        <i className="bi bi-facebook"></i>
-                      </Link>
-                      <Link href="#" className="social-icon apple">
-                        <i className="bi bi-apple"></i>
-                      </Link>
-                    </div> */}
+                      <div className="d-flex align-items-center ">
+                        <Link
+                          href="/pages/login"
+                          className="btn btn bg-primary text-white me-2"
+                        >
+                          SignIn
+                        </Link>
+                        <Link
+                          href="/pages/signup"
+                          className="btn btn bg-dark text-white me-2"
+                        >
+                          Register
+                        </Link>
+                      </div>
+                    ) : (
+
+                      <div className="hero-buttons">
+                        <Link href="/pages/list-your-webiste" className="herobutton1">
+                          List Your Website
+                        </Link>
+                        <Link href="/pages/freelistingform" className="herobutton2">
+                          List Your Business
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

@@ -595,16 +595,16 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                   <div className="socialmedia-details">
                     <div>
                       <div className="social-icons">
-                        <Link href="#">
+                        <Link href="https://x.com/biziffy_india">
                           <i className="bi bi-twitter"></i>
                         </Link>
-                        <Link href="#">
+                        <Link href="https://www.facebook.com/people/Biziffy-India/pfbid05EeMQK7qXrw5nuEe2B6cKNhBwYTskFwsMrijTM1WdgijuLjvuXUa7GQ94WJM9AEvl/">
                           <i className="bi bi-facebook"></i>
                         </Link>
                         <Link href="#">
                           <i className="bi bi-linkedin"></i>
                         </Link>
-                        <Link href="#">
+                        <Link href="https://www.instagram.com/biziffyindia/">
                           <i className="bi bi-instagram"></i>
                         </Link>
                       </div>
