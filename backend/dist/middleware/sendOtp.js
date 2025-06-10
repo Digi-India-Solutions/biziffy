@@ -23,7 +23,7 @@ const sendOTP = (email, otp) => __awaiter(void 0, void 0, void 0, function* () {
         },
     });
     const mailOptions = {
-        from: '"Biziffy" <support@biziffy.com>',
+        from: '"Biziffy" <amankumartiwari5255@gmail.com>',
         to: email,
         subject: "Biziffy - Your OTP for Registration",
         html: `
