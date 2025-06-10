@@ -76,7 +76,7 @@ export default function CityCards() {
                         <Link href={`/pages/citytourismGuide/${city?._id}`}>
                           <button className="exploreButton">
                             <i className="bi bi-geo-alt me-1"></i>
-                            <span>Explore</span>
+                            Explore
                           </button>
                         </Link>
                       </div>

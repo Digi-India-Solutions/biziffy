@@ -3,8 +3,17 @@ import Link from "next/link";
 import Image from "next/image";
 import "./footer.css";
 import logo from "../../Images/logo.jpg";
+import { useEffect, useState } from "react";
 
 const Footer = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // ✅ NEW: state for login check
+  useEffect(() => {
+    // ✅ NEW: Check localStorage for token on page load
+    const token = localStorage.getItem("biziffyToken");
+    console.log("Token:", token);
+    setIsLoggedIn(!!token);
+  }, []);
+
   return (
     <footer className="footer">
       <div className="container">
@@ -20,16 +29,16 @@ const Footer = () => {
               Your trusted partner in digital solutions.
             </p>
             <div className="social-icons">
-              <Link href="#">
+              <Link target="_blank" href="https://x.com/biziffy_india">
                 <i className="bi bi-twitter"></i>
               </Link>
-              <Link href="#">
+              <Link target="_blank" href="https://www.facebook.com/people/Biziffy-India/pfbid05EeMQK7qXrw5nuEe2B6cKNhBwYTskFwsMrijTM1WdgijuLjvuXUa7GQ94WJM9AEvl/">
                 <i className="bi bi-facebook"></i>
               </Link>
-              <Link href="#">
+              <Link target="_blank" href="#">
                 <i className="bi bi-linkedin"></i>
               </Link>
-              <Link href="#">
+              <Link target="_blank" href="https://www.instagram.com/biziffyindia/">
                 <i className="bi bi-instagram"></i>
               </Link>
             </div>
@@ -93,13 +102,34 @@ const Footer = () => {
           {/* Member Section */}
           <div className="col-lg-3 col-md-6 footer-section">
             <h5>Biziffy Members</h5>
-            <div className="footer-buttons">
-              <Link href="/pages/login" className="footer-login-btn">
-                Log In
-              </Link>
-              <Link href="/pages/signup" className="btn btn-primary">
-                Sign Up
-              </Link>
+            <div className="d-flex  login-function align-items-center flex-wrap">
+              {!isLoggedIn ? (
+
+                <div className="d-flex align-items-center ">
+                  <Link
+                    href="/pages/login"
+                    className="btn btn bg-primary text-white me-2"
+                  >
+                    SignIn
+                  </Link>
+                  <Link
+                    href="/pages/signup"
+                    className="btn btn bg-dark text-white me-2"
+                  >
+                    Register
+                  </Link>
+                </div>
+              ) : (
+                ""
+                // <div className="hero-buttons">
+                //   <Link href="/pages/list-your-webiste" className="herobutton1">
+                //     List Your Website
+                //   </Link>
+                //   <Link href="/pages/freelistingform" className="herobutton2">
+                //     List Your Business
+                //   </Link>
+                // </div>
+              )}
             </div>
             <p>Find and connect with businesses near you.</p>
           </div>

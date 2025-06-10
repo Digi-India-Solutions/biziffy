@@ -434,7 +434,7 @@ const Hero = () => {
                     </div>
 
                     {/* SEARCH BUTTON */}
-                    <button className="hero-search-btn" onClick={handleSearch}>
+                    <button className="hero-search-btn" aria-label="Search" onClick={handleSearch}>
                       <i className="bi bi-search"></i>
                     </button>
                   </div>
