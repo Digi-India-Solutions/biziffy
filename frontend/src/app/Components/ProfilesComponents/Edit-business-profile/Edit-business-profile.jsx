@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import "./EditBusinessProfile.css";
-import axios from "axios";
 import Image from "next/image";
+import { getData, postData } from "../../../services/FetchNodeServices";
 
 const categories = [
   { id: "basic", label: "Basic Info", icon: "bi-person" },
@@ -74,7 +74,7 @@ export default function EditBusinessProfile({ listingId }) {
 
   }, [listingId]);
 
-
+  console.log("XXXXXXXXXXXX:-->", listingId)
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
@@ -132,7 +132,7 @@ export default function EditBusinessProfile({ listingId }) {
     (formData?.subCategoryName || []).forEach((id, index) => {
       form.append(`businessCategory[subCategoryName][${index}]`, id);
     });
-    
+
     (formData?.keywords || []).forEach((keyword, index) => {
       form.append(`businessCategory[keywords][${index}]`, keyword);
     });
@@ -168,7 +168,7 @@ export default function EditBusinessProfile({ listingId }) {
     form.append("upgradeListing[twitter]", formData?.twitter);
 
     try {
-      const response = await axios.post(`https://api.biziffy.com/api/update-listings-by-id/${listingId?._id}`, form);
+      const response = await postData(`update-listings-by-id/${listingId?._id}`, form);
       console.log("response:-", response)
       if (response)
         alert("Profile updated successfully!");
@@ -201,8 +201,8 @@ export default function EditBusinessProfile({ listingId }) {
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const response = await axios.get("https://api.biziffy.com/api/categories");
-        setCategoryList(response.data);
+        const response = await getData("categories");
+        setCategoryList(response);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -214,9 +214,10 @@ export default function EditBusinessProfile({ listingId }) {
     if (formData.businessCategory) {
       const fetchSubCategory = async () => {
         try {
-          console.log("CCCCCCCCCCCCC", formData.businessCategory)
-          const response = await axios.get(`https://api.biziffy.com/api/admin/get-Subcategories-by-category/${formData.businessCategory}`);
-          setSubCategoryList(response.data);
+          // console.log("CCCCCCCCCCCCC", formData.businessCategory)
+          const response = await getData(`admin/get-Subcategories-by-category/${formData.businessCategory}`);
+          // console.log("XXXXXXXXXXXXXXXXXXXX>--->", response)
+          setSubCategoryList(response);
         } catch (error) {
           console.error("Error fetching subcategories:", error);
         }
@@ -277,13 +278,10 @@ export default function EditBusinessProfile({ listingId }) {
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const res = await axios.get(`https://api.biziffy.com/api/pincode/get-areapincode-by-state`, {
+        const res = await getData(`pincode/get-areapincode-by-state`, {
           params: { state: formData?.state }
         });
-        console.log("DADAhhh",
-          // res?.data,
-          formData?.state
-        )
+        console.log("DADAhhh", res)
         const areaList = res?.data.map((user) => `${user?.area} ${user?.pinCode}`);
         setAreas(areaList);
       } catch (error) {
@@ -291,12 +289,12 @@ export default function EditBusinessProfile({ listingId }) {
       }
     };
     fetchAreas();
-  }, [formData.state]);
+  }, [formData?.state]);
 
-  const filteredAreas = areas.filter(
+  const filteredAreas = areas?.filter(
     (area) =>
-      area.toLowerCase().includes(serviceAreaInput.toLowerCase()) &&
-      !formData.businessArea.includes(area)
+      area?.toLowerCase().includes(serviceAreaInput.toLowerCase()) &&
+      !formData?.businessArea.includes(area)
   );
 
   const handleSelectArea = (area) => {
@@ -394,12 +392,12 @@ export default function EditBusinessProfile({ listingId }) {
                   <input type="text" name="Street" value={formData.Street} onChange={handleChange} />
                 </div>
               </div>
-              <div className="col-md-3">
+              {/* <div className="col-md-3">
                 <div className="edit-profile-field">
                   <label>Area</label>
                   <input type="text" name="Area" value={formData.Area} onChange={handleChange} />
                 </div>
-              </div>
+              </div> */}
               <div className="col-md-3">
                 <div className="edit-profile-field">
                   <label>Landmark</label>

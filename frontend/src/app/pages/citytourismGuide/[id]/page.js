@@ -5,9 +5,9 @@ import "../citytourismGuide.css";
 import Link from "next/link";
 import Head from "next/head";
 import { useParams } from "next/navigation";
-import axios from "axios";
 import Image from "next/image";
 import LoadingComponent from "../../../Components/loadingcomponent/Loadingcomponent"
+import { getData } from "../../../services/FetchNodeServices";
 const Page = () => {
   const { id } = useParams(); // ✅ get dynamic route param
   const [data, setData] = useState(null);
@@ -16,12 +16,10 @@ const Page = () => {
     if (!id) return;
     const fetchTopCity = async () => {
       try {
-        const res = await axios.get(
-          `https://api.biziffy.com/api/populerCity/get-popular-city-by-id/${id}`
-        );
-        const result = res.data?.data;
+        const res = await getData(`populerCity/get-popular-city-by-id/${id}`);
+        const result = res?.data;
         // console.log("res:====", res?.data.data);
-        if (res.data?.status) {
+        if (res?.status) {
           setData(result);
         }
       } catch (error) {

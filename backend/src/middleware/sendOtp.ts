@@ -1,16 +1,17 @@
 import nodemailer from 'nodemailer';
 
 export const sendOTP = async (email: string, otp: string): Promise<void> => {
+  
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    service: 'gmail',
     auth: {
-      user: "amankumartiwari5255@gmail.com",
-      pass: "bqbd gioy wnir pqgj", // Use env variables in production
+      user: process.env.MAIL_EMAIL_ID,
+      pass: process.env.MAIL_EMAIL_PASSWORD,
     },
   });
 
   const mailOptions = {
-    from: '"Biziffy" <amankumartiwari5255@gmail.com>',
+    from: `"Biziffy" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "Biziffy - Your OTP for Registration",
     html: `

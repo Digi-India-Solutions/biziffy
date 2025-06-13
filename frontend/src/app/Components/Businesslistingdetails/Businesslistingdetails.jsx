@@ -11,8 +11,8 @@ import "../../pages/bussiness-listing/businessListing.css";
 import BusinessSimilarListing from "./BusinessSimilarListing";
 import DealOffers from "./DealOffers";
 import ListingPageFaq from "./ListingPageFaq";
-import axios from "axios";
 import { useRouter } from "next/navigation";
+import { postData } from "../../services/FetchNodeServices";
 
 const Businesslistingdetails = ({ businesses, advertisements }) => {
   const router = useRouter()
@@ -133,7 +133,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
 
     if (!lastClickDay || parseInt(lastClickDay) < currentDay) {
 
-      axios.post(`https://api.biziffy.com/api/increase-click-count/${businessId}`, { type, user })
+      postData(`increase-click-count/${businessId}`, { type, user })
         .then(() => { console.log(`${type} click counted`); localStorage.setItem(key, currentDay.toString()); })
         .catch((err) => { console.error("Error increasing count", err) });
     } else {
@@ -145,7 +145,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
   console.log("XXXXXXXXDDDDDDD", businesses)
 
   const handleEnquiryForm = async () => {
-    const respons = axios.post("https://api.biziffy.com/api/enquiries/create-enquiryform", { ...enquiryForm })
+    const respons = postData("enquiries/create-enquiryform", { ...enquiryForm })
     if (respons?.data?.status) {
       setEnquiryForm({ name: '', phone: '', requirement: '' })
     } else {

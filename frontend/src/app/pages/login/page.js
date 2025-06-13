@@ -7,6 +7,7 @@ import Link from "next/link";
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'; // Import correct components
+import { postData } from "../../services/FetchNodeServices";
 import axios from "axios";
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -66,13 +67,13 @@ const Login = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post('https://api.biziffy.com/api/auth/user-login', { email: formData.email, password: formData.password, });
-      // console.log("API Response:", response);
-      if (response?.data?.status) {
+      const response = await postData('auth/user-login', { email: formData.email, password: formData.password, });
+      console.log("API Response:", response);
+      if (response?.status) {
 
         // console.log("API Response:", response?.data);
-        localStorage.setItem("biziffyToken", response?.data?.token);
-        localStorage.setItem("biziffyUser", JSON.stringify(response?.data?.user));
+        localStorage.setItem("biziffyToken", response?.token);
+        localStorage.setItem("biziffyUser", JSON.stringify(response?.user));
         setSuccessMessage("Login successful! Redirecting...");
         setLoginError("");
         // console.log("Redirecting to /dashboard...");/
@@ -80,7 +81,7 @@ const Login = () => {
           window.location.href = "/pages/Profile";
         }, 1500);
       } else {
-        setLoginError(data.message || "Something went wrong.");
+        setLoginError(response.message || "Something went wrong.");
         setSuccessMessage("");
       }
 
@@ -97,21 +98,13 @@ const Login = () => {
 
   // Google Login Success handler
   const handleGoogleLoginSuccess = async (response) => {
-    // console.log("Google Login Success:", response);
+    console.log("Google Login Success:", response);
 
     try {
-      const res = await fetch("https://api.biziffy.com/api/user/google-login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tokenId: response.credential,
-        }),
-      });
+      const res = await postData("auth/google-login", { tokenId: response.credential});
 
-      const data = await res.json();
-      // console.log("Google API Response:", data);
-
-      if (res.ok) {
+      const data = await res
+      if (res.success) {
         localStorage.setItem("biziffyToken", data.token);
         localStorage.setItem("biziffyUser", JSON.stringify(data.user));
         setSuccessMessage("Google login successful!");

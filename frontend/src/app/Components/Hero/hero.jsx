@@ -207,9 +207,9 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import UserLocation from "../UserLocation/UserLocation";
 import "./hero.css";
+import { getData } from "../../services/FetchNodeServices";
 // import '../../pages/bussiness-listing/[Id]/'
 
 const Hero = () => {
@@ -221,19 +221,30 @@ const Hero = () => {
   const [pinCodes, setPinCodes] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
-  const categories = [
-    "Plumber",
-    "Electrician",
-    "Carpenter",
-    "Wedding Planner",
-    "Tutor",
-    "Mechanic",
-    "Painter",
-    "Caterer",
-    "Driver",
-    "Laundry",
-    "Gardener"
-  ];
+  const [categoryList, setCategoryList] = useState([]);
+  const [listing, setListing] = useState([]);
+ 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch categories
+        const categoryResponse = await getData("categories");
+        const categories = categoryResponse?.map((cat) => cat?.name);
+        setCategoryList(categories);
+
+        // Fetch listings
+        const listingResponse = await getData("get-all-listings");
+        setListing(listingResponse?.data?.map(listing => listing?.businessDetails?.businessName));
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  
+
 
   // Suggestions update
   useEffect(() => {
@@ -242,8 +253,8 @@ const Hero = () => {
       return;
     }
 
-    const filtered = categories.filter((cat) =>
-      cat.toLowerCase().includes(searchText.toLowerCase())
+    const filtered = categoryList?.filter((cat) =>
+      cat?.toLowerCase().includes(searchText?.toLowerCase())
     );
     setSuggestions(filtered);
   }, [searchText]);
@@ -272,9 +283,10 @@ const Hero = () => {
   useEffect(() => {
     const fetchPinCodes = async () => {
       try {
-        const response = await axios.get("https://api.biziffy.com/api/pincode/get-all-pin-codes");
-        if (response.data?.status) {
-          setPinCodes(response.data.pinCodes);
+        const response = await getData("pincode/get-all-pin-codes");
+        console.log("responseresponse:=>", response)
+        if (response?.status) {
+          setPinCodes(response?.pinCodes);
         }
       } catch (error) {
         console.error("Error fetching pin codes:", error);
@@ -426,7 +438,7 @@ const Hero = () => {
                         <ul className="suggestions-dropdown">
                           {suggestions.map((item, index) => (
                             <li key={index} onClick={() => handleSuggestionClick(item)}>
-                            <b> <i class="bi bi-search"></i></b> &nbsp; {item}
+                              <b> <i class="bi bi-search"></i></b> &nbsp; {item}
                             </li>
                           ))}
                         </ul>

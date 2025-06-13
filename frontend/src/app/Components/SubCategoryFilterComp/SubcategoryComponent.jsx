@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import axios from "axios";
 import "./subCategoryComp.css";
 import "../../pages/citytourismGuide/citytourismGuide.css";
+import { getData } from "../../services/FetchNodeServices";
 
 const SubcategoryComponent = () => {
   const searchParams = useSearchParams();
@@ -24,9 +24,9 @@ const SubcategoryComponent = () => {
       if (!categoryId) return;
       try {
         setLoadingCategory(true);
-        const response = await axios.get(`https://api.biziffy.com/api/categories/${categoryId}`);
-        setCategory(response?.data || null);
-        setSubcategories(response?.data?.subcategories || []);
+        const response = await getData(`categories/${categoryId}`);
+        setCategory(response || null);
+        setSubcategories(response?.subcategories || []);
         setError(null);
       } catch (err) {
         console.error("Category fetch failed:", err);

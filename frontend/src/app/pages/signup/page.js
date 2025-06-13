@@ -10,6 +10,7 @@ import "../../pages/login/login.css";
 import "./signup.css";
 import VerifyOtpPage from "../verify-otp/VerifyOtpPage";
 import LoadingComponent from "../../Components/loadingcomponent/Loadingcomponent";
+import { postData } from "../../services/FetchNodeServices";
 
 const Page = () => {
   const [loading, setLoading] = useState(false);
@@ -72,9 +73,9 @@ const Page = () => {
     try {
       const { email } = formData;
       setLoading(true)
-      const response = await axios.post("https://api.biziffy.com/api/auth/send-otp-user-signup", { email });
+      const response = await postData("auth/send-otp-user-signup", { email });
       console.log("XXXXXXXXXXX", response)
-      if (response?.data?.status) {
+      if (response?.status) {
         setOpenOtp(true);
         setLoading(false)
         // console.log("Signup response:", response?.data?.message);

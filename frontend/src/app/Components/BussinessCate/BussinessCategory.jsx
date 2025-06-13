@@ -5,7 +5,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import "./BussinessCategory.css";
 import Heading from "../Heading/SecHeading";
 import Link from "next/link";
-import axios from "axios";
+import { getData } from "../../services/FetchNodeServices";
 
 const BussinessCategory = () => {
   const [categories, setCategories] = useState([]);
@@ -15,8 +15,8 @@ const BussinessCategory = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("https://api.biziffy.com/api/categories");
-        setCategories(res.data); // Assuming res.data is an array of categories
+        const res = await getData("categories");
+        setCategories(res); 
         setLoading(false);
       } catch (error) {
         setError("Failed to fetch categories");
@@ -48,8 +48,8 @@ const BussinessCategory = () => {
                     </div>
                   </div>
                 ))
-            : categories.map((category) => (
-                <div key={category._id} className="col-lg-2 col-md-3 col-sm-4 col-4">
+            : categories?.map((category) => (
+                <div key={category?._id} className="col-lg-2 col-md-3 col-sm-4 col-4">
                   <Link
                     className="text-decoration-none"
                     href={`/pages/subCategoryFilter/?categoryId=${category._id}`}

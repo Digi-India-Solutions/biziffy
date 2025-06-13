@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import axios from "axios";
 import LoadingComponent from "../../Components/loadingcomponent/Loadingcomponent";
+import { postData } from "../../services/FetchNodeServices";
 const VerifyOtpPage = ({ formData, title, openOtp, setOpenOtp, loading, setLoading }) => {
   const router = useRouter();
   const [otp, setOtp] = useState("");
@@ -16,7 +16,7 @@ const VerifyOtpPage = ({ formData, title, openOtp, setOpenOtp, loading, setLoadi
 
     try {
       setLoading(true);
-      const res = await axios.post("https://api.biziffy.com/api/verify-otp", { ...formData, otp, });
+      const res = await postData("verify-otp", { ...formData, otp, });
 
       if (res.data.status) {
         setLoading(false);

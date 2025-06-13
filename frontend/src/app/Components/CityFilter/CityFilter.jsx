@@ -6,8 +6,8 @@ import "./cityFilter.css";
 import Link from "next/link";
 import Heading from "../Heading/SecHeading";
 import Image from "next/image";
-import axios from "axios";
 import LoadingComponent from "../loadingcomponent/Loadingcomponent";
+import { getData } from "../../services/FetchNodeServices";
 export default function CityCards() {
   const [cityData, setCityData] = useState([]);
   const [hoveredCard, setHoveredCard] = useState(null);
@@ -15,10 +15,10 @@ export default function CityCards() {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const res = await axios.get("https://api.biziffy.com/api/populerCity/get-all-popular-cities");
-        console.log("res->", res?.data);
-        if (res?.data?.status === true) {
-          setCityData(res?.data?.data);
+        const res = await getData("populerCity/get-all-popular-cities");
+        console.log("res->", res);
+        if (res?.status === true) {
+          setCityData(res?.data);
         }
         // Assuming the response contains a 'cities' array
         // setCityData(res?.data?.data || []);

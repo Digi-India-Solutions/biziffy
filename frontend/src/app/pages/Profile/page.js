@@ -10,10 +10,10 @@ import AllEnquiry from "../../Components/ProfilesComponents/all-enquiry/all-enqu
 import Support from "../../Components/ProfilesComponents/Support/Support";
 import { toast, ToastContainer } from "react-toastify";
 import Head from "next/head";
-import axios from "axios";
 import Dashboard from "../../Components/Dashboard/Dashboard"
 import { useRouter } from "next/navigation";
 import ShowWebsiteCout from "../../Components/ShowWebsiteCout/ShowWebsiteCout"
+import { getData, postData } from "../../services/FetchNodeServices";
 const ProfilePage = () => {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -74,10 +74,10 @@ const ProfilePage = () => {
     const fetchUserData = async () => {
       if (!userId) return;
       try {
-        const res = await axios.get(`https://api.biziffy.com/api/auth/get-user-by-id/${userId}`);
+        const res = await getData(`auth/get-user-by-id/${userId}`);
         // console.log("req.params.id:-", res.data)
-        if (res.data.status === true) {
-          setProfileData(res.data.user);
+        if (res?.status === true) {
+          setProfileData(res?.user);
         } else {
           toast.error("User data not found.");
         }
@@ -90,13 +90,14 @@ const ProfilePage = () => {
     const fetchBussinessListing = async () => {
       if (!userId) return;
       try {
-        const res = await axios.get(`https://api.biziffy.com/api/get-all-listings-by-user-id/${userId}`);
-        // console.log("Business Listings", res?.data?.data);
-        if (res?.data?.status === true) {
-          setBusinessListing(res?.data?.data);
-        } else {
-          toast.error("Business listing not found.");
+        const res = await getData(`get-all-listings-by-user-id/${userId}`);
+        // console.log("Business Listings", res);
+        if (res?.status === true) {
+          setBusinessListing(res?.data);
         }
+        //  else {
+        //   toast.error("Business listing not found.");
+        // }
       } catch (err) {
         console.error("Error fetching business listing:", err);
       }
@@ -105,13 +106,11 @@ const ProfilePage = () => {
     const fetchWebsiteListing = async () => {
       if (!userId) return;
       try {
-        const res = await axios.get(`https://api.biziffy.com/api/admin/get-all-website-listings-by-user-id/${userId}`);
-        // console.log("Website Listings", res?.data?.data);
-        if (res?.data?.status === true) {
-          setWebsiteListing(res?.data?.data);
-        } else {
-          toast.error("Business listing not found.");
-        }
+        const res = await getData(`admin/get-all-website-listings-by-user-id/${userId}`);
+        console.log("Website Listings", res);
+        if (res?.status === true) {
+          setWebsiteListing(res?.data);
+        } 
       } catch (err) {
         console.error("Error fetching business listing:", err);
       }
@@ -198,9 +197,9 @@ const ProfilePage = () => {
   const handleSaveChanges = async () => {
     try {
       if (profileData && profileData._id) {
-        const response = await axios.post(`https://api.biziffy.com/api/auth/update-user/${profileData._id}`, profileData);
-        if (response.data.status) {
-          localStorage.setItem("biziffyUser", JSON.stringify(response.data.user));
+        const response = await postData(`auth/update-user/${profileData._id}`, profileData);
+        if (response?.status) {
+          localStorage.setItem("biziffyUser", JSON.stringify(response?.user));
           toast.success("Profile updated successfully!");
         } else {
           toast.error("Failed to update profile.");
@@ -230,12 +229,12 @@ const ProfilePage = () => {
     const formData = new FormData();
     formData.append("image", selectedFile);
     try {
-      const res = await axios.post(`https://api.biziffy.com/api/auth/upload-profile-image/${profileData._id}`, formData);
+      const res = await postData(`auth/upload-profile-image/${profileData?._id}`, formData);
 
-      if (res.data.status) {
+      if (res.status) {
         setIsEditing(false);
-        setProfileData((prev) => ({ ...prev, image: res.data.imageUrl }));
-        localStorage.setItem("biziffyUser", JSON.stringify({ ...profileData, image: res.data.imageUrl })
+        setProfileData((prev) => ({ ...prev, image: res.imageUrl }));
+        localStorage.setItem("biziffyUser", JSON.stringify({ ...profileData, image: res.imageUrl })
         );
         toast.success("Profile photo updated successfully!");
       } else {

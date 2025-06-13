@@ -307,67 +307,74 @@ const bulkDeactivate = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.bulkDeactivate = bulkDeactivate;
 /////////////////////////////////////////////////////////////////////////
-// POST /api/auth/forgot-password
 const sendOtpHandler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.body;
-    if (!email)
-        return res.status(400).json({ message: "Email is required" });
+    if (!email) {
+        return res.status(400).json({ success: false, message: "Email is required" });
+    }
     try {
         const user = yield authModel_1.default.findOne({ email });
-        if (!user)
-            return res.status(404).json({ message: "User not found" });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
         const otp = crypto_1.default.randomInt(100000, 999999).toString();
-        user.otp = otp;
-        user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // Optional: 10 min expiry
-        yield user.save();
+        // Delete any previous OTPs for this email
+        yield otp_model_1.default.deleteMany({ email });
+        yield otp_model_1.default.create({ email, otp, otpExpiry: new Date(Date.now() + 10 * 60 * 1000), });
         yield (0, sendOtp_1.sendOTP)(email, otp);
-        res.status(200).json({ message: "OTP sent to email for password reset" });
+        res.status(200).json({ success: true, message: "OTP sent to email" });
     }
     catch (error) {
-        console.error("Forgot password error:", error);
-        res.status(500).json({ message: "Internal server error" });
+        console.error("Send OTP error:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
     }
 });
 exports.sendOtpHandler = sendOtpHandler;
 // POST /api/auth/verify-reset-otp
 const verifyOtpHandler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, otp } = req.body;
+    console.log("XXXXXXXXXXXX", req.body);
+    if (!email || !otp) {
+        return res.status(400).json({ success: false, message: "Email and OTP are required" });
+    }
     try {
-        const user = yield authModel_1.default.findOne({ email });
-        if (!user || user.otp !== otp)
-            return res.status(400).json({ message: "Invalid OTP" });
-        if (user.otpExpiry && user.otpExpiry < new Date())
-            return res.status(400).json({ message: "OTP expired" });
-        return res.status(200).json({ message: "OTP verified" });
+        const otpRecord = yield otp_model_1.default.findOne({ email, otp });
+        if (!otpRecord) {
+            return res.status(400).json({ success: false, message: "Invalid OTP" });
+        }
+        if (otpRecord.otpExpiry.getTime() < Date.now()) {
+            yield otp_model_1.default.deleteMany({ email });
+            return res.status(400).json({ success: false, message: "OTP expired" });
+        }
+        // Mark OTP as verified by deleting it
+        yield otp_model_1.default.deleteMany({ email });
+        return res.status(200).json({ success: true, message: "OTP verified" });
     }
     catch (error) {
-        console.error("Verify reset OTP error:", error);
-        res.status(500).json({ message: "Internal server error" });
+        console.error("Verify OTP error:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
     }
 });
 exports.verifyOtpHandler = verifyOtpHandler;
 // POST /api/auth/reset-password
 const resetPasswordHandler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, otp, newPassword, confirmPassword } = req.body;
-    if (!email || !otp || !newPassword || !confirmPassword)
-        return res.status(400).json({ message: "All fields are required" });
-    if (newPassword !== confirmPassword)
-        return res.status(400).json({ message: "Passwords do not match" });
+    console.log("XXXXXXXXXXXX", req.body);
+    if (!email || !newPassword) {
+        return res.status(400).json({ success: false, message: "All fields are required" });
+    }
     try {
         const user = yield authModel_1.default.findOne({ email });
-        if (!user || user.otp !== otp)
-            return res.status(400).json({ message: "Invalid OTP" });
-        if (user.otpExpiry && user.otpExpiry < new Date())
-            return res.status(400).json({ message: "OTP expired" });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
         user.password = yield bcryptjs_1.default.hash(newPassword, 10);
-        user.otp = undefined;
-        user.otpExpiry = undefined;
         yield user.save();
-        res.status(200).json({ message: "Password reset successfully" });
+        res.status(200).json({ success: true, message: "Password reset successfully" });
     }
     catch (error) {
         console.error("Reset password error:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ success: false, message: "Internal server error" });
     }
 });
 exports.resetPasswordHandler = resetPasswordHandler;
@@ -402,12 +409,6 @@ const googleLoginController = (req, res) => __awaiter(void 0, void 0, void 0, fu
             });
             yield user.save();
         }
-        // Create token
-        // const token = jwt.sign(
-        //   { id: user._id, email: user.email },
-        //   process.env.JWT_SECRET as string,
-        //   { expiresIn: process.env.JWT_EXPIRES }
-        // );
         const payloads = { id: user._id, email: user.email };
         const secret = process.env.JWT_SECRET;
         const expiresIn = (process.env.JWT_EXPIRES || "1d");

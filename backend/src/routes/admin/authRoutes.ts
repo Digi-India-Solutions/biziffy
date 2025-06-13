@@ -27,15 +27,18 @@ router.get('/get-use-all', getAllUse);
 router.post("/all/:id/toggle-status", toggleUserStatus);
 router.post('/auth/delete-bulk-user', deleteBulkUser)
 router.post('/auth/bulk-deactivate', bulkDeactivate)
+router.post('/send-otp', sendOtpHandler);
+router.post('/verify-otp-forgate-password', verifyOtpHandler);
+router.post('/reset-password', resetPasswordHandler);
+router.post("/google-login", googleLoginController);
+router.post("/user-login", loginUser);
 // Login route
 
 
 
-router.post('/send-otp', sendOtpHandler);
-router.post('/verify-otp', verifyOtpHandler);
-router.post("/user-login", loginUser);
-router.post('/reset-password', resetPasswordHandler);
-router.post("/google-login", googleLoginController);
+
+
+
 
 
 

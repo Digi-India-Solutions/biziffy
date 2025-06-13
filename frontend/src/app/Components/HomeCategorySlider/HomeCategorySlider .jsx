@@ -5,7 +5,6 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { useRouter } from "next/navigation";
 import Skeleton from "react-loading-skeleton";
 import Image from "next/image";
-import axios from "axios";
 import Heading from "../Heading/SecHeading";
 
 import "swiper/css";
@@ -13,6 +12,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "react-loading-skeleton/dist/skeleton.css";
 import "./HomeCategoryslider.css";
+import { getData } from "../../services/FetchNodeServices";
 
 const HomeCategorySlider = () => {
   const router = useRouter();
@@ -25,12 +25,13 @@ const HomeCategorySlider = () => {
   // Fetch categories
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("https://api.biziffy.com/api/admin/subcategories");
-      if (response?.status === 200) {
-        setCategories(response.data);
-      } else {
-        setError("Failed to fetch categories");
-      }
+      const response = await getData("admin/subcategories");
+      console.log("XXXXXXXXXX:--", response);
+      // if (response?.status === 200) {
+        setCategories(response);
+      // } else {
+      //   setError("Failed to fetch categories");
+      // }
     } catch (err) {
       console.error("Error fetching categories:", err);
       setError("Something went wrong.");

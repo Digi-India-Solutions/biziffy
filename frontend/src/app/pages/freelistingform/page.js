@@ -16,8 +16,8 @@ import ContactPerson from "../../Components/FreeListingform/ContactPerson";
 import BusinessCategory from "../../Components/FreeListingform/BusinessCategory";
 import BusinessTiming from "../../Components/FreeListingform/BusinessTiming";
 import UpgradeListing from "../../Components/FreeListingform/UpgradeListing";
-import axios from "axios";
 import { useRouter } from "next/navigation";
+import { postData } from "../../services/FetchNodeServices";
 
 
 const Page = () => {
@@ -40,7 +40,7 @@ const Page = () => {
     }
 
     try {
-      const response = await axios.post("https://api.biziffy.com/api/createBusinessListing", form);
+      const response = await postData("createBusinessListing", form);
 
       if (response.status) {
         // const data = await response.json();

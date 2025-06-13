@@ -2,7 +2,7 @@
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import styles from "./module.css"; // Make sure your CSS file is correctly named
-import axios from "axios";
+import { getData, postData } from "../../services/FetchNodeServices";
 
 const BusinessListingPage = () => {
   const [step, setStep] = useState(1);
@@ -47,12 +47,12 @@ const BusinessListingPage = () => {
       form.append("logo", logoFile);
     }
 
-    const res = await axios.post('https://api.biziffy.com/api/admin/createListing', form);
+    const res = await postData('admin/createListing', form);
     // console.log("res:-", res.data.data);
-    if (res?.data.status === true) {
+    if (res?.status === true) {
       setLoading(false)
       setValidated(false);
-      setFormData({ ...formData, listingId: res?.data?.data?._id });
+      setFormData({ ...formData, listingId: res?.data?._id });
       setStep(2);
     }
     // } else {
@@ -78,9 +78,9 @@ const BusinessListingPage = () => {
         form.append("businessPhotos[]", file);
       });
     }
-    const res = await axios.post('https://api.biziffy.com/api/admin/createAdditionalInformation', form);
+    const res = await postData('admin/createAdditionalInformation', form);
     // console.log("res:-", res.data);
-    if (res?.data?.status === true) {
+    if (res?.status === true) {
       setLoading(false)
       setValidated(false);
       alert("Listing Submitted Successfully!");
@@ -119,8 +119,8 @@ const BusinessListingPage = () => {
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const response = await axios.get("https://api.biziffy.com/api/categories");
-        setCategoryList(response.data);
+        const response = await getData("categories");
+        setCategoryList(response);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -132,8 +132,8 @@ const BusinessListingPage = () => {
     if (formData?.category) {
       const fetchSubCategory = async () => {
         try {
-          const response = await axios.get(`https://api.biziffy.com/api/admin/get-Subcategories-by-category/${formData?.category}`);
-          setSubCategoryList(response.data);
+          const response = await getData(`admin/get-Subcategories-by-category/${formData?.category}`);
+          setSubCategoryList(response);
         } catch (error) {
           console.error("Error fetching subcategories:", error);
         }

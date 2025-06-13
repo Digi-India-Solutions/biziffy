@@ -5,16 +5,7 @@ import logo from '../../Images/logo.jpg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-import axios from 'axios';
-
-// Create an Axios instance with a base URL
-const api = axios.create({
-    baseURL: 'https://api.biziffy.com/api/auth',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
+import { postData } from '../../services/FetchNodeServices';
 
 const Page = () => {
     const [email, setEmail] = useState('');
@@ -24,18 +15,12 @@ const Page = () => {
     const [step, setStep] = useState(1); // 1: Enter Email, 2: Enter OTP, 3: Reset Password, 4: Success
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false); // New loading state
-    const [showPassword, setShowPassword] = useState({
-        newPassword: false, // Renamed 'password' to 'newPassword' for clarity
-        confirmPassword: false,
-    });
+    const [showPassword, setShowPassword] = useState({ newPassword: false, confirmPassword: false, });
 
     const router = useRouter();
 
     const togglePasswordVisibility = (field) => {
-        setShowPassword(prevState => ({
-            ...prevState,
-            [field]: !prevState[field],
-        }));
+        setShowPassword(prevState => ({ ...prevState, [field]: !prevState[field], }));
     };
 
     // ----- 🔹 Send OTP -----
@@ -44,17 +29,18 @@ const Page = () => {
         setMessage('');
         setLoading(true); // Start loading
         try {
-            const res = await api.post('/send-otp', { email }); // Use api instance
-            if (res.data.success) {
+            const res = await postData('auth/send-otp', { email }); // Use api instance
+
+            if (res?.success === true) {
                 setMessage('OTP sent successfully to your email!'); // Provide positive feedback
                 setStep(2);
                 // No router.push here if you want a single-page flow
             } else {
-                setMessage(res.data.message || 'Failed to send OTP. Please try again.');
+                setMessage(res.message || 'Failed to send OTP. Please try again.');
             }
         } catch (err) {
             console.error('Send OTP error:', err);
-            setMessage(err.response?.data?.message || 'Something went wrong. Please check your email and try again.');
+            setMessage(err.response?.message || 'Something went wrong. Please check your email and try again.');
         } finally {
             setLoading(false); // End loading
         }
@@ -66,17 +52,18 @@ const Page = () => {
         setMessage('');
         setLoading(true); // Start loading
         try {
-            const res = await api.post('/verify-otp', { email, otp }); // Use api instance
-            if (res.data.success) {
+            const res = await postData('auth/verify-otp-forgate-password', { email, otp }); // Use api instance
+            console.log("resresresres:=>", res)
+            if (res?.success === true) {
                 setMessage('OTP verified! You can now set your new password.');
                 setStep(3);
                 // No router.push here if you want a single-page flow
             } else {
-                setMessage(res.data.message || 'Invalid OTP. Please try again.');
+                setMessage(res.message || 'Invalid OTP. Please try again.');
             }
         } catch (err) {
             console.error('Verify OTP error:', err);
-            setMessage(err.response?.data?.message || 'Error verifying OTP. Please try again.');
+            setMessage(err.response?.message || 'Error verifying OTP. Please try again.');
         } finally {
             setLoading(false); // End loading
         }
@@ -95,23 +82,19 @@ const Page = () => {
 
         setLoading(true); // Start loading
         try {
-            const res = await api.post('/reset-password', {
-                email,
-                newPassword // Backend expects 'newPassword' based on previous context
-            });
-            if (res.data.success) {
+            const res = await postData('auth/reset-password', { email, newPassword });
+            if (res?.success) {
                 setMessage('Your password has been successfully reset!');
                 setStep(4);
-                // Optional: Auto-redirect to login after a delay
                 setTimeout(() => {
-                    router.push('/pages/login'); // Ensure this path is correct for your login page
-                }, 3000); // Redirect after 3 seconds
+                    router.push('/pages/login');
+                }, 3000);
             } else {
-                setMessage(res.data.message || 'Failed to reset password. Please try again.');
+                setMessage(res.message || 'Failed to reset password. Please try again.');
             }
         } catch (err) {
             console.error('Reset password error:', err);
-            setMessage(err.response?.data?.message || 'Something went wrong during password reset.');
+            setMessage(err.response?.message || 'Something went wrong during password reset.');
         } finally {
             setLoading(false); // End loading
         }
@@ -163,7 +146,7 @@ const Page = () => {
                                             required // Make email required
                                             aria-describedby="emailHelp" // Associate with help text if any
                                         />
-                                        <small id="emailHelp" className="form-text text-muted">We'll send a verification code to this email.</small>
+                                        <small id="emailHelp" className="form-text text-muted">We&apos;ll send a verification code to this email&rsquo;</small>
                                     </div>
                                     <button className="login-btn w-100" type="submit" disabled={loading}>
                                         {loading ? 'Sending OTP...' : 'Send OTP'}
@@ -193,7 +176,7 @@ const Page = () => {
                                     </button>
                                     {/* Optional: Add a resend OTP button */}
                                     <p className="text-center mt-2">
-                                        Didn't receive the OTP? <button type="button" onClick={handleEmailSubmit} className="btn-link" disabled={loading}>Resend OTP</button>
+                                        Didn&apos;t receive the OTP? <button type="button" onClick={handleEmailSubmit} className="btn-link" disabled={loading}>Resend OTP</button>
                                     </p>
                                 </form>
                             )}

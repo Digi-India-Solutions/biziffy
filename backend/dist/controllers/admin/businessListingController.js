@@ -440,7 +440,7 @@ exports.getAllListingsByUserId = getAllListingsByUserId;
 // };
 const searchBusinessListings = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { query = "", pincode = "", state = "", title = "" } = req.query;
-    console.log("🔍 Incoming search:", { query, pincode, state, title });
+    console.log("🔍 Incoming search:=>>", { query, pincode, state, title });
     try {
         const keywordRegex = new RegExp(query, "i");
         const pincodeRegex = new RegExp(`\\b${pincode}\\b`, "i");

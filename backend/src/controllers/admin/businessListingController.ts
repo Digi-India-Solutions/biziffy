@@ -506,7 +506,7 @@ export const getAllListingsByUserId = async (req: Request, res: Response) => {
 export const searchBusinessListings = async (req: Request, res: Response) => {
   const { query = "", pincode = "", state = "", title = "" } = req.query;
 
-  console.log("🔍 Incoming search:", { query, pincode, state, title });
+  console.log("🔍 Incoming search:=>>", { query, pincode, state, title });
 
   try {
     const keywordRegex = new RegExp(query as string, "i");

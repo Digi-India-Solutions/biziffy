@@ -16,18 +16,18 @@ exports.sendOTP = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const sendOTP = (email, otp) => __awaiter(void 0, void 0, void 0, function* () {
     const transporter = nodemailer_1.default.createTransport({
-        service: "gmail",
+        service: 'gmail',
         auth: {
-            user: "amankumartiwari5255@gmail.com",
-            pass: "bqbd gioy wnir pqgj", // Use env variables in production
+            user: process.env.MAIL_EMAIL_ID,
+            pass: process.env.MAIL_EMAIL_PASSWORD,
         },
     });
     const mailOptions = {
-        from: '"Biziffy" <amankumartiwari5255@gmail.com>',
+        from: `"Biziffy" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: "Biziffy - Your OTP for Registration",
         html: `
-       <div style="font-family: Arial, sans-serif;">
+     <div style="font-family: Arial, sans-serif;">
         <h2 style="color: #007bff;">Hi Bot</h2>
         <p style="margin: 0;">Hi there,</p>
         <p style="margin: 0;">Thank you for registering on Bizzify.com!</p>
@@ -45,13 +45,13 @@ const sendOTP = (email, otp) => __awaiter(void 0, void 0, void 0, function* () {
             <a style="text-decoration: none; margin-bottom: 10px;" href="https://biziffy.com">🌐 www.bizzify.com</a>
         </div>
         <div>
-            <a style="text-decoration: none; margin-bottom: 10px;" href="https://www.facebook.com/people/Biziffy-India/pfbid05EeMQK7qXrw5nuEe2B6cKNhBwYTskFwsMrijTM1WdgijuLjvuXUa7GQ94WJM9AEvl/">📘 Facebook</a>
+            <a style="text-decoration: none; margin-bottom: 10px;" href="https://biziffy.com">📘 Facebook</a>
         </div>
         <div>
-            <a style="text-decoration: none; margin-bottom: 10px;" href="https://x.com/biziffy_india">🐦 Twitter/X</a>
+            <a style="text-decoration: none; margin-bottom: 10px;" href="https://biziffy.com">🐦 Twitter/X</a>
         </div>
         <div>
-            <a style="text-decoration: none; margin-bottom: 10px;" href="https://www.instagram.com/biziffyindia/">📸 Instagram</a>
+            <a style="text-decoration: none; margin-bottom: 10px;" href="https://biziffy.com">📸 Instagram</a>
         </div>
         <div>
             <a style="text-decoration: none; margin-bottom: 10px;" href="https://biziffy.com">🔗 LinkedIn</a>

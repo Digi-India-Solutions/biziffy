@@ -203,10 +203,10 @@ import Image from "next/image";
 import logo from "../../Images/logo.jpg";
 import UserLocation from "../UserLocation/UserLocation";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import "../Navbar/navbar.css";
 import "./businessNavbar.css";
 import "../Hero/hero.css";
+import { getData } from "../../services/FetchNodeServices";
 
 const placeholderTexts = [
   "Search for plumbers...",
@@ -235,7 +235,7 @@ const BusinessNavbar = () => {
   useEffect(() => {
     const fetchPinCodes = async () => {
       try {
-        const response = await axios.get("https://api.biziffy.com/api/pincode/get-all-pin-codes");
+        const response = await getData("pincode/get-all-pin-codes");
         if (response.data?.status) {
           setPinCodes(response.data.pinCodes);
         }
@@ -246,7 +246,7 @@ const BusinessNavbar = () => {
 
     const fetchCategorys = async () => {
       try {
-        const res = await axios.get("https://api.biziffy.com/api/categories");
+        const res = await getData("categories");
         setCategoryList(res.data || []);
       } catch (error) {
         console.error("Error fetching pin codes:", error);

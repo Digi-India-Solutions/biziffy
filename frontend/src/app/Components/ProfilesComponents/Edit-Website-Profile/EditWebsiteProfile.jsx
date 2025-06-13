@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import "./EditWebsiteProfile.css";
-import axios from "axios";
+import { getData, postData } from "../../../services/FetchNodeServices";
 
 const categories = [
     { id: "basic", label: "Basic Info", icon: "bi-person" },
@@ -40,6 +40,8 @@ export default function EditWebsiteProfile({ listingId }) {
 
     }, [listingId]);
 
+    console.log("listingId:=>", listingId)
+
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -62,7 +64,7 @@ export default function EditWebsiteProfile({ listingId }) {
     console.log("XXXXXXXXXXXXXlistingId:-", formData);
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         const form = new FormData();
         // Contact Person / Basic Fields
         form.append("userId", listingId?.userId);
@@ -86,7 +88,7 @@ export default function EditWebsiteProfile({ listingId }) {
         }
 
         try {
-            const response = await axios.post(`https://api.biziffy.com/api/admin/update-website-listings-by-id/${listingId?._id}`, form);
+            const response = await postData(`admin/update-website-listings-by-id/${listingId?._id}`, form);
             console.log("response:", response);
             if (response) alert("Profile updated successfully!");
         } catch (error) {
@@ -98,8 +100,8 @@ export default function EditWebsiteProfile({ listingId }) {
     useEffect(() => {
         const fetchCategory = async () => {
             try {
-                const response = await axios.get("https://api.biziffy.com/api/categories");
-                setCategoryList(response.data);
+                const response = await getData("categories");
+                setCategoryList(response);
             } catch (error) {
                 console.error("Error fetching categories:", error);
             }
@@ -112,8 +114,8 @@ export default function EditWebsiteProfile({ listingId }) {
             const fetchSubCategory = async () => {
                 try {
                     console.log("CCCCCCCCCCCCC", formData?.category)
-                    const response = await axios.get(`https://api.biziffy.com/api/admin/get-Subcategories-by-category/${formData?.category}`);
-                    setSubCategoryList(response?.data);
+                    const response = await getData(`admin/get-Subcategories-by-category/${formData?.category}`);
+                    setSubCategoryList(response);
                 } catch (error) {
                     console.error("Error fetching subcategories:", error);
                 }
@@ -162,22 +164,22 @@ export default function EditWebsiteProfile({ listingId }) {
     useEffect(() => {
         const fetchAreas = async () => {
             try {
-                const res = await axios.get(`https://api.biziffy.com/api/pincode/get-areapincode-by-state`, {
+                const res = await getData(`pincode/get-areapincode-by-state`, {
                     params: { state: formData?.state }
                 });
-                console.log("DADAhhh", res?.data)
-                const areaList = res.data.map((user) => `${user.area} ${user.pinCode}`);
+                console.log("DADAhhh", res)
+                const areaList = res?.map((user) => `${user?.area} ${user?.pinCode}`);
                 setAreas(areaList);
             } catch (error) {
                 console.error("Error fetching areas:", error);
             }
         };
         fetchAreas();
-    }, [formData.state]);
+    }, [formData?.state]);
 
-    const filteredAreas = areas.filter(
+    const filteredAreas = areas?.filter(
         (area) =>
-            area.toLowerCase().includes(serviceAreaInput.toLowerCase()) &&
+            area.toLowerCase()?.includes(serviceAreaInput.toLowerCase()) &&
             !formData.businessArea.includes(area)
     );
 

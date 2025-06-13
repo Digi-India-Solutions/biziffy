@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import profileImage from "../../Images/blog1.jpg";
 import "./paid-listing.css";
-import axios from "axios";
+import { postData } from "../../services/FetchNodeServices";
 
 const PaidListing = ({ websiteList, user }) => {
 
@@ -20,7 +20,7 @@ const PaidListing = ({ websiteList, user }) => {
 
     if (!lastClickDay || parseInt(lastClickDay) < currentDay) {
 
-      axios.post(`https://api.biziffy.com/api/admin/increase-click-count-website-listing/${id}`, { user })
+      postData(`admin/increase-click-count-website-listing/${id}`, { user })
         .then(() => { console.log(`click counted`); localStorage.setItem(key, currentDay.toString()); })
         .catch((err) => { console.error("Error increasing count", err) });
     } else {

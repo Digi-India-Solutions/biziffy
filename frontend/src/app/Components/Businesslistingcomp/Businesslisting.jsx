@@ -8,12 +8,12 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import axios from "axios";
 import banner1 from "../../Images/slide1.webp";
 import banner2 from "../../Images/slide2.webp";
 import banner3 from "../../Images/slide3.webp";
 // import PaidListing from "../paid-listing/PaidListing"
 import PaidListing from "../../pages/paid-listing/PaidListing"
+import { getData, postData } from "../../services/FetchNodeServices";
 
 const Businesslisting = () => {
   const searchParams = useSearchParams();
@@ -36,8 +36,9 @@ const Businesslisting = () => {
 
   const fetchAdvartisMant = async () => {
     try {
-      const response = await axios.get("https://api.biziffy.com/api/advertisements/get-all-advertisements");
-      const activeAds = response.data?.filter((ad) => ad?.status === "Active" && ad.type === 'Listing detail center') || [];
+      const response = await getData("advertisements/get-all-advertisements");
+      console.log("XXXXXXXXXXXXXX:===>", response)
+      const activeAds = response?.filter((ad) => ad?.status === "Active" && ad.type === 'Listing detail center') || [];
       setAdvertisements(activeAds);
       console.log("Filtered active ads:", activeAds);
     } catch (error) {
@@ -79,14 +80,15 @@ const Businesslisting = () => {
 
   const fetchBusinessesListing = useCallback(async () => {
     try {
+      // console.log("ZZZZZZZZZZZZZZZ:=>", pincode, query, title, state)
       let response;
       if (pincode || query) {
-        response = await axios.get("https://api.biziffy.com/api/search-listings", {
+        response = await getData("search-listings", {
           params: { pincode, query, title, state },
         });
       }
       console.log("FFFFFFFFFFF", response?.data);
-      setBusinesses(response?.data?.data || []);
+      setBusinesses(response?.data || []);
     } catch (error) {
       console.error("Failed to fetch listings:", error);
     }
@@ -96,13 +98,13 @@ const Businesslisting = () => {
     try {
       let response;
       if (pincode || query) {
-        response = await axios.get("https://api.biziffy.com/api/admin/search-website-listings", {
+        response = await getData("admin/search-website-listings", {
           params: { pincode, query, title, state },
         });
       }
       console.log("FFFFFFFFFFFWebsite", response?.data);
-      if (response?.data?.status) {
-        setWebsiteList(response?.data?.data || []);
+      if (response?.status) {
+        setWebsiteList(response?.data || []);
       }
     } catch (error) {
       console.error("Failed to fetch listings:", error);
@@ -129,7 +131,7 @@ const Businesslisting = () => {
 
     if (!lastClickDay || parseInt(lastClickDay) < currentDay) {
 
-      axios.post(`https://api.biziffy.com/api/increase-click-count/${businessId}`, { type, user })
+      getData(`increase-click-count/${businessId}`, { type, user })
         .then(() => { console.log(`${type} click counted`); localStorage.setItem(key, currentDay.toString()); })
         .catch((err) => { console.error("Error increasing count", err) });
     } else {
@@ -138,7 +140,7 @@ const Businesslisting = () => {
   };
   const visibleBusinesses = businesses.slice(0, visibleCount);
 
-  console.log("CONSLOENNNNNNN:===>", pincode, query, title, state)
+  // console.log("CONSLOENNNNNNN:===>", pincode, query, title, state)
   return (
     <>
       <section className="business-listing-page">
@@ -151,7 +153,7 @@ const Businesslisting = () => {
               loop={true}
               slidesPerView={1}
             >
-              {advertisements.map((img, index) => (
+              {advertisements?.map((img, index) => (
                 <SwiperSlide key={index}>
                   <Image
                     src={img?.image}
@@ -225,8 +227,7 @@ const Businesslisting = () => {
 
                       setIsLoading(true);
                       try {
-                        // https://api.biziffy.com/
-                        const response = await axios.post('https://api.biziffy.com/api/auth/user-login', { email: formData.email, password: formData.password, });
+                        const response = await postData('auth/user-login', { email: formData.email, password: formData.password, });
                         // console.log("API Response:", response.data.token);
                         if (response?.data?.status) {
 

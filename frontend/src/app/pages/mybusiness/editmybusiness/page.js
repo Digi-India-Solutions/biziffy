@@ -1,5 +1,4 @@
 import EditBusinessProfile from "../../../Components/ProfilesComponents/Edit-business-profile/Edit-business-profile"
-import React from 'react'
 
 const page = () => {
   return (

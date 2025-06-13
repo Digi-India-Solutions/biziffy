@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'next/navigation';
 import Businesslistingdetails from '../../../Components/Businesslistingdetails/Businesslistingdetails';
+import { getData } from '../../../services/FetchNodeServices';
 
 const Page = () => {
   const params = useParams();
@@ -17,9 +18,9 @@ const Page = () => {
   useEffect(() => {
     const fetchBusinessDetails = async () => {
       try {
-        const response = await axios.get(`https://api.biziffy.com/api/get-all-listings-by-id/${Id}`);
+        const response = await getData(`get-all-listings-by-id/${Id}`);
         if (response.status === 200) {
-          setBusinesses(response.data?.data || []);
+          setBusinesses(response.data || []);
         } else {
           setError('Failed to fetch data.');
         }
@@ -33,7 +34,7 @@ const Page = () => {
 
     const fetchAdvartisMant = async () => {
       try {
-        const response = await axios.get("https://api.biziffy.com/api/advertisements/get-all-advertisements");
+        const response = await getData("/advertisements/get-all-advertisements");
         const activeAds = response.data?.filter((ad) => ad?.status === "Active" && ad.type === 'Listing detail Right') || [];
         setAdvertisements(activeAds);
         console.log("Filtered active ads:", activeAds);

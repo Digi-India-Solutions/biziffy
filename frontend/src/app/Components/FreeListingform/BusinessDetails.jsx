@@ -90,7 +90,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "../../pages/freelistingform/freelistingform.css";
-import axios from "axios";
+import { getData } from "../../services/FetchNodeServices";
 
 // const statesList = [
 //   "Maharashtra", "Delhi", "Karnataka", "Tamil Nadu", "Gujarat", "Uttar Pradesh"
@@ -157,11 +157,11 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
 
   const fetchState = async () => {
     try {
-      const response = await axios.get("https://api.biziffy.com/api/state/get-all-states");
-      console.log("XXXXXXXXXXXXXXX", response.data.data)
+      const response = await getData("state/get-all-states");
+      console.log("XXXXXXXXXXXXXXX>>>", response.data)
 
-      if (response.data.status) {
-        setStatesList(response?.data.data);
+      if (response.status) {
+        setStatesList(response?.data);
       }
 
     } catch (err) {
