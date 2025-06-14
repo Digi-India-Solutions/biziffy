@@ -6,7 +6,7 @@ const ContactPerson = ({ setKey, formData, setFormData }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  
+
   // Handle input changes for all fields
   const handleChange = (e) => {
     setFormData({ ...formData, contactPerson: { ...formData.contactPerson, [e.target.name]: e.target.value } });
@@ -19,34 +19,6 @@ const ContactPerson = ({ setKey, formData, setFormData }) => {
     setError(""); // Reset error on form submission
 
     try {
-
-      // const response = await fetch(
-      //   "https://api.biziffy.com/api/admin/createContact",
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(formData),
-      //   }
-      // );
-
-      // const response = await fetch("https://api.biziffy.com/api/admin/createContact", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
-
-
-      // Check for a successful response
-      // if (!response.ok) {
-      //   const err = await response.json();
-      //   throw new Error(err.message || "Something went wrong!");
-      // }
-
-      // On successful submission, navigate to the next form
       setKey("business"); // Replace "business" with the key of the next step
     } catch (err) {
       setError(err.message); // Display error if any occurs
@@ -57,9 +29,11 @@ const ContactPerson = ({ setKey, formData, setFormData }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h5 className="section-title">
-        Fill Your Contact Details<sup>*</sup>
-      </h5>
+      <div className="text-center mb-4">
+        <h5 className="section-title">
+          Fill Your Contact Details<sup>*</sup>
+        </h5>
+      </div>
 
       {/* Display error message if any */}
       {error && <div className="alert alert-danger">{error}</div>}

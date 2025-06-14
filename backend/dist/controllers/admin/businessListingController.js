@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.increaseClickCount = exports.searchBusinessListings = exports.getAllListingsByUserId = exports.listingBulkAction = exports.changePublishStatus = exports.updateBusinessListingStatus = exports.deleteBusinessListing = exports.updateAllListingsById = exports.getAllListingsById = exports.getAllListings = exports.createBusinessDetails = void 0;
+exports.postReviewAllListingsById = exports.increaseClickCount = exports.searchBusinessListings = exports.getAllListingsByUserId = exports.listingBulkAction = exports.changePublishStatus = exports.updateBusinessListingStatus = exports.deleteBusinessListing = exports.updateAllListingsById = exports.getAllListingsById = exports.getAllListings = exports.createBusinessDetails = void 0;
 const BusinessListing_1 = __importDefault(require("../../models/BusinessListing"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
@@ -22,9 +22,11 @@ const createBusinessDetails = (req, res) => __awaiter(void 0, void 0, void 0, fu
     try {
         const { contactPerson, businessDetails, businessTiming, businessCategory, upgradeListing, } = req.body;
         const parsedBusinessDetails = JSON.parse(businessDetails);
-        const existingBusiness = yield BusinessListing_1.default.findOne({ "businessDetails.businessName": parsedBusinessDetails.businessName, });
+        const userId = JSON.parse(contactPerson).userId;
+        console.log("userId", userId);
+        const existingBusiness = yield BusinessListing_1.default.findOne({ "businessDetails.businessName": parsedBusinessDetails.businessName, "contactPerson.userId": userId });
         if (existingBusiness) {
-            return res.status(400).json({ message: "Business already exists", status: false });
+            return res.status(200).json({ message: "Business already exists", status: false });
         }
         const files = req.files;
         const imageUrls = [];
@@ -503,6 +505,7 @@ const increaseClickCount = (req, res) => __awaiter(void 0, void 0, void 0, funct
         const allowedClickTypes = ["direction", "share", "contact", "website", "whatsapp", "listings"];
         const { type, user } = req.body;
         const businessId = req.params.id;
+        console.log("🚀 Click type:", req.body, businessId, type);
         if (!type || !allowedClickTypes.includes(type)) {
             return res.status(400).json({ status: false, message: "Invalid or missing click type." });
         }
@@ -510,6 +513,7 @@ const increaseClickCount = (req, res) => __awaiter(void 0, void 0, void 0, funct
             return res.status(400).json({ status: false, message: "Missing userId in body." });
         }
         const business = yield BusinessListing_1.default.findById(businessId);
+        console.log("🚀business:", business);
         if (!business) {
             return res.status(404).json({ status: false, message: "Business not found." });
         }
@@ -549,3 +553,32 @@ const increaseClickCount = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.increaseClickCount = increaseClickCount;
+const postReviewAllListingsById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log("BODY:->", req.body);
+        const listing = yield BusinessListing_1.default.findById(req.params.id);
+        if (!listing) {
+            return res.status(404).json({ status: false, message: "Business listing not found" });
+        }
+        // Extract and format review fields properly
+        const review = {
+            author: req.body['reviews[author]'],
+            comment: req.body['reviews[comment]'],
+            rating: parseInt(req.body['reviews[rating]']),
+            user: req.body['reviews[user]'],
+        };
+        // Basic validation
+        if (!review.author || !review.comment || isNaN(review.rating) || !review.user) {
+            return res.status(400).json({ status: false, message: "Missing or invalid review fields" });
+        }
+        // Add the review
+        listing.reviews.push(review);
+        yield listing.save();
+        return res.status(200).json({ status: true, message: "Review added successfully", data: listing.reviews[listing.reviews.length - 1], });
+    }
+    catch (error) {
+        console.error("Error adding review:", error);
+        return res.status(500).json({ status: false, message: "Failed to add review", error: error.message, });
+    }
+});
+exports.postReviewAllListingsById = postReviewAllListingsById;

@@ -10,7 +10,8 @@ import categoryImage from "../../Images/Step3.png";
 import timingImage from "../../Images/Step3.png";
 import upgradeImage from "../../Images/Step4.png";
 import Head from "next/head";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import BusinessDetails from "../../Components/FreeListingform/BusinessDetails";
 import ContactPerson from "../../Components/FreeListingform/ContactPerson";
 import BusinessCategory from "../../Components/FreeListingform/BusinessCategory";
@@ -41,19 +42,16 @@ const Page = () => {
 
     try {
       const response = await postData("createBusinessListing", form);
-
-      if (response.status) {
-        // const data = await response.json();
-        // console.log("Success:", response.data);
+      console.log("ZZZZZZZZZZ:=>", response.status)
+      if (response?.status) {
+        toast.success(response.message);
         router.push('/pages/freelistingform/freelistingformsuccess')
 
       } else {
-        const error = await response.json();
-        // console.log("Error:", error.message);
-        // Handle error
+        toast.error(response.message);
       }
     } catch (e) {
-      // console.log(e);
+      console.log(e);
     }
   }
 
@@ -71,6 +69,7 @@ const Page = () => {
 
   return (
     <>
+      <ToastContainer />
       <Head>
         <title>Free Business Listing | List Your Businesses on Biziffy</title>
         <meta

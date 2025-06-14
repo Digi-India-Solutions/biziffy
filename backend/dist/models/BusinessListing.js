@@ -1,44 +1,8 @@
 "use strict";
-// import mongoose, { Schema, Document } from "mongoose";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// export interface IBusinessListing extends Document {
-//   businessName: string;
-//   ownerName: string;
-//   email: string;
-//   phone: string;
-//   address: string;
-//   category: string;
-//   subcategory: string;
-//   businessStatus: string; // e.g. Approved, Pending, Rejected
-//   trustStatus: string;    // e.g. Approved, Not Approved
-//   publishStatus: string;  // e.g. Published, Unpublished
-//   publishedDate?: Date;
-//   createdAt: Date;
-// }
-// const BusinessListingSchema: Schema = new Schema(
-//   {
-//     businessName: { type: String, required: true },
-//     ownerName: { type: String },
-//     email: { type: String },
-//     phone: { type: String },
-//     address: { type: String },
-//     category: { type: String },
-//     subcategory: { type: String },
-//     businessStatus: { type: String, default: "Pending" },
-//     trustStatus: { type: String, default: "Not Approved" },
-//     publishStatus: { type: String, default: "Unpublished" },
-//     publishedDate: { type: Date },
-//   },
-//   { timestamps: true }
-// );
-// export default mongoose.model<IBusinessListing>(
-//   "BusinessListing",
-//   BusinessListingSchema
-// );
-// models/BusinessListing.ts
 const mongoose_1 = __importDefault(require("mongoose"));
 const mongoose_2 = require("mongoose");
 const ContactPersonSchema = new mongoose_1.default.Schema({
@@ -114,6 +78,12 @@ const faqSchema = new mongoose_1.default.Schema({
     question: { type: String },
     answer: { type: String },
 });
+const reviewsSchema = new mongoose_1.default.Schema({
+    author: { type: String },
+    rating: { type: Number },
+    comment: { type: String },
+    user: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Auth" },
+});
 const BusinessListingSchema = new mongoose_1.default.Schema({
     contactPerson: ContactPersonSchema,
     businessDetails: BusinessDetailsSchema,
@@ -123,5 +93,6 @@ const BusinessListingSchema = new mongoose_1.default.Schema({
     // clickCounts: clickCountsSchema,
     clickCounts: { type: ClickCountsSchema },
     faq: [faqSchema],
+    reviews: [reviewsSchema]
 }, { timestamps: true });
 exports.default = mongoose_1.default.model("BusinessListing", BusinessListingSchema);

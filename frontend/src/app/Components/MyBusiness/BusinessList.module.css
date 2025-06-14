@@ -26,6 +26,8 @@
 
 .businessImage {
   border-radius: 8px;
+  width: 50%;
+  height: 50%;
 }
 
 @media screen and (max-width: 500px) {

@@ -9,5 +9,5 @@ router.post("/create-pincode", createPincode)
 router.get("/get-all-pin-codes-by-id/:id", getAllPinCodesById)
 router.post("/update-pincode/:id", updatePincode)
 router.get("/delete-Pincode/:id", deletePincode)
-router.get("/get-areapincode-by-state", getAreapincodeByState)
+router.post("/get-areapincode-by-state", getAreapincodeByState)
 export default router;

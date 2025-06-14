@@ -12,5 +12,5 @@ router.post("/create-pincode", pinCodeController_1.createPincode);
 router.get("/get-all-pin-codes-by-id/:id", pinCodeController_1.getAllPinCodesById);
 router.post("/update-pincode/:id", pinCodeController_1.updatePincode);
 router.get("/delete-Pincode/:id", pinCodeController_1.deletePincode);
-router.get("/get-areapincode-by-state", pinCodeController_1.getAreapincodeByState);
+router.post("/get-areapincode-by-state", pinCodeController_1.getAreapincodeByState);
 exports.default = router;

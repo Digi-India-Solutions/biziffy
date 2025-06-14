@@ -177,7 +177,7 @@ export const deletePincode = async (req: Request, res: Response) => {
 
 export const getAreapincodeByState = async (req: Request, res: Response) => {
     try {
-        const { state } = req?.query;
+        const { state } = req?.body;
 
         console.log("state-state-", state)
 

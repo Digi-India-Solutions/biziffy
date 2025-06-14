@@ -177,7 +177,7 @@ const deletePincode = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.deletePincode = deletePincode;
 const getAreapincodeByState = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { state } = req === null || req === void 0 ? void 0 : req.query;
+        const { state } = req === null || req === void 0 ? void 0 : req.body;
         console.log("state-state-", state);
         if (!state) {
             return res.status(400).json({ message: "State is required" });

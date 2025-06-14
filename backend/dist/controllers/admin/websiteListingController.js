@@ -19,13 +19,20 @@ const WebsiteListingModel_1 = __importDefault(require("../../models/WebsiteListi
 const createDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("BODY:-", req.body);
-        const { companyName, website, shortDescription, 
-        // aboutBusiness, 
-        // area,
-        service, userId } = req.body;
+        const { companyName, website, shortDescription, service, userId } = req.body;
         // Validate required fields
         if (!companyName || !website || !shortDescription || !service) {
-            return res.status(400).json({ message: "All fields are required", status: false });
+            return res.status(200).json({ message: "All fields are required", status: false });
+        }
+        const existingListing = yield WebsiteListingModel_1.default.findOne({ 'website': website, 'userId': userId });
+        console.log("userIdexistingListingName1,", existingListing);
+        if (existingListing) {
+            return res.status(200).json({ message: "Website already exists", status: false });
+        }
+        const existingListingName = yield WebsiteListingModel_1.default.findOne({ companyName, 'userId': userId });
+        console.log("userIdexistingListingName2,", existingListingName);
+        if (existingListingName) {
+            return res.status(200).json({ message: "Company name already exists", status: false });
         }
         // Handle single image file
         const file = (req.file || (req.files && Array.isArray(req.files) && req.files[0]));
@@ -36,30 +43,16 @@ const createDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         }
         // Create the business listing (initial phase)
         const listing = new WebsiteListingModel_1.default({
-            companyName,
-            website,
-            shortDescription,
-            // aboutBusiness,
-            // area,
-            userId,
-            service: Array.isArray(service) ? service : [service],
-            logo: imageUrl || "",
+            companyName, website, shortDescription, userId,
+            service: Array.isArray(service) ? service : [service], logo: imageUrl || "",
         });
         yield listing.save();
-        res.status(201).json({
-            message: "Business listing created successfully",
-            status: true,
-            data: listing,
-        });
+        res.status(201).json({ message: "Business listing created successfully", status: true, data: listing, });
     }
     catch (error) {
         const err = error;
         console.error("Error creating business listing:", err);
-        res.status(500).json({
-            message: "Failed to create business listing",
-            status: false,
-            error: err.message,
-        });
+        res.status(500).json({ message: "Failed to create business listing", status: false, error: err.message, });
     }
 });
 exports.createDetails = createDetails;
@@ -76,34 +69,17 @@ const createAdditionalInformation = (req, res) => __awaiter(void 0, void 0, void
         if (!listing) {
             return res.status(404).json({ message: "Business listing not found", status: false });
         }
-        // Handle multiple photo uploads
-        // const files = req.files as Express.Multer.File[] | undefined;
-        // let businessPhotoUrls: string[] = [];
-        // if (files && Array.isArray(files)) {
-        //     for (const file of files) {
-        //         const imageUrl = await uploadImage(file.path);
-        //         businessPhotoUrls.push(imageUrl);
-        //         deleteLocalFile(file.path);
-        //     }
-        // }
         // Update listing fields
         listing.category = category;
         listing.subCategory = subCategory;
         listing.serviceArea = serviceArea;
-        // if (businessPhotoUrls.length > 0) {
-        //     listing.businessPhotos = businessPhotoUrls;
-        // }
         yield listing.save();
         res.status(200).json({ message: "Additional business info updated successfully", status: true, data: listing, });
     }
     catch (error) {
         const err = error;
         console.error("Error updating business listing:", err);
-        res.status(500).json({
-            message: "Failed to update business listing",
-            status: false,
-            error: err.message,
-        });
+        res.status(500).json({ message: "Failed to update business listing", status: false, error: err.message, });
     }
 });
 exports.createAdditionalInformation = createAdditionalInformation;

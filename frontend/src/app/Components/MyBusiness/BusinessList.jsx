@@ -71,12 +71,13 @@ import placeholderImg from "../../Images/LocalShops.webp";
 import styles from "./BusinessList.module.css";
 import { useRouter } from "next/navigation";
 
-const BusinessList= ({ businessListing }) => {
+const BusinessList = ({ businessListing }) => {
   const router = useRouter();
 
   const handleEditClick = (id) => {
     router.push(`/pages/mybusiness/editmybusiness/${id}`);
-  };
+  };  
+
 
   return (
     <div className="container py-4">
@@ -87,8 +88,8 @@ const BusinessList= ({ businessListing }) => {
       )}
 
       {businessListing?.map((biz) => {
-        const imageSrc =
-          biz.businessCategory?.businessImages?.[0] || placeholderImg;
+        // console.log("", biz.businessCategory?.businessImages?.[0])
+        const imageSrc = biz.businessCategory?.businessImages?.[0] || placeholderImg;
 
         const fullAddress = [
           biz.businessDetails?.building,

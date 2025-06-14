@@ -19,8 +19,9 @@ const Page = () => {
     const fetchBusinessDetails = async () => {
       try {
         const response = await getData(`get-all-listings-by-id/${Id}`);
-        if (response.status === 200) {
-          setBusinesses(response.data || []);
+        console.log("Business Listings:=>", response);
+        if (response?.status === true) {
+          setBusinesses(response?.data || []);
         } else {
           setError('Failed to fetch data.');
         }
@@ -34,8 +35,8 @@ const Page = () => {
 
     const fetchAdvartisMant = async () => {
       try {
-        const response = await getData("/advertisements/get-all-advertisements");
-        const activeAds = response.data?.filter((ad) => ad?.status === "Active" && ad.type === 'Listing detail Right') || [];
+        const response = await getData("advertisements/get-all-advertisements");
+        const activeAds = response?.filter((ad) => ad?.status === "Active" && ad.type === 'Listing detail Right') || [];
         setAdvertisements(activeAds);
         console.log("Filtered active ads:", activeAds);
       } catch (error) {
@@ -58,7 +59,7 @@ const Page = () => {
         ) : error ? (
           <p style={{ color: 'red' }}>{error}</p>
         ) : (
-          <Businesslistingdetails advertisements={advertisements} businesses={businesses} />
+          <Businesslistingdetails  advertisements={advertisements} businesses={businesses} />
         )}
       </div>
     </div>

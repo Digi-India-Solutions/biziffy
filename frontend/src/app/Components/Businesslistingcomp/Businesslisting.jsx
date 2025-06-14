@@ -84,15 +84,15 @@ const Businesslisting = () => {
       let response;
       if (pincode || query) {
         response = await getData("search-listings", {
-          params: { pincode, query, title, state },
+          params: { pincode, query, title, state }
         });
       }
-      console.log("FFFFFFFFFFF", response?.data);
+      console.log("FFFFFFFFFFF:=>", response?.data);
       setBusinesses(response?.data || []);
     } catch (error) {
       console.error("Failed to fetch listings:", error);
     }
-  }, [pincode, query, title, state]);  // ✅ add 'title'
+  }, [pincode, query, title, state]);
 
   const fetchWebsiteListing = useCallback(async () => {
     try {
@@ -102,7 +102,7 @@ const Businesslisting = () => {
           params: { pincode, query, title, state },
         });
       }
-      console.log("FFFFFFFFFFFWebsite", response?.data);
+      console.log("FFFFFFFFFFFWebsite", response);
       if (response?.status) {
         setWebsiteList(response?.data || []);
       }
@@ -131,7 +131,7 @@ const Businesslisting = () => {
 
     if (!lastClickDay || parseInt(lastClickDay) < currentDay) {
 
-      getData(`increase-click-count/${businessId}`, { type, user })
+      postData(`admin/increase-click-count/${businessId}`, { type, user })
         .then(() => { console.log(`${type} click counted`); localStorage.setItem(key, currentDay.toString()); })
         .catch((err) => { console.error("Error increasing count", err) });
     } else {
@@ -354,13 +354,13 @@ const Businesslisting = () => {
                             </div>
 
                             <div className="d-flex gap-2 align-items-center">
-                              <p>
-                                {biz?.rating} <i className="bi bi-star-fill"></i>
+                              <div>
+                                {biz?.reviews[0]?.rating} <i className="bi bi-star-fill"></i>
                                 <i className="bi bi-star-fill"></i>
                                 <i className="bi bi-star-fill"></i>
                                 <i className="bi bi-star-fill"></i>
-                                <i className="bi bi-star-fill"></i> ({biz?.reviews})
-                              </p>
+                                <i className="bi bi-star-fill"></i> ({biz?.reviews[0]?.rating})
+                              </div>
                               <span>|</span>
                               <p>{biz?.businessCategory?.category?.name}</p>
                             </div>

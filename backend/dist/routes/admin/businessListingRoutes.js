@@ -20,4 +20,5 @@ router.post("/listing-bulk-action", businessListingController_1.listingBulkActio
 router.get("/get-all-listings-by-user-id/:id", businessListingController_1.getAllListingsByUserId);
 router.get("/search-listings", businessListingController_1.searchBusinessListings);
 router.post("/increase-click-count/:id", businessListingController_1.increaseClickCount);
+router.post("/post-review-all-listings-by-id/:id", businessListingController_1.postReviewAllListingsById);
 exports.default = router;

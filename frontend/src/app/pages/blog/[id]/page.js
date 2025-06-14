@@ -5,7 +5,7 @@ import "./blogdetails.css";
 import breadbg from "../../../Images/bread.jpg";
 import Head from "next/head";
 
-const page = () => {
+const Page = () => {
   return (
     <>
 
@@ -102,4 +102,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

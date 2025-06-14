@@ -164,9 +164,7 @@ export default function EditWebsiteProfile({ listingId }) {
     useEffect(() => {
         const fetchAreas = async () => {
             try {
-                const res = await getData(`pincode/get-areapincode-by-state`, {
-                    params: { state: formData?.state }
-                });
+               const res = await postData(`pincode/get-areapincode-by-state`, { state: formData?.businessDetails?.state });
                 console.log("DADAhhh", res)
                 const areaList = res?.map((user) => `${user?.area} ${user?.pinCode}`);
                 setAreas(areaList);

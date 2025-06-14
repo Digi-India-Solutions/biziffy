@@ -118,7 +118,7 @@ const BusinessTiming = ({ setKey, formData, setFormData }) => {
       // if (response.ok) {
       //   const data = await response.json();
       //   console.log("Timings saved successfully", data);
-        setKey("upgrade"); // Proceed to next step
+      setKey("upgrade"); // Proceed to next step
       // } else {
       //   const error = await response.json();
       //   console.error("Error saving timings", error.message);
@@ -130,10 +130,11 @@ const BusinessTiming = ({ setKey, formData, setFormData }) => {
 
   return (
     <form onSubmit={handleSubmit} className="business-timing-container">
+      <div className="text-center mb-4">
       <h5 className="section-title">
         Select Business Days & Timing<sup>*</sup>
       </h5>
-
+      </div>
       {/* Select All Button */}
       <div className="select-all-container">
         <input
@@ -267,9 +268,26 @@ const BusinessTiming = ({ setKey, formData, setFormData }) => {
         </div>
       ))}
 
-      <button type="submit" className="btn btn-primary w-100 py-3">
-        Next
-      </button>
+      {/* Button Controls */}
+      <div style={{ display: "flex", justifyContent: "space-between", gap: "12px", marginTop: "20px" }}>
+        <button
+          type="button"
+          style={{ backgroundColor: "#343a40", color: "#fff", border: "none", padding: "0.5rem 1.2rem", borderRadius: "5px", cursor: "pointer", fontWeight: "bold", fontSize: "14px", flex: 1, transition: "background 0.3s ease" }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#212529")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#343a40")}
+          onClick={() => setKey?.("category")}
+        >
+          ← Back
+        </button>
+
+        <button
+          type="submit"
+          className="btn btn-success fw-bold"
+          style={{ flex: 1 }}
+        >
+          Submit
+        </button>
+      </div>
     </form>
   );
 };

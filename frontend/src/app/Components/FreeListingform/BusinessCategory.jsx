@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import "../../pages/freelistingform/freelistingform.css";
-import { getData } from "../../services/FetchNodeServices";
+import { getData, postData } from "../../services/FetchNodeServices";
 
 const BusinessCategory = ({ setKey, formData, setFormData }) => {
   const [category, setCategory] = useState(formData?.businessCategory?.category || "");
@@ -19,24 +19,22 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
   const [serviceAreainput, setServiceAreaInput] = useState("");
   const [bImage, setBImage] = useState([]);
 
-  console.log("DADADADADADADADADA:= ", formData.businessDetails?.state)
+  console.log("DADADADADADADADADA:= ", formData?.businessDetails?.state)
 
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const res = await getData(`pincode/get-areapincode-by-state`, {
-          params: { state: formData?.businessDetails?.state }
-        });
-        console.log("DADAhhh", res?.data)
+        const res = await postData(`pincode/get-areapincode-by-state`, { state: formData?.businessDetails?.state });
+        console.log("DADAhhh", res)
 
-        const areaList = res.data.map((user) => `${user.area} ${user.pinCode}`);
+        const areaList = res?.map((user) => `${user?.area} ${user?.pinCode}`);
         setAreas(areaList);
       } catch (error) {
         console.error("Error fetching areas:", error);
       }
     };
     fetchAreas();
-  }, [formData.businessDetails?.state]);
+  }, [formData?.businessDetails?.state]);
 
   useEffect(() => {
     const fetchCategory = async () => {
@@ -55,7 +53,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
       const fetchSubCategory = async () => {
         try {
           const response = await getData(`admin/get-Subcategories-by-category/${category}`);
-          setSubCategoryList(response.data);
+          setSubCategoryList(response);
         } catch (error) {
           console.error("Error fetching subcategories:", error);
         }
@@ -136,9 +134,9 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
     setServiceAreaInput("");
   };
 
-  const filteredAreas = areas.filter(
+  const filteredAreas = areas?.filter(
     (area) =>
-      area.toLowerCase().includes(serviceAreainput.toLowerCase()) &&
+      area?.toLowerCase().includes(serviceAreainput.toLowerCase()) &&
       !serviceArea.includes(area)
   );
 
@@ -157,8 +155,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="text-center mb-4">
-
-      <h5 className="section-title">Business Category<sup>*</sup></h5>
+        <h5 className="section-title">Business Category<sup>*</sup></h5>
       </div>
 
       <div className="mb-3">
@@ -181,7 +178,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
 
       <div className="mb-3">
         <label className="form-label">
-         Business SubCategory <sup>*</sup>
+          Business SubCategory <sup>*</sup>
         </label>
 
         {/* Wrapper to prevent select overlap */}
@@ -194,9 +191,9 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
           // style={{ height: 'auto', minHeight: '30px' }} 
           >
             <option value="">Select Your SubCategory</option>
-            {subCategoryList.map((cat) => (
-              <option key={cat._id} value={cat._id} >
-                {cat.name}
+            {subCategoryList?.map((cat) => (
+              <option key={cat?._id} value={cat?._id} >
+                {cat?.name}
               </option>
             ))}
           </select>
@@ -218,7 +215,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
         <div className="mt-2 d-flex flex-wrap">
           {subCategory.map((cat) => (
             <span key={cat} className="badge bg-primary m-1 d-flex align-items-center">
-              {subCategoryList.find((item) => item._id === cat)?.name || cat}
+              {subCategoryList.find((item) => item?._id === cat)?.name || cat}
               <button
                 type="button"
                 className="btn-close btn-close-white ms-2"
@@ -244,7 +241,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
         />
         <div className="mt-2">
           {keywords.map((keyword, index) => (
-            <span style={{textTransform:"capitalize"}} key={index} className="badge bg-primary m-1 p-2">
+            <span style={{ textTransform: "capitalize" }} key={index} className="badge bg-primary m-1 p-2">
               {keyword}
               <button
                 type="button"
@@ -266,9 +263,9 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
           value={serviceAreainput}
           onChange={(e) => setServiceAreaInput(e.target.value)}
         />
-        {serviceAreainput && filteredAreas.length > 0 && (
+        {serviceAreainput && filteredAreas?.length > 0 && (
           <ul className="list-group position-absolute z-3 w-100">
-            {filteredAreas.map((area) => (
+            {filteredAreas?.map((area) => (
               <li
                 key={area}
                 className="list-group-item list-group-item-action"
@@ -281,8 +278,8 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
           </ul>
         )}
         <div className="mt-2">
-          {serviceArea.map((serarea) => (
-            <span key={serarea} style={{textTransform:"capitalize"}} className="badge bg-primary m-1 p-2">
+          {serviceArea?.map((serarea) => (
+            <span key={serarea} style={{ textTransform: "capitalize" }} className="badge bg-primary m-1 p-2">
               {serarea}
               <button
                 type="button"
@@ -331,7 +328,27 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
         </div>
       </div>
 
-      <button type="submit" className="btn btn-primary w-100 py-3">Next</button>
+     {/* Button Controls */}
+     <div style={{ display: "flex", justifyContent: "space-between", gap: "12px", marginTop: "20px" }}>
+        <button
+          type="button"
+          style={{ backgroundColor: "#343a40", color: "#fff", border: "none", padding: "0.5rem 1.2rem", borderRadius: "5px", cursor: "pointer", fontWeight: "bold", fontSize: "14px", flex: 1, transition: "background 0.3s ease" }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#212529")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#343a40")}
+          onClick={() => setKey?.("business")}
+        >
+          ← Back
+        </button>
+
+        <button
+          type="submit"
+          className="btn btn-success fw-bold"
+          style={{ flex: 1 }}
+        >
+          Submit
+        </button>
+      </div>
+
     </form>
   );
 };

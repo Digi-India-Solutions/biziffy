@@ -127,7 +127,7 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
 
   const validateForm = () => {
     const requiredFields = [
-      "businessName", "building", "street",  "landmark",
+      "businessName", "building", "street", "landmark",
       "state", "city", "pinCode"
     ];
     for (let field of requiredFields) {
@@ -175,12 +175,15 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h5 className="section-title">Fill Business Details<sup>*</sup></h5>
+      <div className="text-center mb-4">
+        <h5 className="section-title">Fill Business Details<sup>*</sup></h5>
+      </div>
 
       {error && <div className="alert alert-danger">{error}</div>}
 
       {[
         { label: "Business Name", name: "businessName" },
+        { label: "Years In Business", name: "yib" }, // 
         { label: "Building/Block No", name: "building" },
         { label: "Street/Colony Name", name: "street" },
         // { label: "Area", name: "area" },
@@ -242,10 +245,26 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
           required
         />
       </div>
+       {/* Button Controls */}
+     <div style={{ display: "flex", justifyContent: "space-between", gap: "12px", marginTop: "20px" }}>
+        <button
+          type="button"
+          style={{ backgroundColor: "#343a40", color: "#fff", border: "none", padding: "0.5rem 1.2rem", borderRadius: "5px", cursor: "pointer", fontWeight: "bold", fontSize: "14px", flex: 1, transition: "background 0.3s ease" }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#212529")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#343a40")}
+          onClick={() => setKey?.("contact")}
+        >
+          ← Back
+        </button>
 
-      <button type="submit" className="btn btn-primary w-100 py-3" disabled={loading}>
-        {loading ? "Submitting..." : "Next"}
-      </button>
+        <button
+          type="submit"
+          className="btn btn-success fw-bold"
+          style={{ flex: 1 }}
+        >
+          Submit
+        </button>
+      </div>
     </form>
   );
 };

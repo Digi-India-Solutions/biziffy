@@ -11,10 +11,12 @@ export const createBusinessDetails = async (req: Request, res: Response) => {
     const { contactPerson, businessDetails, businessTiming, businessCategory, upgradeListing, } = req.body;
 
     const parsedBusinessDetails = JSON.parse(businessDetails);
-    const existingBusiness = await BusinessListing.findOne({ "businessDetails.businessName": parsedBusinessDetails.businessName, });
+    const userId = JSON.parse(contactPerson).userId
+    console.log("userId", userId)
+    const existingBusiness = await BusinessListing.findOne({ "businessDetails.businessName": parsedBusinessDetails.businessName, "contactPerson.userId": userId });
 
     if (existingBusiness) {
-      return res.status(400).json({ message: "Business already exists", status: false });
+      return res.status(200).json({ message: "Business already exists", status: false });
     }
 
     const files = req.files as Express.Multer.File[] | undefined;
@@ -524,7 +526,7 @@ export const searchBusinessListings = async (req: Request, res: Response) => {
         { "businessCategory.serviceArea": { $elemMatch: { $regex: keywordRegex } } }
       ]
     };
-    
+
     console.log("listingsDATA:-", baseQuery)
     // Step 2: Add pincode/state filters if present
     const locationFilters: any[] = [];
@@ -540,10 +542,10 @@ export const searchBusinessListings = async (req: Request, res: Response) => {
     if (locationFilters.length) {
       baseQuery.$and = [{ $or: locationFilters }];
     }
-// console.log("baseQuery:==",baseQuery)
+    // console.log("baseQuery:==",baseQuery)
     let listings = await BusinessListing.find(baseQuery)
       .populate("businessCategory.category businessCategory.subCategory")
-      // .lean(); // Lean for performance
+    // .lean(); // Lean for performance
 
     // Step 3: Additional filtering for CityPage (match category name exactly)
     if (title === "CityPage" && query) {
@@ -564,7 +566,7 @@ export const searchBusinessListings = async (req: Request, res: Response) => {
       status: true,
       data: filteredListings,
     });
-    
+
   } catch (error: any) {
     console.error("❌ Search Error:", error.message);
     return res.status(500).json({
@@ -584,6 +586,8 @@ export const increaseClickCount = async (req: Request, res: Response) => {
     const { type, user } = req.body;
     const businessId = req.params.id;
 
+    console.log("🚀 Click type:", req.body, businessId, type);
+
     if (!type || !allowedClickTypes.includes(type)) {
       return res.status(400).json({ status: false, message: "Invalid or missing click type." });
     }
@@ -593,6 +597,7 @@ export const increaseClickCount = async (req: Request, res: Response) => {
     }
 
     const business = await BusinessListing.findById(businessId);
+    console.log("🚀business:", business);
     if (!business) {
       return res.status(404).json({ status: false, message: "Business not found." });
     }
@@ -635,6 +640,41 @@ export const increaseClickCount = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error("Click count error:", error);
     return res.status(500).json({ status: false, message: error.message || "Server error." });
+  }
+};
+
+
+export const postReviewAllListingsById = async (req: Request, res: Response) => {
+  try {
+    console.log("BODY:->", req.body);
+
+    const listing = await BusinessListing.findById(req.params.id);
+    if (!listing) {
+      return res.status(404).json({ status: false, message: "Business listing not found" });
+    }
+
+    // Extract and format review fields properly
+    const review = {
+      author: req.body['reviews[author]'],
+      comment: req.body['reviews[comment]'],
+      rating: parseInt(req.body['reviews[rating]']),
+      user: req.body['reviews[user]'],
+    };
+
+    // Basic validation
+    if (!review.author || !review.comment || isNaN(review.rating) || !review.user) {
+      return res.status(400).json({ status : false, message: "Missing or invalid review fields" });
+    }
+
+    // Add the review
+    listing.reviews.push(review);
+    await listing.save();
+
+    return res.status(200).json({ status: true, message: "Review added successfully", data: listing.reviews[listing.reviews.length - 1], });
+
+  } catch (error: any) {
+    console.error("Error adding review:", error);
+    return res.status(500).json({status: false, message: "Failed to add review", error: error.message, });
   }
 };
 

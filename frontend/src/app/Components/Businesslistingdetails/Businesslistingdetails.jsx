@@ -57,16 +57,48 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
     setExpanded(!expanded);
   };
 
-  const handleAddReview = () => {
-    if (newReview.author && newReview.comment) {
-      const updatedReviews = [...reviews, newReview];
-      setReviews(updatedReviews);
-      setNewReview({ author: "", comment: "", rating: 0 });
-      console.log("updatedReviews:--", updatedReviews);
-      setShowForm(false);
+  useEffect(() => {
+    const storedData = localStorage.getItem('biziffyUser');
+    const userData = JSON.parse(storedData);
+    setNewReview({ ...newReview, user: userData?._id });
+  }, [])
+
+  const handleAddReview = async () => {
+    if (newReview.author.trim() && newReview.comment.trim()) {
+      const body = {
+        'reviews[author]': newReview.author,
+        'reviews[comment]': newReview.comment,
+        'reviews[rating]': newReview.rating,
+        'reviews[user]': newReview.user,
+      };
+
+      try {
+        const response = await postData(
+          `admin/post-review-all-listings-by-id/${businesses?._id}`,
+          body
+        );
+        console.log('responsereviews:', response);
+
+        if (response?.status || response?.data?.status) {
+          const updatedReviews = [...reviews, newReview];
+          setReviews(updatedReviews);
+          setNewReview({ author: '', comment: '', rating: 0, user: '' });
+          toast.success('Review added successfully!');
+
+          setShowForm(false);
+        } else {
+          toast.error('Failed to add review. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error adding review:', error);
+        toast.error('Something went wrong. Please try again later.');
+      }
+    } else {
+      toast.warn('Please fill in author and comment fields.');
     }
   };
 
+  console.log("businesses", businesses?._id)
   const openLightbox = (index) => {
     setCurrentIndex(index);
     setLightbox(true);
@@ -152,6 +184,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
 
     }
   }
+  console.log('responsereviews:=>', businesses.reviews)
   return (
     <>
       <div className="container mt-4">
@@ -425,7 +458,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                     </p>
                     <ul className="review-list">
 
-                      {reviews?.map((review, index) => (
+                      {businesses?.reviews?.map((review, index) => (
                         <li key={index}>
                           <span className="review-name">
                             {typeof review.author === "string" &&
@@ -439,7 +472,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                                 <i
                                   key={i}
                                   className={
-                                    i < review.rating
+                                    i < review?.rating
                                       ? "bi bi-star-fill"
                                       : "bi bi-star"
                                   }
@@ -447,11 +480,47 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                               ))}
                             </div>
                             <p className="client-feedback">
-                              {`"${review.comment || ""}"`}
+                              {`"${review?.comment || ""}"`}
                             </p>
                           </div>
                         </li>
                       ))}
+
+                      <div className="text-center">
+                        <button
+                          className="login-btn mb-2"
+                          onClick={() => setShowForm(!showForm)}
+                        >
+                          {showForm ? "Hide Review Form" : "Write a Review"}{" "}
+                          <i className="bi bi-pencil"></i>
+                        </button>
+
+                        {showForm && (
+                          <div className="add-review">
+                            <h4>Add a Review</h4>
+                            <input type="text" placeholder="Your Name" className="login-input mb-2" value={newReview?.author} onChange={(e) => setNewReview({ ...newReview, author: e.target.value, })} />
+                            <textarea placeholder="Your Comment" className="login-input mb-2" value={newReview?.comment} onChange={(e) => setNewReview({ ...newReview, comment: e.target.value, })}></textarea>
+                            <div className="rating-selection">
+                              <p>
+                                <b>Select Rating:</b>
+                              </p>
+                              <div>
+                                {[...Array(5)].map((_, i) => (
+                                  <i
+                                    key={i}
+                                    className={i < newReview.rating ? "bi bi-star-fill" : "bi bi-star"}
+                                    onClick={() => setNewReview({ ...newReview, rating: i + 1, })}
+                                    style={{ cursor: "pointer" }}
+                                  ></i>
+                                ))}
+                              </div>
+                            </div>
+                            <button className="btn btn-primary" onClick={handleAddReview}                        >
+                              Submit
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </ul>
                   </div>
                   <hr />
@@ -568,21 +637,23 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                 >
                   <h4>Photos</h4>
                   <div className="photo-gallery d-flex flex-wrap gap-2">
-                    {visiblePhotos.map((photo, index) => (
+                    {businesses?.businessCategory?.businessImages?.map((photo, index) => (
                       <Image
                         key={index}
                         src={photo}
+                        width={200}
+                        height={200}
                         alt={`Photo ${index + 1}`}
                         className="gallery-img"
                         onClick={() => openLightbox(index)}
                       />
                     ))}
-                    {!showAll && staticPhotos.length > 4 && (
+                    {!showAll && businesses?.businessCategory?.businessImages.length > 4 && (
                       <div
                         className="plus-overlay"
                         onClick={() => setShowAll(true)}
                       >
-                        +{staticPhotos.length - 4}
+                        +{businesses?.businessCategory?.businessImages?.length - 4}
                       </div>
                     )}
                   </div>

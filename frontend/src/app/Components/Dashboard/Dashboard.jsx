@@ -201,6 +201,7 @@ const Dashboard = ({ businessListing }) => {
     }))
     : [];
 
+    // console.log("businessListing", businessListing)
   const totalListings = businessListing.reduce((acc, item) => {
     return acc + (item?.clickCounts?.listings?.count || 0);
   }, 0);

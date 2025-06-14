@@ -25,6 +25,7 @@ export default function EditBusinessProfile({ listingId }) {
   const [areas, setAreas] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
+  const [statesList, setStatesList] = useState([])
 
   const [formData, setFormData] = useState({
     businessname: "", businessCategory: "", businessSubCategory: [], services: [], businessArea: [], Building: "",
@@ -278,9 +279,7 @@ export default function EditBusinessProfile({ listingId }) {
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const res = await getData(`pincode/get-areapincode-by-state`, {
-          params: { state: formData?.state }
-        });
+        const res = await postData(`pincode/get-areapincode-by-state`, { state: formData?.businessDetails?.state });
         console.log("DADAhhh", res)
         const areaList = res?.data.map((user) => `${user?.area} ${user?.pinCode}`);
         setAreas(areaList);
@@ -316,10 +315,7 @@ export default function EditBusinessProfile({ listingId }) {
   console.log("FORMDATA:___---:-", formData);
 
   useEffect(() => {
-    // Get the category name
     const Cname = categoryList?.find((cl) => cl?._id === formData?.businessCategory);
-
-    // Get all selected subcategory names
     const SCN = formData?.businessSubCategory?.map((id) => {
       const match = subCategoryList?.find((sc) => sc?._id === id);
       return match?.name || "";
@@ -328,6 +324,24 @@ export default function EditBusinessProfile({ listingId }) {
     // Update both values in one setFormData call
     setFormData((prev) => ({ ...prev, categoryName: Cname?.name || "", subCategoryName: SCN, }));
   }, [formData?.businessCategory, formData?.businessSubCategory]);
+
+  const fetchState = async () => {
+    try {
+      const response = await getData("state/get-all-states");
+      // console.log("XXXXXXXXXXXXXXX>>>", response.data)
+
+      if (response?.status) {
+        setStatesList(response?.data);
+      }
+
+    } catch (err) {
+      console.log('err', err)
+    }
+  }
+
+  useEffect(() => {
+    fetchState()
+  }, [])
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -363,7 +377,7 @@ export default function EditBusinessProfile({ listingId }) {
               <div className="col-md-4">
                 <div className="edit-profile-field">
                   <label>Years In Business</label>
-                  <input type="text" name="yib" value={formData.yib} onChange={handleChange} />
+                  <input type="text" name="yib" value={formData?.yib} onChange={handleChange} />
                 </div>
               </div>
             </div>
@@ -380,13 +394,13 @@ export default function EditBusinessProfile({ listingId }) {
         return (
           <form onSubmit={handleSubmit}>
             <div className="row align-items-center">
-              <div className="col-md-3">
+              <div className="col-md-4">
                 <div className="edit-profile-field">
                   <label>Building/Block No</label>
                   <input type="text" name="Building" value={formData.Building} onChange={handleChange} />
                 </div>
               </div>
-              <div className="col-md-3">
+              <div className="col-md-4">
                 <div className="edit-profile-field">
                   <label>Street/Colony Name</label>
                   <input type="text" name="Street" value={formData.Street} onChange={handleChange} />
@@ -398,7 +412,7 @@ export default function EditBusinessProfile({ listingId }) {
                   <input type="text" name="Area" value={formData.Area} onChange={handleChange} />
                 </div>
               </div> */}
-              <div className="col-md-3">
+              <div className="col-md-4">
                 <div className="edit-profile-field">
                   <label>Landmark</label>
                   <input type="text" name="Landmark" value={formData.Landmark} onChange={handleChange} />
@@ -406,19 +420,37 @@ export default function EditBusinessProfile({ listingId }) {
               </div>
             </div>
             <div className="row align-items-center">
-              <div className="col-md-3">
+              {/* <div className="col-md-3">
+                <div className="edit-profile-field">
+                  <label>State</label>
+                  <input type="text" name="state" value={formData.state} onChange={handleChange} />
+                </div>
+              </div> */}
+              <div className="col-md-4">
+                <div className="edit-profile-field">
+                  <label className="form-label">State <sup>*</sup></label>
+                  <select
+                    className="form-control"
+                    name="state"
+                    value={formData.state || ""}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select State</option>
+                    {statesList?.map((state) => (
+                      <option key={state?._id} value={state?.name}>{state?.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="col-md-4">
                 <div className="edit-profile-field">
                   <label>City</label>
                   <input type="text" name="city" value={formData.city} onChange={handleChange} />
                 </div>
               </div>
-              <div className="col-md-3">
-                <div className="edit-profile-field">
-                  <label>State</label>
-                  <input type="text" name="state" value={formData.state} onChange={handleChange} />
-                </div>
-              </div>
-              <div className="col-md-3">
+              <div className="col-md-4">
                 <div className="edit-profile-field">
                   <label>Pin Code</label>
                   <input type="tel" name="pincode" value={formData.pincode} onChange={handleChange} />

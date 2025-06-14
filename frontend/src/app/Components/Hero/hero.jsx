@@ -223,7 +223,7 @@ const Hero = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [listing, setListing] = useState([]);
- 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -243,7 +243,7 @@ const Hero = () => {
 
     fetchData();
   }, []);
-  
+
 
 
   // Suggestions update
@@ -313,6 +313,7 @@ const Hero = () => {
   const handleSearch = () => {
     const pincode = selectedLocation?.pincode || location?.pincode;
     const state = selectedLocation?.stateName || location?.state;
+    console.log("LOCATION:=>", pincode, "LOCATION 2:=>", location);
     if (!pincode || !searchText.trim()) {
       alert("Please wait for location and enter a search term.");
       return;
