@@ -101,7 +101,7 @@ const Login = () => {
     console.log("Google Login Success:", response);
 
     try {
-      const res = await postData("auth/google-login", { tokenId: response.credential});
+      const res = await postData("auth/google-login", { tokenId: response.credential });
 
       const data = await res
       if (res.success) {
@@ -236,16 +236,26 @@ const Login = () => {
                         </Link>
                       </div>
 
-                      <button type="submit" className="login-btn bg-primary text-white w-100">
-                        Login
+                      <button
+                        type="submit"
+                        className="login-btn bg-primary text-white w-100 d-flex justify-content-center align-items-center"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <>
+                            <span
+                              className="spinner-border spinner-border-sm me-2"
+                              role="status"
+                              aria-hidden="true"
+                            ></span>
+                            Logging in...
+                          </>
+                        ) : successMessage ? (
+                          "Login Successful"
+                        ) : (
+                          "Login"
+                        )}
                       </button>
-
-                      {loginError && (
-                        <p className="text-danger text-center mt-3">{loginError}</p>
-                      )}
-                      {successMessage && (
-                        <p className="text-success text-center mt-3">{successMessage}</p>
-                      )}
 
                       <p className="text-center mt-3">
                         Don’t have an account?{" "}

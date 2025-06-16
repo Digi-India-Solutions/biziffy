@@ -9,7 +9,13 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
   const [subCategoryName, setSubCategoryName] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
-  const [subCategory, setSubCategory] = useState(formData?.businessCategory?.subCategory || []);
+  const [subCategory, setSubCategory] = useState(
+    formData?.businessCategory?.subCategory || []
+  );
+  const [subcategorySearch, setSubcategorySearch] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+
   const [businessImages, setBusinessImages] = useState(formData?.businessCategory?.businessImages || []);
   const [about, setAbout] = useState(formData?.businessCategory?.about || "");
   const [keywords, setKeywords] = useState(formData?.businessCategory?.keywords || []);
@@ -18,6 +24,7 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
   const [serviceArea, setServiceArea] = useState(formData?.businessCategory?.serviceArea || []);
   const [serviceAreainput, setServiceAreaInput] = useState("");
   const [bImage, setBImage] = useState([]);
+  const [filteredCategories, setFilteredCategories] = useState([]);
 
   console.log("DADADADADADADADADA:= ", formData?.businessDetails?.state)
 
@@ -62,10 +69,22 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
     }
   }, [category]);
 
-  const handleSubCategoryChange = (e) => {
-    const values = Array.from(e.target.selectedOptions, (o) => o.value);
-    setSubCategory((prev) => [...new Set([...prev, ...values])]);
+  const handleSubCategorySelect = (selectedId) => {
+    if (!subCategory.includes(selectedId)) {
+      const updated = [...subCategory, selectedId];
+      setSubCategory(updated);
+      setFormData((prev) => ({
+        ...prev,
+        businessCategory: {
+          ...prev.businessCategory,
+          subCategory: updated,
+        },
+      }));
+    }
+    setSubcategorySearch("");
+    setShowSuggestions(false);
   };
+
 
   const handleImageChange = (e) => {
     const imageUrls = Array.from(e.target.files).map((file) => URL.createObjectURL(file));
@@ -161,17 +180,49 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
       <div className="mb-3">
         <label className="form-label">Business Category <sup>*</sup></label>
         <div className="relative">
-          <select
-            className="form-control"
-            required
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="">Select Your Category</option>
-            {categoryList.map((cat) => (
-              <option key={cat._id} value={cat._id}>{cat.name}</option>
-            ))}
-          </select>
+          <div className="position-relative">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Select Your Category"
+              value={
+                categoryList.find((cat) => cat._id === category)?.name || category
+              }
+              onChange={(e) => {
+                const value = e.target.value;
+                setCategory(value);
+
+                const matches = categoryList.filter((cat) =>
+                  cat.name.toLowerCase().includes(value.toLowerCase())
+                );
+                setFilteredCategories(matches);
+              }}
+              onFocus={() => setFilteredCategories(categoryList)}
+              autoComplete="off"
+              required
+            />
+
+            {filteredCategories.length > 0 && (
+              <ul
+                className="list-group position-absolute w-100"
+                style={{ zIndex: 10, maxHeight: "200px", overflowY: "auto" }}
+              >
+                {filteredCategories.map((cat) => (
+                  <li
+                    key={cat._id}
+                    className="list-group-item list-group-item-action"
+                    onClick={() => {
+                      setCategory(cat._id);
+                      setFilteredCategories([]); // hide suggestions
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {cat.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
       </div>
@@ -181,35 +232,39 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
           Business SubCategory <sup>*</sup>
         </label>
 
-        {/* Wrapper to prevent select overlap */}
         <div className="position-relative">
-          <select
+          <input
+            type="text"
             className="form-control"
-            // required
-            onChange={handleSubCategoryChange}
-            value={subCategory}
-          // style={{ height: 'auto', minHeight: '30px' }} 
-          >
-            <option value="">Select Your SubCategory</option>
-            {subCategoryList?.map((cat) => (
-              <option key={cat?._id} value={cat?._id} >
-                {cat?.name}
-              </option>
-            ))}
-          </select>
-
-          <i
-            className="bi bi-chevron-down"
-            style={{
-              position: 'absolute',
-              right: '15px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              pointerEvents: 'none',
-              color: '#6c757d'
-            }}
-          ></i>
+            placeholder="Search and select subcategory"
+            value={subcategorySearch}
+            onChange={(e) => setSubcategorySearch(e.target.value)}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // prevent flicker
+          />
+          {showSuggestions && (
+            <ul className="list-group position-absolute w-100"
+              style={{ zIndex: 1000, maxHeight: '200px', overflowY: 'auto' }}>
+              {subCategoryList
+                .filter((cat) =>
+                  cat.name.toLowerCase().includes(subcategorySearch.toLowerCase())
+                )
+                .map((cat) => (
+                  <li
+                    key={cat._id}
+                    className="list-group-item list-group-item-action"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => handleSubCategorySelect(cat._id)}
+                  >
+                    {cat.name}
+                  </li>
+                ))}
+            </ul>
+          )}
         </div>
+
+
+
 
         {/* Display selected subcategories as badges */}
         <div className="mt-2 d-flex flex-wrap">
@@ -328,8 +383,8 @@ const BusinessCategory = ({ setKey, formData, setFormData }) => {
         </div>
       </div>
 
-     {/* Button Controls */}
-     <div style={{ display: "flex", justifyContent: "space-between", gap: "12px", marginTop: "20px" }}>
+      {/* Button Controls */}
+      <div style={{ display: "flex", justifyContent: "space-between", gap: "12px", marginTop: "20px" }}>
         <button
           type="button"
           style={{ backgroundColor: "#343a40", color: "#fff", border: "none", padding: "0.5rem 1.2rem", borderRadius: "5px", cursor: "pointer", fontWeight: "bold", fontSize: "14px", flex: 1, transition: "background 0.3s ease" }}

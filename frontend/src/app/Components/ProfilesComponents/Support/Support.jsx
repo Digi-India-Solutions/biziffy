@@ -4,7 +4,9 @@ import React, { useState, useRef } from "react";
 import "./Support.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useRouter } from "next/navigation";
+// import ViewEnquiry from "../../Components/ProfilesComponents/ViewEnquiry/Viewenquiry";
+ 
 const supportTypes = [
   {
     id: 1,
@@ -39,6 +41,7 @@ const supportTypes = [
 ];
 
 export default function SupportCenter() {
+  const router = useRouter()
   const [selectedType, setSelectedType] = useState(null);
   const [email, setEmail] = useState("");
   const [description, setDescription] = useState("");
@@ -89,12 +92,18 @@ export default function SupportCenter() {
   return (
     <div className="container">
       <div>
-        <h2 className="edit-profile-title">Support Center</h2>
-        <p className="text-muted">
-          Select the type of support you need, and our team will assist you.
-        </p>
+        <div>
+          <h2 className="edit-profile-title">Support Center</h2>
+          <p className="text-muted">
+            Select the type of support you need, and our team will assist you.
+          </p>
+        </div>
+        {/* <div>
+          <button className="btn btn-primary" onClick={() => router?.push("/pages/view-enquiry")}>
+            <i className="bi bi-pencil-square"></i> View Enquiry
+          </button>
+        </div> */}
       </div>
-
       <hr />
 
       <div className="row g-3 mb-5">

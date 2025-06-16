@@ -44,7 +44,6 @@ export default function CityCards() {
           ) : (
             cityData?.map((city) => {
               console.log("City:", city); // Debug: Check city object
-
               return (
                 <div key={city._id} className="col-sm-4 col-6 col-md-3">
                   <div

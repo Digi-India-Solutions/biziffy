@@ -15,12 +15,23 @@ import { useRouter } from "next/navigation";
 import { postData } from "../../services/FetchNodeServices";
 
 const Businesslistingdetails = ({ businesses, advertisements }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+  const [lightbox, setLightbox] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selected, setSelected] = useState({ businesses });
+  const [reviews, setReviews] = useState(businesses?.reviewsData || []);
+  const [newReview, setNewReview] = useState({ author: "", comment: "", rating: 0, });
+  const [showForm, setShowForm] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
+  const [showAllHours, setShowAllHours] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [user, setUser] = useState('')
+  const [enquiryForm, setEnquiryForm] = useState({ name: '', phone: '', requirement: '', user: '' })
   const router = useRouter()
 
   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium error, odio eos, nostrum animi quae facilis possimus consequatur id ipsum odit iure hic, debitis voluptas iusto eligendi tenetur nam omnis blanditiis quos magni porro? Dolore nostrum voluptatem dolorem natus totam tempore cum distinctio ea excepturi. Consectetur enim dolor ut ea dicta mollitia provident possimus placeat consequatur ab quasi neque laudantium recusandae aliquid nobis sapiente illum eum est reiciendis, rerum perspiciatis, corporis exercitationem. In voluptatum dignissimos quibusdam asperiores exercitationem nobis perferendis voluptate magnam alias beatae accusamus non reprehenderit adipisci placeat ex consequatur, unde eaque enim consequuntur debitis molestiae saepe officiis aut!";
-  const words = businesses?.businessCategory?.about.split(" ");
-  const wordLimit = 25;
-  const isLongText = words?.length > wordLimit;
+
 
   // Static Data
   const staticPhotos = [gourav, gourav2, gourav3, gourav, gourav2, gourav3];
@@ -35,28 +46,18 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
   ];
 
   // States
-  const [isOpen, setIsOpen] = useState(false);
-  const [showAll, setShowAll] = useState(false);
-  const [lightbox, setLightbox] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [selected, setSelected] = useState({ businesses });
-  const [reviews, setReviews] = useState(businesses?.reviewsData || []);
-  const [newReview, setNewReview] = useState({ author: "", comment: "", rating: 0, });
-  const [showForm, setShowForm] = useState(false);
-  const [activeTab, setActiveTab] = useState("overview");
-  const [showAllHours, setShowAllHours] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  const [user, setUser] = useState('')
-  const [enquiryForm, setEnquiryForm] = useState({ name: '', phone: '', requirement: '', user: '' })
   console.log("EnquiryForm", enquiryForm)
-  // Derived Values
+
   const visiblePhotos = showAll ? staticPhotos : staticPhotos.slice(0, 4);
+  const wordLimit = 30;
 
-  // Functions
+  const aboutText = businesses?.businessCategory?.about || "";
+  const words = aboutText.split(" ");
+  const isLongText = words.length > wordLimit;
+
   const toggleText = () => {
-    setExpanded(!expanded);
+    setExpanded((prev) => !prev);
   };
-
   useEffect(() => {
     const storedData = localStorage.getItem('biziffyUser');
     const userData = JSON.parse(storedData);
@@ -323,9 +324,9 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                     <p>
                       <b>About Us: </b>
                       {expanded
-                        ? businesses?.businessCategory?.about
-                        : words?.slice(0, wordLimit).join(" ") +
-                        (isLongText ? "..." : "")}
+                        ? aboutText
+                        : words.slice(0, wordLimit).join(" ") + (isLongText ? "..." : "")}
+
                       {isLongText && (
                         <button
                           onClick={toggleText}
@@ -334,6 +335,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                             background: "none",
                             color: "blue",
                             cursor: "pointer",
+                            paddingLeft: "5px"
                           }}
                         >
                           {expanded ? "read less" : "read more"}{" "}
@@ -341,6 +343,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                         </button>
                       )}
                     </p>
+
                   </div>
 
                   <hr />

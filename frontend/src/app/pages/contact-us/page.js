@@ -331,7 +331,7 @@ const Page = () => {
                     <option value="">Select State</option>
                     {stateList.map((state) => (
                       <option key={state.isoCode} value={state.isoCode}>
-                        {state.name}
+                       <i className="bi bi-search"></i> {city.name} {state.name}
                       </option>
                     ))}
                   </select>

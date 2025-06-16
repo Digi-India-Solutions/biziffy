@@ -26,6 +26,17 @@ export default function EditBusinessProfile({ listingId }) {
   const [categoryList, setCategoryList] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
   const [statesList, setStatesList] = useState([])
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false);
+  const [showStateSuggestions, setShowStateSuggestions] = useState(false);
+
+  // Example static data if you're not fetching from API yet
+  const citiesList = [
+    { _id: 1, name: "Mumbai" },
+    { _id: 2, name: "Delhi" },
+    { _id: 3, name: "Bengaluru" },
+    { _id: 4, name: "Chennai" },
+    { _id: 5, name: "Kolkata" }
+  ];
 
   const [formData, setFormData] = useState({
     businessname: "", businessCategory: "", businessSubCategory: [], services: [], businessArea: [], Building: "",
@@ -33,10 +44,7 @@ export default function EditBusinessProfile({ listingId }) {
     images: [], email: "", experience: "", whatsapp: "", websiteURL: "", googlemap: "", facebook: "", instagram: "",
     twitter: "", linkedin: "", faq: [{ question: "", answer: "" }], yib: '',
   });
-
   console.log("XXXXXXXXXXXXXlistingId:-", listingId);
-
-
   // ----- Images ------------
 
   useEffect(() => {
@@ -427,28 +435,86 @@ export default function EditBusinessProfile({ listingId }) {
                 </div>
               </div> */}
               <div className="col-md-4">
-                <div className="edit-profile-field">
+                <div className="edit-profile-field position-relative">
                   <label className="form-label">State <sup>*</sup></label>
-                  <select
-                    className="form-control"
+                  <input
+                    type="text"
                     name="state"
+                    className="form-control"
+                    placeholder="Enter State"
                     value={formData.state || ""}
                     onChange={handleChange}
+                    onFocus={() => setShowStateSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowStateSuggestions(false), 200)}
                     required
-                  >
-                    <option value="">Select State</option>
-                    {statesList?.map((state) => (
-                      <option key={state?._id} value={state?.name}>{state?.name}</option>
-                    ))}
-                  </select>
+                  />
+                  {showStateSuggestions && (
+                    <ul
+                      className="list-group position-absolute w-100"
+                      style={{ zIndex: 1000, maxHeight: "200px", overflowY: "auto" }}
+                    >
+                      {statesList
+                        ?.filter((state) =>
+                          state?.name
+                            ?.toLowerCase()
+                            .includes((formData.state || "").toLowerCase())
+                        )
+                        .map((state) => (
+                          <li
+                            key={state._id}
+                            className="list-group-item list-group-item-action"
+                            style={{ cursor: "pointer" }}
+                            onMouseDown={() =>
+                              setFormData({ ...formData, state: state.name })
+                            }
+                          >
+                           <i className="bi bi-search"></i> {city.name} {state.name}
+                          </li>
+                        ))}
+                    </ul>
+                  )}
                 </div>
+
               </div>
 
               <div className="col-md-4">
-                <div className="edit-profile-field">
+                <div className="edit-profile-field position-relative">
                   <label>City</label>
-                  <input type="text" name="city" value={formData.city} onChange={handleChange} />
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    onFocus={() => setShowCitySuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowCitySuggestions(false), 200)}
+                    className="form-control"
+                    placeholder="Enter City"
+                  />
+                  {showCitySuggestions && (
+                    <ul
+                      className="list-group position-absolute w-100"
+                      style={{ zIndex: 1000, maxHeight: "200px", overflowY: "auto" }}
+                    >
+                      {citiesList
+                        ?.filter((city) =>
+                          city?.name.toLowerCase().includes((formData.city || "").toLowerCase())
+                        )
+                        .map((city) => (
+                          <li
+                            key={city._id}
+                            className="list-group-item list-group-item-action"
+                            style={{ cursor: "pointer" }}
+                            onMouseDown={() =>
+                              setFormData({ ...formData, city: city.name })
+                            }
+                          >
+                           <i className="bi bi-search"></i> {city.name} {city.name}
+                          </li>
+                        ))}
+                    </ul>
+                  )}
                 </div>
+
               </div>
               <div className="col-md-4">
                 <div className="edit-profile-field">
