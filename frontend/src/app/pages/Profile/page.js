@@ -27,11 +27,7 @@ const ProfilePage = () => {
   const [listingId, setListingId] = useState('')
   const [showWebsiteVijiter, setShowWebsiteVijiter] = useState(false)
   const [showsiteVijiter, setWebsiteVijiter] = useState(false)
-  // const [listings, setListings] = useState([
-  //   { id: 1, title: "Awesome Cafe", address: "Bawana Delhi 110039", image: profileImage, },
-  //   { id: 2, title: "ModakWala Cafe", address: "Bawana Delhi 110039", image: profileImage, },
-  //   { id: 3, title: "Hari Sweets", address: "Bawana Delhi 110039", image: profileImage, },
-  // ]);
+  const [statesList, setStatesList] = useState([])
 
   const userProfile = {
     firstname: "Maria",
@@ -59,7 +55,7 @@ const ProfilePage = () => {
 
       const user = JSON.parse(storedUser);
       if (user?._id) {
-        setUserId(user._id);
+        setUserId(user?._id);
       } else {
         window.location.href = "/pages/login";
       }
@@ -75,11 +71,9 @@ const ProfilePage = () => {
       if (!userId) return;
       try {
         const res = await getData(`auth/get-user-by-id/${userId}`);
-        // console.log("req.params.id:-", res.data)
+        console.log("req.params.id:-", res)
         if (res?.status === true) {
           setProfileData(res?.user);
-        } else {
-          toast.error("User data not found.");
         }
       } catch (err) {
         console.error("Error fetching user data:", err);
@@ -95,9 +89,6 @@ const ProfilePage = () => {
         if (res?.status === true) {
           setBusinessListing(res?.data);
         }
-        //  else {
-        //   toast.error("Business listing not found.");
-        // }
       } catch (err) {
         console.error("Error fetching business listing:", err);
       }
@@ -110,7 +101,7 @@ const ProfilePage = () => {
         console.log("Website Listings", res);
         if (res?.status === true) {
           setWebsiteListing(res?.data);
-        } 
+        }
       } catch (err) {
         console.error("Error fetching business listing:", err);
       }
@@ -121,49 +112,23 @@ const ProfilePage = () => {
     fetchWebsiteListing()
   }, [userId]);
 
-  // const handleDelete = (id) => {
-  //   toast.info(
-  //     ({ closeToast }) => (
-  //       <div>
-  //         <p>Are you sure you want to delete this listing?</p>
-  //         <div className="d-flex justify-content-end gap-2">
-  //           <button
-  //             onClick={() => {
-  //               confirmDelete(id);
-  //               closeToast();
-  //             }}
-  //             className="btn btn-sm btn-danger"
-  //           >
-  //             Yes
-  //           </button>
-  //           <button onClick={closeToast} className="btn btn-sm btn-secondary">
-  //             No
-  //           </button>
-  //         </div>
-  //       </div>
-  //     ),
-  //     {
-  //       position: "top-center",
-  //       autoClose: false,
-  //       closeOnClick: false,
-  //       draggable: false,
-  //       closeButton: false,
-  //     }
-  //   );
-  // };
+  const fetchState = async () => {
+    try {
+      const response = await getData("state/get-all-states");
+      // console.log("XXXXXXXXXXXXXXX>>>", response.data)
+      if (response?.status) {
+        setStatesList(response?.data);
+      }
 
-  // const confirmDelete = (id) => {
-  //   try {
-  //     const response = axios.delete(`https://api.biziffy.com/api/delete-business-listing/${id}`);
-  //     if (response.status === true) {
-  //       setListings((prev) => prev.filter((item) => item.id !== id));
-  //       toast.success("Listing deleted successfully!", { position: "top-right", autoClose: 3000 });
-  //     }
-  //   } catch (err) {
-  //     console.error("Error deleting listing:", err);
-  //   }
+    } catch (err) {
+      console.log('err', err)
+    }
+  }
 
-  // };
+  useEffect(() => {
+    fetchState()
+  }, [])
+
 
   // Handle Logout
   const handleLogout = () => {
@@ -294,21 +259,9 @@ const ProfilePage = () => {
               <div className="sidebar">
                 <div className="d-grid justify-content-center text-center">
                   {(previewImage || profileData.profileImage) ? (
-                    <Image
-                      src={previewImage || profileData.profileImage}
-                      alt="Profile"
-                      className="profile-img rounded-circle"
-                      width={150}
-                      height={150}
-                    />
+                    <Image src={previewImage || profileData.profileImage} alt="Profile" className="profile-img rounded-circle" width={150} height={150} />
                   ) : (
-                    <Image
-                      src="/default-profile.png"
-                      alt="Default Profile"
-                      className="profile-img rounded-circle"
-                      width={150}
-                      height={150}
-                    />
+                    <Image src="/default-profile.png" alt="Default Profile" className="profile-img rounded-circle" width={150} height={150} />
                   )}
                   {isEditing ? (
                     <>
@@ -326,44 +279,6 @@ const ProfilePage = () => {
                   <h3 className="text-white mt-3">{profileData?.fullName}</h3>
                   <p className="text-warning m-0">{profileData?.userType}</p>
                 </div>
-
-                {/* <div className="d-grid justify-content-center text-center">
-                  {(previewImage || profileData.profileImage) ? (
-                    <Image
-                      src={previewImage || profileData.profileImage}
-                      alt="Profile"
-                      className="profile-img rounded-circle"
-                      width={150}
-                      height={150}
-                    />
-                  ) : (
-                    <div className="profile-img rounded-circle bg-secondary" style={{ width: 150, height: 150 }} />
-                  )}
-
-                  {isEditing ? (
-                    <>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="form-control mt-2"
-                        style={{ maxWidth: 250, margin: "0 auto" }}
-                      />
-                      {selectedFile && (
-                        <button className="btn btn-sm btn-success mt-2" onClick={uploadProfileImage}>
-                          Save Profile Photo
-                        </button>
-                      )}
-                    </>
-                  ) : (
-                    <button className="btn btn-sm btn-primary mt-2" onClick={() => setIsEditing(true)}>
-                      Change Profile Photo
-                    </button>
-                  )}
-
-                  <h3 className="text-white mt-3">{profileData?.fullName}</h3>
-                  <p className="text-warning m-0">{profileData?.userType}</p>
-                </div> */}
 
                 <hr className="text-white" />
                 <div className="sidebar-button-main">
@@ -505,16 +420,32 @@ const ProfilePage = () => {
                           <label className="form-label">Address</label>
                           <input type="tel" className="form-control" onChange={(e) => setProfileData({ ...profileData, address: e.target.value })} defaultValue={profileData.address} /></div>
                       </div>
-
+                      {/* <div className="col-md-6">
+                        <div className="mb-3">
+                          <label className="form-label">State</label>
+                          <input type="tel" className="form-control" onChange={(e) => setProfileData({ ...profileData, state: e.target.value })} defaultValue={profileData.state} /> </div>
+                      </div> */}
+                      <div className="col-md-4">
+                        <div className="edit-profile-field">
+                          <label className="form-label">State <sup>*</sup></label>
+                          <select
+                            className="form-control"
+                            name="state"
+                            value={profileData?.state || ""}
+                            onChange={(e) => setProfileData({ ...profileData, state: e.target.value })}
+                            required
+                          >
+                            <option value="">Select State</option>
+                            {statesList?.map((state) => (
+                              <option key={state?._id} value={state?.name}>{state?.name}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
                       <div className="col-md-6">
                         <div className="mb-3">
                           <label className="form-label">City</label>
                           <input type="tel" className="form-control" onChange={(e) => setProfileData({ ...profileData, city: e.target.value })} defaultValue={profileData.city} /></div>
-                      </div>
-                      <div className="col-md-6">
-                        <div className="mb-3">
-                          <label className="form-label">State</label>
-                          <input type="tel" className="form-control" onChange={(e) => setProfileData({ ...profileData, state: e.target.value })} defaultValue={profileData.state} /> </div>
                       </div>
 
                     </div>
