@@ -230,11 +230,10 @@ const Dashboard = ({ businessListing }) => {
           {/* Profile Dropdown */}
           <div className="position-relative" ref={menuRef}>
             <button
-              className="btn btn-light d-flex align-items-center gap-2"
+              className="btn d-flex align-items-center gap-2 m-0"
               onClick={() => setDropdownOpen(!dropdownOpen)}
             >
               <i className="bi bi-person-circle fs-5"></i>
-              <i className={`bi ${dropdownOpen ? "bi-caret-up-fill" : "bi-caret-down-fill"} fs-6`}></i>
             </button>
             {dropdownOpen && (
               <div

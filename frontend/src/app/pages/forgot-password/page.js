@@ -176,7 +176,7 @@ const Page = () => {
                                     </button>
                                     {/* Optional: Add a resend OTP button */}
                                     <p className="text-center mt-2">
-                                        Didn&apos;t receive the OTP? <button type="button" onClick={handleEmailSubmit} className="btn-link" disabled={loading}>Resend OTP</button>
+                                        Didn&apos;t receive the OTP? <span type="button" onClick={handleEmailSubmit} className="btn-link" disabled={loading}>Resend OTP</span>
                                     </p>
                                 </form>
                             )}

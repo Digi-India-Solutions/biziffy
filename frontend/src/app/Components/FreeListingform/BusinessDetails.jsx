@@ -100,8 +100,55 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
   const [loading, setLoading] = useState(false);
   const [statesList, setStatesList] = useState([])
   const [error, setError] = useState("");
-
+  const [showStateSuggestions, setShowStateSuggestions] = useState(false);
+  const [filteredStates, setFilteredStates] = useState([]);
   const details = formData.businessDetails || {};
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false);
+
+  // Example static data if you're not fetching from API yet
+  const citiesList = [
+    { _id: 1, name: "Mumbai" },
+    { _id: 2, name: "Delhi" },
+    { _id: 3, name: "Bengaluru" },
+    { _id: 4, name: "Chennai" },
+    { _id: 5, name: "Kolkata" }
+  ];
+
+  const handleStateInputChange = (e) => {
+    const value = e.target.value;
+    setFormData({
+      ...formData,
+      businessDetails: {
+        ...formData.businessDetails,
+        state: value,
+      },
+    });
+
+    const filtered = statesList.filter((state) =>
+      state.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredStates(filtered);
+  };
+
+  const handleSuggestionClick = (stateName) => {
+    setFormData({
+      ...formData,
+      businessDetails: {
+        ...formData.businessDetails,
+        state: stateName,
+      },
+    });
+    setShowStateSuggestions(false);
+  };
+
+  const handleStateInputFocus = () => {
+    const inputValue = details.state || "";
+    const filtered = statesList.filter((state) =>
+      state.name.toLowerCase().includes(inputValue.toLowerCase())
+    );
+    setFilteredStates(filtered);
+    setShowStateSuggestions(true);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -205,25 +252,46 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
         </div>
       ))}
 
-      {/* State Dropdown */}
+      {/* State Autocomplete Input */}
       <div className="mb-3">
         <label className="form-label">State <sup>*</sup></label>
-        <select
-          className="form-control"
-          name="state"
-          value={details.state || ""}
-          onChange={handleStateChange}
-          required
-        >
-          <option value="">Select State</option>
-          {statesList?.map((state) => (
-            <option key={state?._id} value={state?.name}>{state?.name}</option>
-          ))}
-        </select>
+        <div className="form-group position-relative">
+          <input
+            type="text"
+            className="form-control"
+            name="state"
+            placeholder="Select State"
+            value={details.state || ""}
+            onChange={handleStateInputChange}
+            onFocus={handleStateInputFocus}
+            onBlur={() => setTimeout(() => setShowStateSuggestions(false), 200)}
+            autoComplete="off"
+            required
+          />
+          {showStateSuggestions && filteredStates.length > 0 && (
+            <ul
+              className="list-group position-absolute w-100 z-3"
+              style={{ maxHeight: "200px", overflowY: "auto" }}
+            >
+              {filteredStates.map((state) => (
+                <li
+                  key={state._id}
+                  className="list-group-item list-group-item-action"
+                  style={{ cursor: "pointer" }}
+                  onMouseDown={() => handleSuggestionClick(state.name)}
+                >
+                  <i className="bi bi-search"></i> {state.name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
 
+
       {/* City Text Input */}
-      <div className="mb-3">
+      {/* City Text Input with Suggestions */}
+      <div className="mb-3 position-relative">
         <label className="form-label">City <sup>*</sup></label>
         <input
           type="text"
@@ -231,9 +299,41 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
           name="city"
           value={details?.city || ""}
           onChange={handleChange}
+          onFocus={() => setShowCitySuggestions(true)}
+          onBlur={() => setTimeout(() => setShowCitySuggestions(false), 200)}
           required
         />
+        {showCitySuggestions && (
+          <ul
+            className="list-group position-absolute w-100"
+            style={{ zIndex: 1000, maxHeight: "200px", overflowY: "auto" }}
+          >
+            {citiesList
+              ?.filter((city) =>
+                city?.name?.toLowerCase().includes((details?.city || "").toLowerCase())
+              )
+              .map((city) => (
+                <li
+                  key={city._id}
+                  className="list-group-item list-group-item-action"
+                  style={{ cursor: "pointer" }}
+                  onMouseDown={() =>
+                    setFormData({
+                      ...formData,
+                      businessDetails: {
+                        ...formData.businessDetails,
+                        city: city.name,
+                      },
+                    })
+                  }
+                >
+                 <i className="bi bi-search"></i> {city.name}
+                </li>
+              ))}
+          </ul>
+        )}
       </div>
+
       <div className="mb-3">
         <label className="form-label">Pin Code <sup>*</sup></label>
         <input
@@ -245,8 +345,8 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
           required
         />
       </div>
-       {/* Button Controls */}
-     <div style={{ display: "flex", justifyContent: "space-between", gap: "12px", marginTop: "20px" }}>
+      {/* Button Controls */}
+      <div style={{ display: "flex", justifyContent: "space-between", gap: "12px", marginTop: "20px" }}>
         <button
           type="button"
           style={{ backgroundColor: "#343a40", color: "#fff", border: "none", padding: "0.5rem 1.2rem", borderRadius: "5px", cursor: "pointer", fontWeight: "bold", fontSize: "14px", flex: 1, transition: "background 0.3s ease" }}

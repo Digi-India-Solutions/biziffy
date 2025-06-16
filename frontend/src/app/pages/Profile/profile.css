@@ -56,14 +56,12 @@
 
 /* Instagram */
 .social-media-urls .bi-instagram {
-  background: linear-gradient(
-    45deg,
-    #feda75,
-    #fa7e1e,
-    #d62976,
-    #962fbf,
-    #4f5bd5
-  );
+  background: linear-gradient(45deg,
+      #feda75,
+      #fa7e1e,
+      #d62976,
+      #962fbf,
+      #4f5bd5);
 }
 
 /* YouTube */
@@ -251,6 +249,45 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.pending-status {
+  position: absolute;
+  right: 15px;
+  top: 0;
+}
+
+.status-badge {
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-badge.pending {
+  color: #f1c40f;
+  /* Yellow */
+}
+
+.status-badge.pending .status-dot {
+  background-color: #f1c40f;
+}
+
+.status-badge.approved {
+  color: #2ecc71;
+  /* Green */
+}
+
+.status-badge.approved .status-dot {
+  background-color: #2ecc71;
+}
+
+
 @media only screen and (max-width: 768px) {
   .profile-overview-main {
     width: 50px;
@@ -278,6 +315,7 @@
     margin: auto;
     gap: 10px;
   }
+
   .profile-img {
     height: 120px;
     width: 120px;

@@ -14,6 +14,7 @@ import Dashboard from "../../Components/Dashboard/Dashboard"
 import { useRouter } from "next/navigation";
 import ShowWebsiteCout from "../../Components/ShowWebsiteCout/ShowWebsiteCout"
 import { getData, postData } from "../../services/FetchNodeServices";
+import ViewEnquiry from "../../Components/ProfilesComponents/ViewEnquiry/Viewenquiry";
 const ProfilePage = () => {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -28,6 +29,20 @@ const ProfilePage = () => {
   const [showWebsiteVijiter, setShowWebsiteVijiter] = useState(false)
   const [showsiteVijiter, setWebsiteVijiter] = useState(false)
   const [statesList, setStatesList] = useState([])
+  const [showStateSuggestions, setShowStateSuggestions] = useState(false);
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false);
+
+  const [citiesList, setCitiesList] = useState([
+    { _id: "1", name: "Mumbai" },
+    { _id: "2", name: "Delhi" },
+    { _id: "3", name: "Bangalore" },
+    { _id: "4", name: "Hyderabad" },
+    { _id: "5", name: "Ahmedabad" },
+    { _id: "6", name: "Chennai" },
+    { _id: "7", name: "Pune" },
+    { _id: "8", name: "Kolkata" },
+  ]);
+
 
   const userProfile = {
     firstname: "Maria",
@@ -311,10 +326,13 @@ const ProfilePage = () => {
                     className={`sidebar-tab ${activeTab === "support" ? "active" : ""}`} onClick={() => setActiveTab("support")} >
                     <i className="bi bi-patch-question"></i> Support
                   </button>
+                  <button
+                    className={`sidebar-tab ${activeTab === "view-enquiry" ? "active" : ""}`} onClick={() => setActiveTab("view-enquiry")} >
+                    <i className="bi bi-patch-question"></i> View Enquiry
+                  </button>
                   <button className="sidebar-tab" onClick={() => handleLogout()} >
                     <i className="bi bi-box-arrow-left"></i> Logout
                   </button>
-                  {/* Toast container must be in your component tree */}
                   <ToastContainer />
                 </div>
               </div>
@@ -428,25 +446,89 @@ const ProfilePage = () => {
                       <div className="col-md-4">
                         <div className="edit-profile-field">
                           <label className="form-label">State <sup>*</sup></label>
-                          <select
-                            className="form-control"
-                            name="state"
-                            value={profileData?.state || ""}
-                            onChange={(e) => setProfileData({ ...profileData, state: e.target.value })}
-                            required
-                          >
-                            <option value="">Select State</option>
-                            {statesList?.map((state) => (
-                              <option key={state?._id} value={state?.name}>{state?.name}</option>
-                            ))}
-                          </select>
+                          <div className="position-relative">
+                            <input
+                              type="text"
+                              className="form-control m-1"
+                              name="state"
+                              placeholder="Select State"
+                              value={profileData?.state || ""}
+                              onChange={(e) =>
+                                setProfileData({ ...profileData, state: e.target.value })
+                              }
+                              onFocus={() => setShowStateSuggestions(true)}
+                              onBlur={() => setTimeout(() => setShowStateSuggestions(false), 200)}
+                              required
+                            />
+                            {showStateSuggestions && (
+                              <ul
+                                className="list-group position-absolute w-100"
+                                style={{ zIndex: 1000, maxHeight: "200px", overflowY: "auto" }}
+                              >
+                                {statesList
+                                  ?.filter((state) =>
+                                    state?.name
+                                      .toLowerCase()
+                                      .includes((profileData?.state || "").toLowerCase())
+                                  )
+                                  .map((state) => (
+                                    <li
+                                      key={state?._id}
+                                      className="list-group-item list-group-item-action"
+                                      style={{ cursor: "pointer" }}
+                                      onMouseDown={() =>
+                                        setProfileData({ ...profileData, state: state?.name })
+                                      }
+                                    >
+                                      {state?.name}
+                                    </li>
+                                  ))}
+                              </ul>
+                            )}
+                          </div>
+
                         </div>
                       </div>
                       <div className="col-md-6">
-                        <div className="mb-3">
+                        <div className="mb-3 position-relative">
                           <label className="form-label">City</label>
-                          <input type="tel" className="form-control" onChange={(e) => setProfileData({ ...profileData, city: e.target.value })} defaultValue={profileData.city} /></div>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter City"
+                            value={profileData.city || ""}
+                            onChange={(e) => setProfileData({ ...profileData, city: e.target.value })}
+                            onFocus={() => setShowCitySuggestions(true)}
+                            onBlur={() => setTimeout(() => setShowCitySuggestions(false), 200)}
+                          />
+                          {showCitySuggestions && (
+                            <ul
+                              className="list-group position-absolute w-100"
+                              style={{ zIndex: 1000, maxHeight: "200px", overflowY: "auto" }}
+                            >
+                              {citiesList
+                                ?.filter((city) =>
+                                  city?.name
+                                    ?.toLowerCase()
+                                    .includes((profileData.city || "").toLowerCase())
+                                )
+                                .map((city) => (
+                                  <li
+                                    key={city._id}
+                                    className="list-group-item list-group-item-action"
+                                    style={{ cursor: "pointer" }}
+                                    onMouseDown={() =>
+                                      setProfileData({ ...profileData, city: city.name })
+                                    }
+                                  >
+                                    <i className="bi bi-search"></i> {city.name} {city.name}
+                                  </li>
+                                ))}
+                            </ul>
+                          )}
+                        </div>
                       </div>
+
 
                     </div>
                     <button className="btn btn-primary" onClick={handleSaveChanges}>Save Changes</button>
@@ -490,10 +572,14 @@ const ProfilePage = () => {
                               <button className={`black-btn ${activeTab === "edit-business" ? "active" : ""}`} onClick={() => { setActiveTab("edit-business"), setListingId(listing) }}>
                                 Edit Business
                               </button>
-
-                              {/* <button className="btn btn-danger" onClick={() => handleDelete(listing?._id)}>
-                              <i className="bi bi-trash"></i>
-                            </button> */}
+                              <div className="pending-status">
+                                <p>
+                                  <span className={`status-badge ${status === "Approved" ? "approved" : "pending"}`}>
+                                    <span className="status-dot"></span>
+                                    {status}
+                                  </span>
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -568,15 +654,10 @@ const ProfilePage = () => {
                 </>
               )}
 
-
-
-
               {activeTab === "plan" && (
-
                 <div className="profile-plan-table">
                   <h3>My Plan</h3>
                   <hr />
-
                   <div className="d-flex justify-content-between align-items-center">
                     <h1 className="text-primary">Premium Plan</h1>
                     <h3 className="text-warning">₹2999</h3>
@@ -600,11 +681,18 @@ const ProfilePage = () => {
                   </div>
                 </div>
               )}
+
               {activeTab === "support" && (
                 <>
                   <Support />
                 </>
               )}
+              {activeTab === "view-enquiry" && (
+                <>
+                  <ViewEnquiry />
+                </>
+              )}
+
               {activeTab === "dashboard" && (
                 <>
                   <Dashboard businessListing={businessListing} />
