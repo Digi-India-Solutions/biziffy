@@ -503,30 +503,63 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                         </button>
 
                         {showForm && (
-                          <div className="add-review">
-                            <h4>Add a Review</h4>
-                            <input type="text" placeholder="Your Name" className="login-input mb-2" value={newReview?.author} onChange={(e) => setNewReview({ ...newReview, author: e.target.value, })} />
-                            <textarea placeholder="Your Comment" className="login-input mb-2" value={newReview?.comment} onChange={(e) => setNewReview({ ...newReview, comment: e.target.value, })}></textarea>
-                            <div className="rating-selection">
-                              <p>
-                                <b>Select Rating:</b>
-                              </p>
-                              <div>
+                          <div className="card border-0 text-start p-4 mb-4 bg-white">
+                            <h4 className="text-center fw-bold text-primary mb-3">
+                              <i className="bi bi-chat-dots-fill me-2"></i>Leave a Review
+                            </h4>
+
+                            <div className="mb-3">
+                              <label className="form-label fw-semibold">
+                                <i className="bi bi-person-circle me-2"></i>Your Name
+                              </label>
+                              <input
+                                type="text"
+                                className="form-control rounded-pill px-4 py-2"
+                                placeholder="Enter your name"
+                                value={newReview?.author}
+                                onChange={(e) => setNewReview({ ...newReview, author: e.target.value })}
+                              />
+                            </div>
+
+                            <div className="mb-3">
+                              <label className="form-label fw-semibold">
+                                <i className="bi bi-chat-left-text-fill me-2"></i>Your Comment
+                              </label>
+                              <textarea
+                                className="form-control rounded-4 px-4 py-2"
+                                rows="4"
+                                placeholder="Write something nice..."
+                                value={newReview?.comment}
+                                onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                              ></textarea>
+                            </div>
+
+                            <div className="mb-3">
+                              <label className="form-label fw-semibold">
+                                <i className="bi bi-star-fill me-2 text-warning"></i>Give Rating
+                              </label>
+                              <div className="d-flex gap-2 fs-4">
                                 {[...Array(5)].map((_, i) => (
                                   <i
                                     key={i}
-                                    className={i < newReview.rating ? "bi bi-star-fill" : "bi bi-star"}
-                                    onClick={() => setNewReview({ ...newReview, rating: i + 1, })}
-                                    style={{ cursor: "pointer" }}
+                                    className={`bi ${i < newReview.rating ? "bi-star-fill text-warning" : "bi-star text-muted"}`}
+                                    style={{ cursor: "pointer", transition: "transform 0.2s ease" }}
+                                    onClick={() => setNewReview({ ...newReview, rating: i + 1 })}
+                                    onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.3)")}
+                                    onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
                                   ></i>
                                 ))}
                               </div>
                             </div>
-                            <button className="btn btn-primary" onClick={handleAddReview}                        >
-                              Submit
-                            </button>
+
+                            <div className="text-center">
+                              <button className="btn btn-outline-primary px-4 py-2 rounded-pill mt-3" onClick={handleAddReview}>
+                                <i className="bi bi-send-fill me-2"></i>Submit Review
+                              </button>
+                            </div>
                           </div>
                         )}
+
                       </div>
                     </ul>
                   </div>
