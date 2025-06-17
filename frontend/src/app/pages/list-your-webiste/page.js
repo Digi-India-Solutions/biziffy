@@ -1,5 +1,4 @@
 "use client";
-
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import styles from "./module.css";
@@ -19,34 +18,41 @@ const BusinessListingPage = () => {
     service: [],
   });
 
+  const [filteredCategories, setFilteredCategories] = useState([]);
+  const [filteredSubCategories, setFilteredSubCategories] = useState([]);
+  const [showCategorySuggestions, setShowCategorySuggestions] = useState(false);
+  const [showSubCategorySuggestions, setShowSubCategorySuggestions] = useState(false);
+
   const formRef1 = useRef(null);
   const formRef2 = useRef(null);
 
-  // Load user on mount
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("biziffyUser"));
     if (user?._id) {
       setFormData(prev => ({ ...prev, userId: user?._id }));
     }
-  }, [formData]);
+  }, []);
 
-  // Fetch categories on mount
   useEffect(() => {
     getData("categories")
-      .then(setCategoryList)
+      .then(data => {
+        setCategoryList(data);
+        setFilteredCategories(data);
+      })
       .catch(err => console.error("Category Fetch Error:", err));
   }, []);
 
-  // Fetch subcategories when category changes
   useEffect(() => {
     if (formData.category) {
       getData(`admin/get-Subcategories-by-category/${formData.category}`)
-        .then(setSubCategoryList)
+        .then(data => {
+          setSubCategoryList(data);
+          setFilteredSubCategories(data);
+        })
         .catch(err => console.error("Subcategory Fetch Error:", err));
     }
   }, [formData.category]);
 
-  // Handle service input
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && input.trim()) {
       e.preventDefault();
@@ -135,7 +141,21 @@ const BusinessListingPage = () => {
       setLoading(false);
     }
   };
-  console.log("formData", formData)
+
+  const handleCategorySearch = (text) => {
+    const filtered = categoryList.filter(cat =>
+      cat.name.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredCategories(filtered);
+  };
+
+  const handleSubCategorySearch = (text) => {
+    const filtered = subCategoryList.filter(sub =>
+      sub.name.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredSubCategories(filtered);
+  };
+
   return (
     <>
       <ToastContainer position="top-center" autoClose={2000} />
@@ -207,29 +227,78 @@ const BusinessListingPage = () => {
                 <form onSubmit={handleFinalSubmit}>
                   <h4 className="text-success mb-4">Step 2: Additional Information</h4>
 
-                  <div className="mb-3">
+                  <div className="mb-3 position-relative">
                     <label>Category</label>
-                    <select className="form-select" value={formData?.category || ""} onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
-                      <option value="">Select</option>
-                      {categoryList?.map((cat) => (
-                        <option key={cat?._id} value={cat?._id}>{cat?.name}</option>
-                      ))}
-                    </select>
+                    <input
+                      className="form-control"
+                      type="text"
+                      value={
+                        (categoryList?.find(cat => cat._id === formData?.category) || {}).name || ""
+                      }
+                      onFocus={() => setShowCategorySuggestions(true)}
+                      onChange={(e) => {
+                        handleCategorySearch(e.target.value);
+                        setShowCategorySuggestions(true);
+                      }}
+                    />
+                    {showCategorySuggestions && (
+                      <ul className="list-group position-absolute w-100 z-3" style={{ maxHeight: 200, overflowY: "auto" }}>
+                        {filteredCategories.map((cat) => (
+                          <li
+                            key={cat._id}
+                            className="list-group-item list-group-item-action"
+                            onClick={() => {
+                              setFormData({ ...formData, category: cat._id });
+                              setShowCategorySuggestions(false);
+                            }}
+                          >
+                           <i className="bi bi-search"></i> {cat.name}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
 
-                  <div className="mb-3">
+                  <div className="mb-3 position-relative">
                     <label>Subcategory</label>
-                    <select className="form-select" value={formData?.subCategory || ""} onChange={(e) => setFormData({ ...formData, subCategory: e.target.value })}>
-                      <option value="">Select</option>
-                      {subCategoryList?.map((sub) => (
-                        <option key={sub?._id} value={sub?._id}>{sub?.name}</option>
-                      ))}
-                    </select>
+                    <input
+                      className="form-control"
+                      type="text"
+                      value={
+                        (subCategoryList?.find(sub => sub._id === formData?.subCategory) || {}).name || ""
+                      }
+                      onFocus={() => setShowSubCategorySuggestions(true)}
+                      onChange={(e) => {
+                        handleSubCategorySearch(e.target.value);
+                        setShowSubCategorySuggestions(true);
+                      }}
+                    />
+                    {showSubCategorySuggestions && (
+                      <ul className="list-group position-absolute w-100 z-3" style={{ maxHeight: 200, overflowY: "auto" }}>
+                        {filteredSubCategories.map((sub) => (
+                          <li
+                            key={sub._id}
+                            className="list-group-item list-group-item-action"
+                            onClick={() => {
+                              setFormData({ ...formData, subCategory: sub._id });
+                              setShowSubCategorySuggestions(false);
+                            }}
+                          >
+                           <i className="bi bi-search"></i> {sub.name}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
 
                   <div className="mb-3">
                     <label>Service Area / Pincode</label>
-                    <input className="form-control" type="text" value={formData?.serviceArea || ""} onChange={(e) => setFormData({ ...formData, serviceArea: e.target.value })} />
+                    <input
+                      className="form-control"
+                      type="text"
+                      value={formData?.serviceArea || ""}
+                      onChange={(e) => setFormData({ ...formData, serviceArea: e.target.value })}
+                    />
                   </div>
 
                   <div className="d-flex justify-content-between">
