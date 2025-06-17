@@ -338,6 +338,8 @@ const BusinessNavbar = () => {
     return () => clearInterval(interval);
   }, [placeholderIndex]);
 
+  const slugify = (text) => text?.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^\w-]+/g, "");
+
   const handleSearch = () => {
     const finalPincode = selectedLocation?.pinCode || location?.pincode;
     if (!finalPincode || !searchText.trim()) {
@@ -345,8 +347,9 @@ const BusinessNavbar = () => {
       return;
     }
     const finalState = selectedLocation?.stateName || location?.state;
-    console.log("LOCATION:=>", finalPincode, "LOCATION 2:=>", location);
-    router.push(`/pages/bussiness-listing?query=${searchText.trim()}&pincode=${finalPincode}&state=${finalState}`);
+    // console.log("LOCATION:=>", finalPincode, "LOCATION 2:=>", location);
+    `/pages/bussiness-listing/${finalPincode || 12121}/${slugify(finalState||'state')}/${slugify(searchText.trim())}`
+    // router.push(`/pages/bussiness-listing?query=${searchText.trim()}&pincode=${finalPincode}&state=${finalState}`);
   };
 
   return (

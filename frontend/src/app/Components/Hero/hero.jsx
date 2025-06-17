@@ -318,9 +318,12 @@ const Hero = () => {
       alert("Please wait for location and enter a search term.");
       return;
     }
+    const slugify = (text) =>
+      text.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^\w-]+/g, "");
 
     router.push(
-      `/pages/bussiness-listing?query=${searchText.trim()}&pincode=${pincode}&state=${state}`
+      // `/pages/bussiness-listing?query=${searchText.trim()}&pincode=${pincode}&state=${state}`
+      `/pages/bussiness-listing/${pincode || 12121}/${slugify(state||'state')}/${slugify(searchText)}`
     );
   };
 

@@ -83,13 +83,16 @@ const SubcategoryComponent = () => {
     };
   };
 
+  const slugify = (text) => text?.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^\w-]+/g, "");
+
   const handleSubcategoryClick = (sub) => {
     const pincode = location?.pincode || "";
     const state = location?.state || "";
     const catName = sub?.name
     if (pincode || state) {
       router.push(
-        `/pages/bussiness-listing?query=${catName?.trim()}&pincode=${pincode}&state=${state}`
+        `/pages/bussiness-listing/${pincode || 12121}/${slugify(state || 'state')}/${slugify(catName)}`
+        // `/pages/bussiness-listing?query=${catName?.trim()}&pincode=${pincode}&state=${state}`
       );
     } else {
       alert("Need pinCode Pleas wait")

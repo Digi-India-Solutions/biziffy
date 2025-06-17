@@ -30,6 +30,9 @@ const Page = () => {
     fetchTopCity();
   }, [id]);
 
+  const slugify = (text) =>
+    text?.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^\w-]+/g, "") || "";
+  
   if (!data) return <LoadingComponent />;
 
   return (
@@ -75,25 +78,26 @@ const Page = () => {
               <div key={index} className="col-md-2 col-sm-3 col-4">
                 <div className="city-category-select-data">
                   <Link
-                    href={`/pages/bussiness-listing?query=${category?.name}&pincode=${data?.city?.pinCode}&title=${"CityPage"}`}
+                    href={`/pages/bussiness-listing/${data?.city?.pinCode || '12121'}/${slugify(state || 'state')}/${slugify(searchText || 'business-name')}/CityPage`}
+                  // href={`/pages/bussiness-listing?query=${category?.name}&pincode=${data?.city?.pinCode}&title=${"CityPage"}`}
                   >
-                    <div className="city-category-img">
-                      <Image
-                        src={category?.icon}
-                        alt={category?.name}
-                        className="city-category-round-img"
-                        height={100}
-                        width={100}
-                      />
-                    </div>
-                  </Link>
-                  <h4 className="city-category-title">{category?.name}</h4>
-                </div>
+                  <div className="city-category-img">
+                    <Image
+                      src={category?.icon}
+                      alt={category?.name}
+                      className="city-category-round-img"
+                      height={100}
+                      width={100}
+                    />
+                  </div>
+                </Link>
+                <h4 className="city-category-title">{category?.name}</h4>
+              </div>
               </div>
             ))}
-          </div>
         </div>
-      </section>
+      </div>
+    </section >
 
       <section className="city-about-section">
         <div className="container">

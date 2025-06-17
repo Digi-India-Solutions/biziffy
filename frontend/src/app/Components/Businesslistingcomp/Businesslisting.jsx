@@ -1,6 +1,6 @@
 'use client';
 import { Suspense, useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import "../../pages/bussiness-listing/businessListing.css";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,7 +16,8 @@ import PaidListing from "../../pages/paid-listing/PaidListing"
 import { getData, postData } from "../../services/FetchNodeServices";
 
 const Businesslisting = () => {
-  const searchParams = useSearchParams();
+  const path = usePathname()
+  const formatSlug = (text) => text?.replace(/-/g, ' ');
   const [query, setQuery] = useState("");
   const [pincode, setPincode] = useState("");
   const [title, setTitle] = useState("");
@@ -56,17 +57,25 @@ const Businesslisting = () => {
     fetchAdvartisMant()
   }, [])
 
-  useEffect(() => {
-    const q = searchParams.get("query") || "";
-    const pin = searchParams.get("pincode") || "";
-    const title = searchParams.get("title")
-    const st = searchParams.get("state") || "";
+  // useEffect(() => {
+  //   const q = searchParams.get("query") || "";
+  //   const pin = searchParams.get("pincode") || "";
+  //   const title = searchParams.get("title")
+  //   const st = searchParams.get("state") || "";
 
-    setQuery(q);
-    setPincode(pin);
-    setTitle(title);
-    setState(st);
-  }, [searchParams]);
+  //   setQuery(q);
+  //   setPincode(pin);
+  //   setTitle(title);
+  //   setState(st);
+  // }, [searchParams]);
+
+  useEffect(() => {
+    console.log("XXXXXXXXXX:=>", path?.split('/').length > 6)
+    setPincode(formatSlug(path.split('/')[3]))
+    setQuery(formatSlug(path.split('/')[5]))
+    setState(formatSlug(path.split('/')[4]))
+    path?.split('/').length > 6 && setTitle(formatSlug(path?.split('/')[7]))
+  }, [])
 
   // const bannerImages = [banner1, banner2, banner3];
 
