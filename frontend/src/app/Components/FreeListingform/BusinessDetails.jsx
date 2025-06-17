@@ -90,7 +90,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "../../pages/freelistingform/freelistingform.css";
-import { getData } from "../../services/FetchNodeServices";
+import { getData, postData } from "../../services/FetchNodeServices";
 
 // const statesList = [
 //   "Maharashtra", "Delhi", "Karnataka", "Tamil Nadu", "Gujarat", "Uttar Pradesh"
@@ -104,15 +104,7 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
   const [filteredStates, setFilteredStates] = useState([]);
   const details = formData.businessDetails || {};
   const [showCitySuggestions, setShowCitySuggestions] = useState(false);
-
-  // Example static data if you're not fetching from API yet
-  const citiesList = [
-    { _id: 1, name: "Mumbai" },
-    { _id: 2, name: "Delhi" },
-    { _id: 3, name: "Bengaluru" },
-    { _id: 4, name: "Chennai" },
-    { _id: 5, name: "Kolkata" }
-  ];
+  const [citiesList, setCitiesList] = useState([])
 
   const handleStateInputChange = (e) => {
     const value = e.target.value;
@@ -220,6 +212,23 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
     fetchState()
   }, [])
 
+  useEffect(() => {
+    const fetchAreas = async () => {
+      try {
+        const res = await postData(`pincode/get-areapincode-by-state`, { state: formData?.businessDetails?.state });
+        console.log("DADAhhh:=>", res, citiesList)
+        // const areaList = res?.map((user) => user);
+        console.log("DADAhhhsss", res)
+        setCitiesList(res);
+      } catch (error) {
+        console.error("Error fetching areas:", error);
+      }
+    }
+    if (formData?.businessDetails?.state) {
+      fetchAreas()
+    }
+  }, [formData?.businessDetails?.state])
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="text-center mb-4">
@@ -237,15 +246,15 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
         { label: "Landmark", name: "landmark" },
 
       ].map((field) => (
-        <div className="mb-3" key={field.name}>
+        <div className="mb-3" key={field?.name}>
           <label className="form-label">
             {field.label} <sup>*</sup>
           </label>
           <input
             type="text"
             className="form-control"
-            name={field.name}
-            value={details[field.name] || ""}
+            name={field?.name}
+            value={details[field?.name] || ""}
             onChange={handleChange}
             required
           />
@@ -310,7 +319,7 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
           >
             {citiesList
               ?.filter((city) =>
-                city?.name?.toLowerCase().includes((details?.city || "").toLowerCase())
+                city?.area?.toLowerCase().includes((details?.city || "").toLowerCase())
               )
               .map((city) => (
                 <li
@@ -322,12 +331,12 @@ const BusinessDetails = ({ setKey, formData, setFormData }) => {
                       ...formData,
                       businessDetails: {
                         ...formData.businessDetails,
-                        city: city.name,
+                        city: city.area,
                       },
                     })
                   }
                 >
-                 <i className="bi bi-search"></i> {city.name}
+                  <i className="bi bi-search"></i> {city.area}
                 </li>
               ))}
           </ul>

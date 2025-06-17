@@ -5,6 +5,7 @@ import Enquiry from "../../models/enquiryModel";
 export const getAllEnquiries = async (req: Request, res: Response) => {
   try {
     const enquiries = await Enquiry.find().populate('user');
+    console.log(enquiries)
     res.status(200).json(enquiries);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch enquiries" });

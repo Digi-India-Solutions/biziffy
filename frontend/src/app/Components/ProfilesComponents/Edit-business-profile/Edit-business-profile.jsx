@@ -28,16 +28,13 @@ export default function EditBusinessProfile({ listingId }) {
   const [statesList, setStatesList] = useState([])
   const [showCitySuggestions, setShowCitySuggestions] = useState(false);
   const [showStateSuggestions, setShowStateSuggestions] = useState(false);
-
-  // Example static data if you're not fetching from API yet
-  const citiesList = [
+  const [citiesList, setCitiesList] = useState([
     { _id: 1, name: "Mumbai" },
     { _id: 2, name: "Delhi" },
     { _id: 3, name: "Bengaluru" },
     { _id: 4, name: "Chennai" },
     { _id: 5, name: "Kolkata" }
-  ];
-
+  ])
   const [formData, setFormData] = useState({
     businessname: "", businessCategory: "", businessSubCategory: [], services: [], businessArea: [], Building: "",
     Street: "", Area: "", Landmark: "", city: "", state: "", pincode: "", phone: "", about: "", image: null,
@@ -269,28 +266,15 @@ export default function EditBusinessProfile({ listingId }) {
     });
   };
 
-  // useEffect(() => {
-  //   const fetchAreas = async () => {
-  //     try {
-  //       const res = await axios.get("https://6800d7ffb72e9cfaf728eac6.mockapi.io/areapincode");
-  //       const areaList = res.data.map((user) => `${user.area} ${user.pincode}`);
-  //       setAreas(areaList);
-  //     } catch (error) {
-  //       console.error("Error fetching areas:", error);
-  //     }
-  //   };
-  //   fetchAreas();
-  // }, []);
-
-
-
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const res = await postData(`pincode/get-areapincode-by-state`, { state: formData?.businessDetails?.state });
-        console.log("DADAhhh", res)
-        const areaList = res?.data.map((user) => `${user?.area} ${user?.pinCode}`);
+        const res = await postData(`pincode/get-areapincode-by-state`, { state: formData?.state });
+        console.log("DADAhhh:--->", res ,formData?.state , formData?.businessDetails?.state)
+        const areaList = res?.map((user) => `${user?.area} ${user?.pinCode}`);
         setAreas(areaList);
+        setCitiesList(res);
+
       } catch (error) {
         console.error("Error fetching areas:", error);
       }
@@ -457,7 +441,7 @@ export default function EditBusinessProfile({ listingId }) {
                         ?.filter((state) =>
                           state?.name
                             ?.toLowerCase()
-                            .includes((formData.state || "").toLowerCase())
+                            .includes((formData?.state || "").toLowerCase())
                         )
                         .map((state) => (
                           <li
@@ -465,10 +449,10 @@ export default function EditBusinessProfile({ listingId }) {
                             className="list-group-item list-group-item-action"
                             style={{ cursor: "pointer" }}
                             onMouseDown={() =>
-                              setFormData({ ...formData, state: state.name })
+                              setFormData({ ...formData, state: state?.name })
                             }
                           >
-                           <i className="bi bi-search"></i> {city.name} {state.name}
+                            <i className="bi bi-search"></i>{state?.name}
                           </li>
                         ))}
                     </ul>
@@ -497,7 +481,7 @@ export default function EditBusinessProfile({ listingId }) {
                     >
                       {citiesList
                         ?.filter((city) =>
-                          city?.name.toLowerCase().includes((formData.city || "").toLowerCase())
+                          city?.area.toLowerCase().includes((formData.city || "").toLowerCase())
                         )
                         .map((city) => (
                           <li
@@ -505,10 +489,10 @@ export default function EditBusinessProfile({ listingId }) {
                             className="list-group-item list-group-item-action"
                             style={{ cursor: "pointer" }}
                             onMouseDown={() =>
-                              setFormData({ ...formData, city: city.name })
+                              setFormData({ ...formData, city: city.area })
                             }
                           >
-                           <i className="bi bi-search"></i> {city.name} {city.name}
+                            <i className="bi bi-search"></i> {city.area}
                           </li>
                         ))}
                     </ul>

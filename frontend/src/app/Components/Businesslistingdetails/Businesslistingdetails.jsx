@@ -13,6 +13,7 @@ import DealOffers from "./DealOffers";
 import ListingPageFaq from "./ListingPageFaq";
 import { useRouter } from "next/navigation";
 import { postData } from "../../services/FetchNodeServices";
+import { toast, ToastContainer } from "react-toastify";
 
 const Businesslistingdetails = ({ businesses, advertisements }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -179,8 +180,10 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
 
   const handleEnquiryForm = async () => {
     const respons = postData("enquiries/create-enquiryform", { ...enquiryForm })
-    if (respons?.data?.status) {
+
+    if (respons?.status) {
       setEnquiryForm({ name: '', phone: '', requirement: '' })
+      toast.success('Enquiry form submitted successfully!');
     } else {
 
     }
@@ -188,6 +191,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
   console.log('responsereviews:=>', businesses.reviews)
   return (
     <>
+      <ToastContainer />
       <div className="container mt-4">
         <div className="row">
           {/* <Link href="/pages/bussiness-listing"> */}
@@ -400,7 +404,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                       {businesses?.businessCategory?.keywords?.map((service, index) => (
                         <li key={index}>
                           <i className="bi bi-check2-all me-2"></i>
-                          {service}
+                          {service.charAt(0).toUpperCase() + service.slice(1)}
                         </li>
                       ))}
                     </ul>
@@ -558,7 +562,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                     {businesses?.businessCategory?.keywords?.map((service, index) => (
                       <li key={index}>
                         <i className="bi bi-check2-all me-2"></i>
-                        {service}
+                        {service.charAt(0).toUpperCase() + service.slice(1)}
                       </li>
                     ))}
                   </ul>
@@ -568,7 +572,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                     <b>Review Rating</b>
                   </p>
                   <ul className="review-list">
-                    {reviews?.map((review, index) => (
+                    {businesses?.reviews?.map((review, index) => (
                       <li key={index}>
                         <span className="review-name">
                           {typeof review.author === "string" &&
@@ -582,7 +586,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                               <i
                                 key={i}
                                 className={
-                                  i < review.rating
+                                  i < review?.rating
                                     ? "bi bi-star-fill"
                                     : "bi bi-star"
                                 }
@@ -590,7 +594,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                             ))}
                           </div>
                           <p className="client-feedback">
-                            {`"${review.comment || ""}"`}
+                            {`"${review?.comment || ""}"`}
                           </p>
                         </div>
                       </li>

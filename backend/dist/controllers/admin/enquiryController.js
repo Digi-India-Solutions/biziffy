@@ -18,6 +18,7 @@ const enquiryModel_1 = __importDefault(require("../../models/enquiryModel"));
 const getAllEnquiries = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const enquiries = yield enquiryModel_1.default.find().populate('user');
+        console.log(enquiries);
         res.status(200).json(enquiries);
     }
     catch (error) {

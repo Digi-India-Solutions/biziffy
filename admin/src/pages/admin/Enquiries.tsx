@@ -11,6 +11,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { getData } from "../../services/FetchNodeServices";
 
 const Enquiries = () => {
   const [enquiries, setEnquiries] = useState([]);
@@ -22,9 +23,9 @@ const Enquiries = () => {
   useEffect(() => {
     const loadEnquiries = async () => {
       try {
-        const response = await fetch("https://api.biziffy.com/api/enquiries");
-        const data = await response.json();
-        setEnquiries(data);
+        const response = await getData("enquiries");
+        // console.log("GGGGGGG:=>", response);
+        setEnquiries(response);
       } catch (error) {
         console.error("Failed to load enquiries:", error);
       }
@@ -134,9 +135,9 @@ const Enquiries = () => {
               currentEnquiries.map((enquiry: any, index: number) => (
                 <tr key={enquiry._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">{indexOfFirst + index + 1}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{enquiry.user.fullName || "-"}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{enquiry.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{enquiry.phone}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{enquiry?.user?.fullName || "-"}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{enquiry?.name}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{enquiry?.phone}</td>
                   <td className="px-6 py-4 text-sm text-gray-900 max-w-lg">
                     {enquiry.requirement || enquiry.name}
                   </td>
@@ -155,7 +156,7 @@ const Enquiries = () => {
                 <PaginationPrevious
                   href="#"
                   onClick={() => paginate(Math.max(currentPage - 1, 1))}
-                  disabled={currentPage === 1}
+                  // disabled={currentPage === 1}
                 />
               </PaginationItem>
               {renderPageNumbers().map((num) => (
@@ -173,7 +174,7 @@ const Enquiries = () => {
                 <PaginationNext
                   href="#"
                   onClick={() => paginate(Math.min(currentPage + 1, totalPages))}
-                  disabled={currentPage === totalPages}
+                  // disabled={currentPage === totalPages}
                 />
               </PaginationItem>
             </PaginationContent>

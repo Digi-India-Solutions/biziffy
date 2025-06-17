@@ -9,19 +9,16 @@ import {
 
 const router = express.Router();
 
-// GET all support tickets
-router.get("/support-tickets", getSupportTickets);
+router.get("/get-all-support-tickets", getSupportTickets);
 
-// POST a new support ticket
 router.post("/support-tickets", createSupportTicket);
 
-// GET a single support ticket by ID
-router.get("/support-tickets/:id", getSupportTicketById);
+router.get("/get-support-tickets-by-user/:id", getSupportTicketById);
 
 // PUT update status of a ticket (open/closed)
-router.put("/support-tickets/:id", updateSupportTicketStatus); // 👈 update route
+router.post("/support-tickets-change-status/:id", updateSupportTicketStatus); // 👈 update route
 
 // DELETE a support ticket
-router.delete("/support-tickets/:id", deleteSupportTicket);
+router.get("/support-tickets-delete/:id", deleteSupportTicket);
 
 export default router;

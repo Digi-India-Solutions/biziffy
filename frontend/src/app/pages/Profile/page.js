@@ -32,16 +32,7 @@ const ProfilePage = () => {
   const [showStateSuggestions, setShowStateSuggestions] = useState(false);
   const [showCitySuggestions, setShowCitySuggestions] = useState(false);
 
-  const [citiesList, setCitiesList] = useState([
-    { _id: "1", name: "Mumbai" },
-    { _id: "2", name: "Delhi" },
-    { _id: "3", name: "Bangalore" },
-    { _id: "4", name: "Hyderabad" },
-    { _id: "5", name: "Ahmedabad" },
-    { _id: "6", name: "Chennai" },
-    { _id: "7", name: "Pune" },
-    { _id: "8", name: "Kolkata" },
-  ]);
+  const [citiesList, setCitiesList] = useState([]);
 
 
   const userProfile = {
@@ -232,7 +223,24 @@ const ProfilePage = () => {
   }
   // console.log("User ID:", userId);
 
-  // console.log("XXXXXXXXXXXXX:__--:-", profileData)
+  useEffect(() => {
+    const fetchAreas = async () => {
+      try {
+        const res = await postData(`pincode/get-areapincode-by-state`, { state: profileData?.state });
+        console.log("DADAhhh:=>", res, citiesList)
+        // const areaList = res?.map((user) => user);
+        console.log("DADAhhhsss", res)
+        setCitiesList(res);
+      } catch (error) {
+        console.error("Error fetching areas:", error);
+      }
+    }
+    if (profileData?.state) {
+      fetchAreas()
+    }
+  }, [profileData?.state])
+  // console.log("XXXXXXXXXXXXX:__--:-", businessListing)
+
   return (
     <>
       <ToastContainer />
@@ -328,7 +336,7 @@ const ProfilePage = () => {
                   </button>
                   <button
                     className={`sidebar-tab ${activeTab === "view-enquiry" ? "active" : ""}`} onClick={() => setActiveTab("view-enquiry")} >
-                    <i className="bi bi-patch-question"></i> View Enquiry
+                    <i className="bi bi-patch-question"></i> View Support Enquiry
                   </button>
                   <button className="sidebar-tab" onClick={() => handleLogout()} >
                     <i className="bi bi-box-arrow-left"></i> Logout
@@ -508,7 +516,7 @@ const ProfilePage = () => {
                             >
                               {citiesList
                                 ?.filter((city) =>
-                                  city?.name
+                                  city?.area
                                     ?.toLowerCase()
                                     .includes((profileData.city || "").toLowerCase())
                                 )
@@ -518,10 +526,10 @@ const ProfilePage = () => {
                                     className="list-group-item list-group-item-action"
                                     style={{ cursor: "pointer" }}
                                     onMouseDown={() =>
-                                      setProfileData({ ...profileData, city: city.name })
+                                      setProfileData({ ...profileData, city: city.area })
                                     }
                                   >
-                                    <i className="bi bi-search"></i> {city.name} {city.name}
+                                    <i className="bi bi-search"></i> {city.area} {city.pinCode}
                                   </li>
                                 ))}
                             </ul>
@@ -574,9 +582,9 @@ const ProfilePage = () => {
                               </button>
                               <div className="pending-status">
                                 <p>
-                                  <span className={`status-badge ${status === "Approved" ? "approved" : "pending"}`}>
+                                  <span className={`status-badge ${listing?.businessDetails?.status === "Approved" ? "approved" : "pending"}`}>
                                     <span className="status-dot"></span>
-                                    {status}
+                                    {listing?.businessDetails?.status}
                                   </span>
                                 </p>
                               </div>

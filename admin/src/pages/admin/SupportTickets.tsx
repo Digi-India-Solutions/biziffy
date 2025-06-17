@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/Layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -7,17 +8,25 @@ import {
   DeleteButton,
   EditButton,
 } from "@/components/ui/table-actions";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Search } from "lucide-react";
-import axios from "axios";
+import { getData, postData } from "../../services/FetchNodeServices";
 
 interface SupportTicket {
   _id: string;
-  title: string;
-  priority: string;
-  dateTime: string;
+  userId: string;
+  supportType: string;
+  email: string;
+  issue: string;
   status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const SupportTickets = () => {
@@ -25,20 +34,26 @@ const SupportTickets = () => {
   const [supportTicketsData, setSupportTicketsData] = useState<SupportTicket[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const ticketsPerPage = 4;
-
+  const [bulkAction, setBulkAction] = useState("");
+  const [selectedTickets, setSelectedTickets] = useState<string[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
 
+  const ticketsPerPage = 5;
+
   const fetchSupportTickets = async () => {
+    setLoading(true);
     try {
-      const res = await axios.get("https://api.biziffy.com/api/admin/support-tickets");
-      setSupportTicketsData(res.data.data);
+      const res = await getData("admin/get-all-support-tickets");
+      setSupportTicketsData(res?.data || []);
     } catch (error) {
-      console.error("Error fetching support tickets:", error);
+      toast({ title: "Error", description: "Failed to load tickets" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -46,85 +61,118 @@ const SupportTickets = () => {
     fetchSupportTickets();
   }, []);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value.toLowerCase());
-    setCurrentPage(1);
-  };
-
   const filteredTickets = supportTicketsData.filter((ticket) =>
-    `${ticket._id} ${ticket.title} ${ticket.priority} ${ticket.status}`
+    `${ticket._id} ${ticket.email} ${ticket.issue} ${ticket.supportType} ${ticket.status}`
       .toLowerCase()
-      .includes(searchTerm)
+      .includes(searchTerm.toLowerCase())
   );
 
-  const indexOfLastTicket = currentPage * ticketsPerPage;
-  const indexOfFirstTicket = indexOfLastTicket - ticketsPerPage;
-  const currentTickets = filteredTickets.slice(indexOfFirstTicket, indexOfLastTicket);
+  const indexOfLast = currentPage * ticketsPerPage;
+  const indexOfFirst = indexOfLast - ticketsPerPage;
+  const currentTickets = filteredTickets.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredTickets.length / ticketsPerPage);
 
   const handleExportToCSV = () => {
     const csvContent = [
-      ["ID", "Title", "Priority", "DateTime", "Status"],
+      ["ID", "Support Type", "Email", "Issue", "Created At", "Status"],
       ...filteredTickets.map((ticket) => [
         ticket._id,
-        ticket.title,
-        ticket.priority,
-        ticket.dateTime,
+        ticket.supportType,
+        ticket.email,
+        `"${ticket.issue.replace(/"/g, '""')}"`,
+        new Date(ticket.createdAt).toLocaleString(),
         ticket.status,
       ]),
     ]
-      .map((e) => e.join(","))
+      .map((row) => row.join(","))
       .join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-
-    link.setAttribute("href", url);
-    link.setAttribute("download", "support_tickets.csv");
-    document.body.appendChild(link);
+    link.href = url;
+    link.download = "support_tickets.csv";
     link.click();
-    document.body.removeChild(link);
-  };
-
-  const handleView = (ticket: SupportTicket) => {
-    setSelectedTicket(ticket);
-    setViewModal(true);
-  };
-
-  const handleEdit = (ticket: SupportTicket) => {
-    setSelectedTicket(ticket);
-    setEditModal(true);
-  };
-
-  const handleDelete = (ticket: SupportTicket) => {
-    setSelectedTicket(ticket);
-    setDeleteModal(true);
+    URL.revokeObjectURL(url);
   };
 
   const confirmDelete = async () => {
     if (!selectedTicket) return;
     try {
-      await axios.delete(`https://api.biziffy.com/api/admin/support-tickets/${selectedTicket._id}`);
-      toast({ title: "Deleted", description: `Ticket deleted successfully.` });
-      setDeleteModal(false);
-      fetchSupportTickets();
-    } catch (error) {
-      toast({ title: "Error", description: "Failed to delete ticket" });
+      const res = await getData(`admin/support-tickets-delete/${selectedTicket._id}`);
+      if (res?.status) {
+        toast({ title: "Deleted", description: "Ticket deleted successfully." });
+        fetchSupportTickets();
+        setDeleteModal(false);
+      }
+    } catch {
+      toast({ title: "Error", description: "Failed to delete ticket." });
     }
   };
 
   const handleStatusChange = async (newStatus: string) => {
     if (!selectedTicket) return;
     try {
-      await axios.put(`https://api.biziffy.com/api/admin/support-tickets/${selectedTicket._id}`, {
-        status: newStatus,
-      });
-      toast({ title: "Updated", description: `Ticket status changed to ${newStatus}` });
-      setEditModal(false);
+      const res = await postData(`admin/support-tickets-change-status/${selectedTicket._id}`, { status: newStatus });
+      if (res?.status) {
+        toast({ title: "Updated", description: `Status changed to ${newStatus}` });
+        fetchSupportTickets();
+        setEditModal(false);
+      }
+    } catch {
+      toast({ title: "Error", description: "Failed to update status." });
+    }
+  };
+
+  const handleBulkAction = async (action: string) => {
+    if (selectedTickets.length === 0) {
+      toast({ title: "No tickets selected" });
+      return;
+    }
+
+    try {
+      if (action === "delete") {
+        await Promise.all(selectedTickets.map((id) => getData(`admin/support-tickets-delete/${id}`)));
+        toast({ title: "Deleted", description: "Selected tickets deleted." });
+      } else {
+        await Promise.all(selectedTickets.map((id) =>
+          postData(`admin/support-tickets-change-status/${id}`, { status: action })
+        ));
+        toast({ title: "Status Updated", description: `Tickets marked as ${action}` });
+      }
       fetchSupportTickets();
-    } catch (error) {
-      toast({ title: "Error", description: "Failed to update status" });
+      setSelectedTickets([]);
+      setSelectAll(false);
+    } catch {
+      toast({ title: "Error", description: "Bulk action failed." });
+    }
+  };
+
+  const toggleSelectAll = () => {
+    if (!selectAll) {
+      setSelectedTickets(currentTickets.map((ticket) => ticket._id));
+    } else {
+      setSelectedTickets([]);
+    }
+    setSelectAll(!selectAll);
+  };
+
+  const toggleSelectTicket = (ticketId: string) => {
+    setSelectedTickets((prev) =>
+      prev.includes(ticketId) ? prev.filter((id) => id !== ticketId) : [...prev, ticketId]
+    );
+  };
+
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case "open":
+        return "bg-green-100 text-green-700";
+      case "pending":
+        return "bg-yellow-100 text-yellow-700";
+      case "completed":
+        return "bg-blue-100 text-blue-700";
+      default:
+        return "bg-gray-100 text-gray-700";
     }
   };
 
@@ -133,34 +181,35 @@ const SupportTickets = () => {
       {/* Top Controls */}
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center space-x-2">
-          <select className="border rounded-md px-3 py-2 bg-white">
-            <option>Bulk Action</option>
-            <option>Mark as Open</option>
-            <option>Mark as Closed</option>
-            <option>Delete Selected</option>
+          <select
+            className="border rounded-md px-3 py-2 bg-white"
+            value={bulkAction}
+            onChange={(e) => setBulkAction(e.target.value)}
+          >
+            <option value="">Bulk Action</option>
+            <option value="open">Mark as Open</option>
+            <option value="pending">Mark as Pending</option>
+            <option value="completed">Mark as Completed</option>
+            <option value="delete">Delete Selected</option>
           </select>
-          <Button onClick={() => toast({ title: "Bulk Action", description: "Action applied" })} className="bg-blue-500 hover:bg-blue-600">
+          <Button disabled={!bulkAction} onClick={() => handleBulkAction(bulkAction)}>
             Apply
           </Button>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-2">
-          <Button className="bg-blue-500 hover:bg-blue-600">
-            Add Ticket
-          </Button>
-
+          {/* <Button className="bg-blue-500">Add Ticket</Button> */}
           <div className="relative w-64">
             <Input
               type="text"
-              placeholder="Search by ID, status, priority..."
+              placeholder="Search by email, status, issue..."
               value={searchTerm}
-              onChange={handleSearchChange}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
-
-          <Button onClick={handleExportToCSV} className="bg-green-500 hover:bg-green-600">
+          <Button onClick={handleExportToCSV} className="bg-green-500">
             Export to CSV
           </Button>
         </div>
@@ -171,133 +220,130 @@ const SupportTickets = () => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3"><input type="checkbox" /></th>
+              <th className="px-4 py-3">
+                <input type="checkbox" checked={selectAll} onChange={toggleSelectAll} />
+              </th>
               <th className="px-6 py-3">ID</th>
-              <th className="px-6 py-3">Title</th>
-              <th className="px-6 py-3">Priority</th>
-              <th className="px-6 py-3">Date & Time</th>
+              <th className="px-6 py-3">Support Type</th>
+              <th className="px-6 py-3">Email</th>
+              <th className="px-6 py-3">Issue</th>
+              <th className="px-6 py-3">Created At</th>
               <th className="px-6 py-3">Status</th>
-              <th className="px-6 py-3">Action</th>
+              <th className="px-6 py-3">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {currentTickets.map((ticket) => (
-              <tr key={ticket._id}>
-                <td className="px-6 py-4"><input type="checkbox" /></td>
-                <td className="px-6 py-4">{ticket._id.slice(-5)}</td>
-                <td className="px-6 py-4">{ticket.title}</td>
-                <td className="px-6 py-4">
-                  <span className={`px-2 py-1 text-xs rounded-full font-semibold ${
-                    ticket.priority === "urgent"
-                      ? "bg-red-100 text-red-800"
-                      : ticket.priority === "high"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : "bg-blue-100 text-blue-800"
-                  }`}>
-                    {ticket.priority}
-                  </span>
-                </td>
-                <td className="px-6 py-4">{ticket.dateTime}</td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center">
-                    <span className={`w-2 h-8 rounded-l ${ticket.status === "open" ? "bg-green-500" : "bg-red-500"}`}></span>
-                    <span className={`ml-2 px-2 text-xs rounded font-semibold ${
-                      ticket.status === "open" ? "text-green-800" : "text-red-800"
-                    }`}>
-                      {ticket.status}
-                    </span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 space-x-2">
-                  <ViewButton onClick={() => handleView(ticket)} />
-                  <DeleteButton onClick={() => handleDelete(ticket)} />
-                  {ticket.status === "open" && <EditButton onClick={() => handleEdit(ticket)} />}
+            {currentTickets.length === 0 ? (
+              <tr>
+                <td colSpan={8} className="text-center py-6 text-gray-500">
+                  No support tickets found.
                 </td>
               </tr>
-            ))}
+            ) : (
+              currentTickets.map((ticket) => (
+                <tr key={ticket._id}>
+                  <td className="px-4 py-4">
+                    <input
+                      type="checkbox"
+                      checked={selectedTickets.includes(ticket._id)}
+                      onChange={() => toggleSelectTicket(ticket._id)}
+                    />
+                  </td>
+                  <td className="px-6 py-4 font-mono">{ticket._id.slice(-6)}</td>
+                  <td className="px-6 py-4">{ticket.supportType}</td>
+                  <td className="px-6 py-4">{ticket.email}</td>
+                  <td className="px-6 py-4">{ticket.issue}</td>
+                  <td className="px-6 py-4">{new Date(ticket.createdAt).toLocaleString()}</td>
+                  <td className="px-6 py-4">
+                    <span className={`px-2 py-1 text-xs rounded font-semibold ${getStatusStyle(ticket.status)}`}>
+                      {ticket.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 space-x-2">
+                    <ViewButton onClick={() => { setSelectedTicket(ticket); setViewModal(true); }} />
+                    <EditButton onClick={() => { setSelectedTicket(ticket); setEditModal(true); }} />
+                    <DeleteButton onClick={() => { setSelectedTicket(ticket); setDeleteModal(true); }} />
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center mt-6 space-x-2">
-        <Button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((prev) => prev - 1)}
-        >
-          Previous
-        </Button>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <Button
-            key={page}
-            variant={currentPage === page ? "default" : "outline"}
-            onClick={() => setCurrentPage(page)}
-          >
-            {page}
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-6 space-x-2">
+          <Button disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
+            Previous
           </Button>
-        ))}
-        <Button
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage((prev) => prev + 1)}
-        >
-          Next
-        </Button>
-      </div>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <Button
+              key={page}
+              variant={currentPage === page ? "default" : "outline"}
+              onClick={() => setCurrentPage(page)}
+            >
+              {page}
+            </Button>
+          ))}
+          <Button disabled={currentPage === totalPages} onClick={() => setCurrentPage((p) => p + 1)}>
+            Next
+          </Button>
+        </div>
+      )}
 
-      {/* View Dialog */}
+      {/* View Modal */}
       {selectedTicket && (
         <Dialog open={viewModal} onOpenChange={setViewModal}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Ticket Details</DialogTitle>
             </DialogHeader>
-            <div className="space-y-2">
+            <div className="space-y-2 text-sm">
               <p><strong>ID:</strong> {selectedTicket._id}</p>
-              <p><strong>Title:</strong> {selectedTicket.title}</p>
-              <p><strong>Priority:</strong> {selectedTicket.priority}</p>
-              <p><strong>Date:</strong> {selectedTicket.dateTime}</p>
+              <p><strong>Support Type:</strong> {selectedTicket.supportType}</p>
+              <p><strong>Email:</strong> {selectedTicket.email}</p>
+              <p><strong>Issue:</strong> {selectedTicket.issue}</p>
               <p><strong>Status:</strong> {selectedTicket.status}</p>
+              <p><strong>Created At:</strong> {new Date(selectedTicket.createdAt).toLocaleString()}</p>
             </div>
           </DialogContent>
         </Dialog>
       )}
 
-      {/* Edit Dialog */}
+      {/* Edit Modal */}
       {selectedTicket && (
         <Dialog open={editModal} onOpenChange={setEditModal}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Edit Ticket Status</DialogTitle>
+              <DialogTitle>Change Ticket Status</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
-              <Button
-                onClick={() => handleStatusChange("open")}
-                className="w-full bg-green-500"
-              >
-                Mark as Open
-              </Button>
-              <Button
-                onClick={() => handleStatusChange("closed")}
-                className="w-full bg-red-500"
-              >
-                Mark as Closed
-              </Button>
+            <div className="space-y-3">
+              {["open", "pending", "completed"].map((status) => (
+                <Button
+                  key={status}
+                  className={`w-full ${getStatusStyle(status)}`}
+                  onClick={() => handleStatusChange(status)}
+                >
+                  Mark as {status.charAt(0).toUpperCase() + status.slice(1)}
+                </Button>
+              ))}
             </div>
           </DialogContent>
         </Dialog>
       )}
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Modal */}
       {selectedTicket && (
         <Dialog open={deleteModal} onOpenChange={setDeleteModal}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Are you sure?</DialogTitle>
+              <DialogTitle>Confirm Deletion</DialogTitle>
             </DialogHeader>
-            <p>Do you really want to delete this ticket?</p>
-            <div className="flex justify-end space-x-2 mt-4">
+            <p>Are you sure you want to delete this ticket?</p>
+            <div className="flex justify-end gap-2 mt-4">
               <Button variant="outline" onClick={() => setDeleteModal(false)}>Cancel</Button>
-              <Button onClick={confirmDelete} className="bg-red-500 text-white">Delete</Button>
+              <Button className="bg-red-600 text-white" onClick={confirmDelete}>Delete</Button>
             </div>
           </DialogContent>
         </Dialog>

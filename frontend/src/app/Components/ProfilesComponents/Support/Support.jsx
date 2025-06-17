@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./Support.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
+import { postData } from "../../../services/FetchNodeServices";
 // import ViewEnquiry from "../../Components/ProfilesComponents/ViewEnquiry/Viewenquiry";
- 
+
 const supportTypes = [
   {
     id: 1,
@@ -44,7 +45,8 @@ export default function SupportCenter() {
   const router = useRouter()
   const [selectedType, setSelectedType] = useState(null);
   const [email, setEmail] = useState("");
-  const [description, setDescription] = useState("");
+  const [userId, setUserId] = useState("");
+  const [issue, setIssue] = useState("");
   const formRef = useRef(null);
 
   const handleCardClick = (type) => {
@@ -58,36 +60,31 @@ export default function SupportCenter() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Check if email or description is empty
-    if (!email || !description) {
+    // Check if email or issue is empty
+    if (!email || !issue) {
       toast.error("Please fill in all fields.");
       return;
     }
 
-    const formData = {
-      email,
-      description,
-      supportType: selectedType?.title,
-    };
+    const formData = { email, issue, supportType: selectedType?.title, userId };
 
-    // Log the form data to the console (for testing purposes)
-    console.log("Form Data Submitted:", formData);
-
-    // Show success toast notification with position specified as string
-    toast.success(
-      <div>
-        <p>
-          Ticket submitted for {selectedType?.title || "your support request"}
-        </p>
-      </div>,
-      { position: "top-center" }
-    );
-
-    // Reset the form fields
+    const response = postData('admin/support-tickets', formData);
+    // console.log("Form Data Submitted:->", response);
+    if (response?.status) {
+      toast.success(response?.message, { position: "top-center" });
+    }
     setEmail("");
-    setDescription("");
+    setIssue("");
     setSelectedType(null);
   };
+
+  useEffect(() => {
+    const useData = localStorage.getItem("biziffyUser");
+    if (useData) {
+      const userData = JSON.parse(useData);
+      setUserId(userData?._id);
+    }
+  }, [])
 
   return (
     <div className="container">
@@ -138,30 +135,14 @@ export default function SupportCenter() {
               <label htmlFor="email" className="form-label">
                 <i className="bi bi-envelope me-2"></i>Your Email
               </label>
-              <input
-                type="email"
-                className="form-control"
-                id="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-              />
+              <input type="email" className="form-control" id="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" />
             </div>
 
             <div className="mb-3">
               <label htmlFor="description" className="form-label">
                 <i className="bi bi-chat-left-text me-2"></i>Describe Your Issue
               </label>
-              <textarea
-                className="form-control"
-                id="description"
-                rows="5"
-                required
-                placeholder="Please provide details about your issue..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              ></textarea>
+              <textarea className="form-control" id="description" rows="5" required placeholder="Please provide details about your issue..." value={issue} onChange={(e) => setIssue(e.target.value)}></textarea>
             </div>
 
             <div className="d-flex gap-2">

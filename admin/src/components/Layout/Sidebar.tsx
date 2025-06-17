@@ -622,7 +622,7 @@ export const Sidebar = () => {
                 </button>
                 {openSupport && (
                   <ul className="ml-6 mt-1 space-y-1">
-                    <li>
+                    {/* <li>
                       <Link
                         to="/admin/support/department"
                         className={cn(
@@ -632,7 +632,7 @@ export const Sidebar = () => {
                       >
                         Department
                       </Link>
-                    </li>
+                    </li> */}
                     <li>
                       <Link
                         to="/admin/support/tickets"
