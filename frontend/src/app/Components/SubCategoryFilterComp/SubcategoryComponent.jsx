@@ -7,9 +7,9 @@ import "./subCategoryComp.css";
 import "../../pages/citytourismGuide/citytourismGuide.css";
 import { getData } from "../../services/FetchNodeServices";
 
-const SubcategoryComponent = () => {
+const SubcategoryComponent = ({ Id }) => {
   const searchParams = useSearchParams();
-  const categoryId = searchParams.get("categoryId");
+  // const categoryId = searchParams.get("categoryId");
   const router = useRouter();
 
   const [category, setCategory] = useState(null);
@@ -21,10 +21,10 @@ const SubcategoryComponent = () => {
   // Fetch category and subcategories
   useEffect(() => {
     const fetchCategoryDetails = async () => {
-      if (!categoryId) return;
+      if (! Id) return;
       try {
         setLoadingCategory(true);
-        const response = await getData(`categories/${categoryId}`);
+        const response = await getData(`categories/${ Id}`);
         setCategory(response || null);
         setSubcategories(response?.subcategories || []);
         setError(null);
@@ -37,7 +37,7 @@ const SubcategoryComponent = () => {
     };
 
     fetchCategoryDetails();
-  }, [categoryId]);
+  }, [ Id]);
 
   // Request user location
   useEffect(() => {
@@ -101,7 +101,7 @@ const SubcategoryComponent = () => {
   };
 
   // Fallback UI
-  if (!categoryId) return <div className="loader">❗ Category ID is missing...</div>;
+  if (!Id) return <div className="loader">❗ Category ID is missing...</div>;
   if (loadingCategory) return <div className="loader">🔄 Loading category data...</div>;
   if (error) return <div className="error-msg">⚠️ {error}</div>;
 

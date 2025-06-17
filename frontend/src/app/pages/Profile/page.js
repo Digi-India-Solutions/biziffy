@@ -168,7 +168,7 @@ const ProfilePage = () => {
   const handleSaveChanges = async () => {
     try {
       if (profileData && profileData._id) {
-        const response = await postData(`auth/update-user/${profileData._id}`, profileData);
+        const response = await postData(`auth/update-user/${profileData?._id}`, profileData);
         if (response?.status) {
           localStorage.setItem("biziffyUser", JSON.stringify(response?.user));
           toast.success("Profile updated successfully!");

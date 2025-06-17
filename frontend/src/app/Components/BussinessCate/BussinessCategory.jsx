@@ -52,7 +52,7 @@ const BussinessCategory = () => {
                 <div key={category?._id} className="col-lg-2 col-md-3 col-sm-4 col-4">
                   <Link
                     className="text-decoration-none"
-                    href={`/pages/subCategoryFilter/?categoryId=${category._id}`}
+                    href={`/pages/subCategoryFilter/${category?._id}`}
                     passHref
                   >
                     <div className="bussiness-category-card text-center p-3">

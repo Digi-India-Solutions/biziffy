@@ -1,51 +1,7 @@
+"use client";
 import React, { useEffect, useState } from 'react';
 import './ViewEnquiry.css';
 import { getData } from '../../../services/FetchNodeServices';
-
-const enquiries = [
-  {
-    id: 1,
-    email: 'user1@example.com',
-    message: 'I need help with my account setup. Please respond quickly.',
-    date: '2025-06-16',
-    status: 'Pending',
-  },
-  {
-    id: 2,
-    email: 'user2@example.com',
-    message: 'I am unable to log in with my credentials.',
-    date: '2025-06-15',
-    status: 'Completed',
-  },
-  {
-    id: 3,
-    email: 'user3@example.com',
-    message: 'My payment did not go through, please check.',
-    date: '2025-06-14',
-    status: 'Open',
-  },
-  {
-    id: 4,
-    email: 'user1@example.com',
-    message: 'I need help with my account setup. Please respond quickly.',
-    date: '2025-06-16',
-    status: 'Pending',
-  },
-  {
-    id: 5,
-    email: 'user2@example.com',
-    message: 'I am unable to log in with my credentials.',
-    date: '2025-06-15',
-    status: 'Completed',
-  },
-  {
-    id: 6,
-    email: 'user3@example.com',
-    message: 'My payment did not go through, please check.',
-    date: '2025-06-14',
-    status: 'Open',
-  },
-];
 
 const getStatusBadge = (status) => {
   let color = '';
