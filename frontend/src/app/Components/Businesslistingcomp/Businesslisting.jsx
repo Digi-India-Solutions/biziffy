@@ -14,7 +14,7 @@ import banner3 from "../../Images/slide3.webp";
 // import PaidListing from "../paid-listing/PaidListing"
 import PaidListing from "../../pages/paid-listing/PaidListing"
 import { getData, postData } from "../../services/FetchNodeServices";
-
+import verifyImage from "../../Images/verified.gif"
 const Businesslisting = () => {
   const path = usePathname()
   const formatSlug = (text) => text?.replace(/-/g, ' ');
@@ -353,13 +353,14 @@ const Businesslisting = () => {
                             />
                           </div>
                           <div>
-                            <div className="d-flex gap-3 mb-2 align-items-center">
+                            <div className="d-flex justify-content-between gap-3 mb-2 align-items-center">
                               <h5>
                                 {biz?.businessDetails?.businessName?.slice(0, 15)}...
                               </h5>
-                              <span className="verified-text">
+                              <Image src={verifyImage} className="verified-image" alt="veryfied-image" />
+                              {/* <span className="verified-text">
                                 <i className="bi bi-check-all"></i> Biziffy Verified
-                              </span>
+                              </span> */}
                             </div>
 
                             <div className="d-flex gap-2 align-items-center">

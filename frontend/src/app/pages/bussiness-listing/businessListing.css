@@ -37,7 +37,8 @@
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   box-shadow: 0 0px 2px rgba(0, 0, 0, 0.3);
-  gap: 20px;
+  /* gap: 20px; */
+  justify-content: space-around;
   text-decoration: none;
 }
 
@@ -110,7 +111,7 @@ span {
   box-shadow: 0 0px 2px rgba(0, 0, 0, 0.3);
   color: var(--black);
   width: 100%;
-  margin: 2rem 0rem;
+  margin: 1rem 0rem;
 }
 
 .details-card h5 {
@@ -362,7 +363,21 @@ span {
   display: none !important;
 }
 
+.verified-image{
+  width: auto;
+  height: 25px;
+}
 
+.back-sec {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.verify-img{
+  width: auto;
+  /* height: 30px; */
+}
 @keyframes wiggle {
   0%,
   100% {
@@ -378,7 +393,7 @@ span {
 
 .enquiry-form {
   padding: 20px;
-  margin-top: 2rem;
+  margin-top: 1rem;
   border-radius: 20px;
   border: 1px solid lightgray;
 }
