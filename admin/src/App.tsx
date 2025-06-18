@@ -59,6 +59,13 @@ import EditPinCode from "./pages/admin/EditPinCode";
 import AllWebsiteListing from "./pages/admin/AllWebsiteListing";
 import WebsiteListingDetails from "./pages/admin/WebsiteListingDetails";
 import EditAdvertisements from "./pages/admin/EditAdvertisements";
+import AllFaq from "./pages/admin/AllFaq";
+import AddFaq from "./pages/admin/AddFaq";
+import { Edit } from "lucide-react";
+import EditFaq from "./pages/admin/EditFaq";
+import AllBlog from "./pages/admin/AllBlog";
+import AddBlog from "./pages/admin/AddBlog";
+import EditBlog from "./pages/admin/EditBlog";
 
 
 const queryClient = new QueryClient();
@@ -129,8 +136,15 @@ const App = () => (
             <Route path="/admin/deals" element={<ProtectedRoute><Deals /></ProtectedRoute>} />
             <Route path="/admin/deals/add" element={<ProtectedRoute><AddDeal /></ProtectedRoute>} />
             <Route path="/admin/deals/edit/:id" element={<ProtectedRoute><EditDeal /></ProtectedRoute>} />
-            {/* Membership Route */}
 
+            {/* FAQ Route */}
+            <Route path="/admin/faq" element={<ProtectedRoute><AllFaq /></ProtectedRoute>} />
+            <Route path="/admin/faq/add" element={<ProtectedRoute><AddFaq /></ProtectedRoute>} />
+            <Route path="/admin/faq/edit/:id" element={<ProtectedRoute><EditFaq /></ProtectedRoute>} />
+            {/* Blog Route */}
+            <Route path="/admin/blog" element={<ProtectedRoute><AllBlog /></ProtectedRoute>} />
+            <Route path="/admin/blog/add" element={<ProtectedRoute><AddBlog /></ProtectedRoute>} />
+            <Route path="/admin/blog/edit/:id" element={<ProtectedRoute><EditBlog /></ProtectedRoute>} />
             {/* Logout Route */}
             <Route
               path="/logout"

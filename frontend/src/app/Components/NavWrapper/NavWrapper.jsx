@@ -5,7 +5,9 @@ import Header from "../Navbar/Navbar";
 
 export default function NavWrapper() {
   const pathname = usePathname();
-  return pathname === "/pages/bussiness-listing" ? (
+  console.log("pathname", pathname);
+  const isBusinessListingPage = pathname?.startsWith("/pages/bussiness-listing/");
+  return isBusinessListingPage ? (
     <BusinessNavbar />
   ) : (
     <Header />

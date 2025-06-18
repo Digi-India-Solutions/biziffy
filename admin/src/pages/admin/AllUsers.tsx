@@ -143,7 +143,7 @@ const AllUsers = () => {
   // console.log("Users:", userList);
 
   const filteredUsers = searchQuery
-    ? userList.filter((user) => {
+    ? userList.filter((user: any) => {
       const name = user?.fullName || "";
       const email = user?.email || "";
       const phone = user?.phone || "";
@@ -284,11 +284,7 @@ const AllUsers = () => {
 
       <div className="flex justify-between mb-4">
         <div className="flex items-center gap-2">
-          <select
-            className="px-4 py-2 border rounded-md"
-            value={bulkAction}
-            onChange={(e) => setBulkAction(e.target.value)}
-          >
+          <select className="px-4 py-2 border rounded-md" value={bulkAction} onChange={(e) => setBulkAction(e.target.value)}>
             <option value="Bulk Action">Bulk Action</option>
             <option value="Delete">Delete</option>
             <option value="Active">Active</option>
@@ -301,12 +297,7 @@ const AllUsers = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <Input
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="max-w-sm"
-          />
+          <Input placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="max-w-sm" />
 
           <Button className="bg-blue-500 hover:bg-blue-600" onClick={exportToCSV}>
             Export to CSV
@@ -325,12 +316,7 @@ const AllUsers = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[40px]">
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4"
-                      checked={isAllCurrentUsersSelected}
-                      onChange={handleBulkCheckboxChange}
-                    />
+                    <input type="checkbox" className="h-4 w-4" checked={isAllCurrentUsersSelected} onChange={handleBulkCheckboxChange} />
                   </TableHead>
                   <TableHead>ID</TableHead>
                   <TableHead>Name</TableHead>
@@ -341,15 +327,10 @@ const AllUsers = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {currentUsers.map((user) => (
+                {currentUsers.map((user: any) => (
                   <TableRow key={user._id}>
                     <TableCell>
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4"
-                        checked={selectedUsers.includes(user._id)}
-                        onChange={() => handleCheckboxChange(user._id)}
-                      />
+                      <input type="checkbox" className="h-4 w-4" checked={selectedUsers.includes(user._id)} onChange={() => handleCheckboxChange(user?._id)} />
                     </TableCell>
                     <TableCell>{user._id}</TableCell>
                     <TableCell>{user.fullName}</TableCell>

@@ -327,7 +327,7 @@ const Hero = () => {
     );
   };
 
-  console.log("CCCCCCCC:-", pinCodes)
+  // console.log("CCCCCCCC:-", pinCodes)
   const filteredLocations = pinCodes.filter((loc) => {
     const lowerSearch = searchTerm.toLowerCase();
     return (

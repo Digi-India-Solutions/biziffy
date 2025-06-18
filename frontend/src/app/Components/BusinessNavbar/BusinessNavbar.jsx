@@ -348,7 +348,7 @@ const BusinessNavbar = () => {
     }
     const finalState = selectedLocation?.stateName || location?.state;
     // console.log("LOCATION:=>", finalPincode, "LOCATION 2:=>", location);
-    `/pages/bussiness-listing/${finalPincode || 12121}/${slugify(finalState||'state')}/${slugify(searchText.trim())}`
+    router.push(`/pages/bussiness-listing/${finalPincode || 12121}/${slugify(finalState || 'state')}/${slugify(searchText.trim())}`)
     // router.push(`/pages/bussiness-listing?query=${searchText.trim()}&pincode=${finalPincode}&state=${finalState}`);
   };
 

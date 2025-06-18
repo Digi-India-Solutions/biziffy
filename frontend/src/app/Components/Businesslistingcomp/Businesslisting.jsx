@@ -70,7 +70,7 @@ const Businesslisting = () => {
   // }, [searchParams]);
 
   useEffect(() => {
-    console.log("XXXXXXXXXX:=>", path?.split('/').length > 6)
+    console.log("XXXXXXXXXX:=>", path?.split('/'))
     setPincode(formatSlug(path.split('/')[3]))
     setQuery(formatSlug(path.split('/')[5]))
     setState(formatSlug(path.split('/')[4]))

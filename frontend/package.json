@@ -19,6 +19,7 @@
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
     "framer-motion": "^12.6.2",
+    "jodit-react": "^5.2.19",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",

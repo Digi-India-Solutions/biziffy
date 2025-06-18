@@ -30,6 +30,8 @@ const stateRoutes_1 = __importDefault(require("./routes/admin/stateRoutes"));
 const populerCitysRoutes_1 = __importDefault(require("./routes/admin/populerCitysRoutes"));
 const pinCodeRoutes_1 = __importDefault(require("./routes/admin/pinCodeRoutes"));
 const contactRoutes_1 = __importDefault(require("./routes/admin/contactRoutes"));
+const faqRoutes_1 = __importDefault(require("./routes/admin/faqRoutes"));
+const blogRoutes_1 = __importDefault(require("./routes/admin/blogRoutes"));
 // hm yaha per all listiing ka data import kr rhe hai
 const businessListingRoutes_1 = __importDefault(require("./routes/admin/businessListingRoutes"));
 const websiteListingRoutes_1 = __importDefault(require("./routes/admin/websiteListingRoutes"));
@@ -84,8 +86,10 @@ app.use("/api/admin", collectionRoutes_1.default);
 app.use("/api/state", stateRoutes_1.default);
 app.use("/api/populerCity", populerCitysRoutes_1.default);
 app.use("/api/pincode", pinCodeRoutes_1.default);
+app.use('/api/faq', faqRoutes_1.default);
 app.use("/api/admin", businessListingRoutes_1.default);
 app.use("/api/admin", websiteListingRoutes_1.default);
+app.use("/api/blog", blogRoutes_1.default);
 // signup
 app.use("/api/auth", authRoutes_2.default);
 app.use("/api", authRoutes_2.default); // So /api/verify-otp becomes valid

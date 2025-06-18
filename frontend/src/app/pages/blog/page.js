@@ -1,53 +1,27 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import "./blogpage.css";
 import breadbg from "../../Images/bread.jpg";
 import blogImage1 from "../../Images/blog1.jpg";
-import blogImage2 from "../../Images/blog2.jpg";
-import blogImage3 from "../../Images/blog3.jpg";
-import blogImage4 from "../../Images/blog4.jpg";
-import blogImage5 from "../../Images/blog5.jpg";
 import Head from "next/head";
 
 import Image from "next/image";
 import Link from "next/link";
+import { getData } from "../../services/FetchNodeServices";
 const Page = () => {
-  const blogs = [
-    {
-      id: 1,
-      title: "Professional Photoshoot Services",
-      description:
-        "High-quality images enhance brand presence and credibility.",
-      image: blogImage1,
-    },
-    {
-      id: 2,
-      title: "Website & App Development",
-      description:
-        "A well-developed platform improves user experience and customer retention.",
-      image: blogImage2,
-    },
-    {
-      id: 3,
-      title: "Creative Designing Services",
-      description:
-        "Strong visuals make brands stand out and boost recognition.",
-      image: blogImage3,
-    },
-    {
-      id: 4,
-      title: "Digital Marketing Solutions",
-      description:
-        "SEO and social media marketing increase brand awareness and sales.",
-      image: blogImage4,
-    },
-    {
-      id: 5,
-      title: "Content Creation & Branding",
-      description:
-        "Engaging content builds trust and strengthens brand identity.",
-      image: blogImage5,
-    },
-  ];
+  const [blogList, setBlogList] = useState([]);
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  const fetchBlogs = async () => {
+    const response = await getData("blog/get-all-blogs");
+    if (response?.status === true) {
+      setBlogList(response?.data);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -119,19 +93,23 @@ const Page = () => {
       <section className="blog-main">
         <div className="container">
           <div className="row">
-            {blogs.map((blog, index) => (
+            {blogList?.map((blog, index) => (
               <div key={index} className="col-md-4 gy-3">
                 <div className="blog-card card">
                   <Image
-                    src={blog.image}
+                    src={blog?.image}
                     className="blog-card-img"
-                    alt={blog.title}
+                    alt={blog?.heading}
+                    width={100}
+                    height={100}
                   />
                   <div className="card-body">
-                    <h5 className="card-title">{blog.title}</h5>
-                    <p className="card-text">{blog.description}</p>
+                    <h5 className="card-title">{blog?.heading}</h5>
+                    <p className="card-text text-sm text-gray-600 mb-3 line-clamp-2">
+                      {blog?.shortDisc}
+                    </p>
                     <Link
-                      href={`../../pages/blog/${blog.id}`}
+                      href={`../../pages/blog/${blog?._id}`}
                       className="login-btn"
                     >
                       Read More <i className="bi bi-arrow-right-circle "></i>

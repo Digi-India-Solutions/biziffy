@@ -27,6 +27,8 @@ import stateRoutes from "./routes/admin/stateRoutes";
 import populerCityRoutes from "./routes/admin/populerCitysRoutes";
 import pinCodeRoutes from "./routes/admin/pinCodeRoutes"
 import contactRoutes from "./routes/admin/contactRoutes"
+import faqRoutes from "./routes/admin/faqRoutes";
+import blogRoutes from "./routes/admin/blogRoutes";
 
 // hm yaha per all listiing ka data import kr rhe hai
 import businessListingRoutes from "./routes/admin/businessListingRoutes";
@@ -95,10 +97,10 @@ app.use("/api/admin", collectionRoutes);
 app.use("/api/state", stateRoutes);
 app.use("/api/populerCity", populerCityRoutes);
 app.use("/api/pincode", pinCodeRoutes)
-
+app.use('/api/faq', faqRoutes)
 app.use("/api/admin", businessListingRoutes);
 app.use("/api/admin", websiteListingRoutes);
-
+app.use("/api/blog",blogRoutes)
 // signup
 app.use("/api/auth", authRoutes);
 

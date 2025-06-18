@@ -1,11 +1,31 @@
-import React from "react";
+'use client';
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import "./blogdetails.css";
 import breadbg from "../../../Images/bread.jpg";
 import Head from "next/head";
+import { useParams } from "next/navigation";
+import { getData } from "../../../services/FetchNodeServices";
 
 const Page = () => {
+  const { id } = useParams();
+  const [formData, setFormData] = useState([]);
+
+  useEffect(() => {
+    const fetchBlog = async () => {
+      const res = await getData(`blog/get-all-blog/${id}`);
+      // console.log("formData:=>", res)
+      if (res?.status) {
+        setFormData(res?.data);
+      }
+    }
+    if (id) {
+      fetchBlog();
+    }
+  }, [id])
+
+  console.log("formData:=>", formData, id)
   return (
     <>
 
@@ -39,7 +59,7 @@ const Page = () => {
       <section>
         <div className="all-breadcrumb">
           <Image
-            src={breadbg}
+            src={formData.banner ? formData.banner : breadbg}
             alt="Breadcrumb Background"
             layout="fill"
             objectFit="cover"
@@ -48,7 +68,8 @@ const Page = () => {
           {/* Overlay should be separate */}
           <div className="container">
             <div className="bread-content">
-              <h1>Stay Update With Trending Business Ideas 💡</h1>
+              {/* Stay Update With Trending Business Ideas 💡 */}
+              <h1>{formData?.heading}</h1>
               <nav aria-label="Breadcrumb" className="mb-4">
                 <ol>
                   <li>
@@ -72,27 +93,34 @@ const Page = () => {
           <div className="row">
             <div className="col-md-12">
               <div className="blog-data">
-                <h1 className="blog-title">
+                {/* <h1 className="blog-title">
                   Unlock Growth: Why Listing Your Business & Website is Essential
-                </h1>
+                </h1> */}
                 <p className="blog-paragrap">
-                  In today&apos;s digital age, visibility is everything. Whether you&apos;re a budding entrepreneur launching a new service or an established company looking to expand your reach, getting your business and website listed in the right places is no longer optional &ndash; it&apos;s a fundamental step towards sustainable growth. But why is it so crucial, and where should you begin?
+                  {/* In today&apos;s digital age, visibility is everything. Whether you&apos;re a budding entrepreneur launching a new service or an established company looking to expand your reach, getting your business and website listed in the right places is no longer optional &ndash; it&apos;s a fundamental step towards sustainable growth. But why is it so crucial, and where should you begin? */}
+                  {formData?.shortDisc}
                 </p>
               </div>
-              <div className="blog-Image">
+              <div className="blog-Image" style={{ textAlign: "center" }}>
                 <Image
-                  src={breadbg}
+                  src={formData?.image ? formData?.image : breadbg}
                   alt="A hand holding a smartphone displaying a business directory website, with a blurred cityscape in the background, symbolizing online visibility for businesses."
                   className="Details-Blog-Image img-fluid"
+                  width={300}
+                  height={100}
                 />
               </div>
               <div className="blog-data">
-                <p className="blog-paragrap">
+                {/* <p className="blog-paragrap">
                   Listing your business and website goes beyond just being found; it builds **credibility**, improves your **SEO (Search Engine Optimization)**, and significantly expands your potential customer base. When your business appears in trusted online directories and your website is properly indexed, search engines see you as a more legitimate and relevant entity. This, in turn, boosts your rankings, driving more organic traffic directly to your offerings. Think of it as a digital storefront sign, but instead of being seen by passersby on a street, it&apos;s seen by millions searching online.
                 </p>
                 <p className="blog-paragrap">
                   Beyond general visibility, specific directories cater to various niches. Listing your business on industry-specific platforms, local directories, and global listing sites ensures you&apos;re discoverable by your ideal customers. For your website, simply having a great design isn&apos;t enough; it needs to be actively promoted and linked across the web. Each quality listing acts as a vote of confidence, reinforcing your online authority. Don&apos;t leave your digital presence to chance; proactively listing your business and website is the key to unlocking new opportunities and staying ahead in a competitive market.
-                </p>
+                </p> */}
+                <div
+                  className="blog-paragrap"
+                  dangerouslySetInnerHTML={{ __html: formData?.disc }}
+                />
               </div>
             </div>
           </div>

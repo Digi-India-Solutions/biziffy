@@ -49,7 +49,7 @@ const AddDeal = () => {
     setLoading(true);
 
     try {
-      await createDeal(formData);
+      // await createDeal(formData);
       navigate("/admin/deals");
     } catch (error) {
       console.error("Error adding deal:", error);

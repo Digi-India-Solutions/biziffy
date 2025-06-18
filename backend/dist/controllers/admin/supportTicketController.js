@@ -46,7 +46,7 @@ const createSupportTicket = (req, res) => __awaiter(void 0, void 0, void 0, func
 exports.createSupportTicket = createSupportTicket;
 const getSupportTicketById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log("ticket:==>w", req.params.id);
+        // console.log("ticket:==>w", req.params.id);
         const userId = new mongoose_1.default.Types.ObjectId(req.params.id); // optional, if `userId` is stored as ObjectId
         const ticket = yield SupportTicket_1.default.find({ userId });
         if (!ticket) {

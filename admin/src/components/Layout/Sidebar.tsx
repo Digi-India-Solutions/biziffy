@@ -292,8 +292,6 @@ export const Sidebar = () => {
                 )}
               </li>
 
-
-
               <li>
                 <button
                   onClick={() => setOpenSubcategories(!openSubcategories)}
@@ -661,7 +659,7 @@ export const Sidebar = () => {
                 </Link>
               </li>
 
-              <li>
+              {/* <li>
                 <Link
                   to="/admin/links"
                   className={cn(
@@ -672,9 +670,9 @@ export const Sidebar = () => {
                   <LinkIcon className="h-5 w-5 mr-3" />
                   Links
                 </Link>
-              </li>
+              </li> */}
 
-              <li>
+              {/* <li>
                 <Link
                   to="/admin/reviews"
                   className={cn(
@@ -685,9 +683,31 @@ export const Sidebar = () => {
                   <Star className="h-5 w-5 mr-3" />
                   Reviews
                 </Link>
+              </li> */}
+              <li>
+                <Link
+                  to="/admin/blog"
+                  className={cn(
+                    "flex items-center px-4 py-2 text-gray-700 rounded-md hover:bg-blue-50 hover:text-blue-600",
+                    isActive("/admin/blog") && "bg-blue-50 text-blue-600"
+                  )}
+                >
+                  <Star className="h-5 w-5 mr-3" />
+                  Blogs
+                </Link>
               </li>
-
-
+              <li>
+                <Link
+                  to="/admin/faq"
+                  className={cn(
+                    "flex items-center px-4 py-2 text-gray-700 rounded-md hover:bg-blue-50 hover:text-blue-600",
+                    isActive("/admin/faq") && "bg-blue-50 text-blue-600"
+                  )}
+                >
+                  <Star className="h-5 w-5 mr-3" />
+                  FAQ
+                </Link>
+              </li>
               <li>
                 <Link
                   to="/logout"
