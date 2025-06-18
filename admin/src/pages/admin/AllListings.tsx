@@ -438,6 +438,7 @@ export const AllListings = () => {
               <TableHead>Created Date</TableHead>
               <TableHead>Published</TableHead>
               <TableHead>Business Status</TableHead>
+              <TableHead>Approved-Pending</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -480,6 +481,31 @@ export const AllListings = () => {
                           setEditingPublishStatusId(listing._id)
                         }
                         className="p-1 bg-orange-200 rounded-md hover:bg-orange-300 transition-colors w-6 h-6 flex items-center justify-center"
+                      >
+                        <Pencil className="w-3 h-3 text-orange-600" />
+                      </button>
+                    </div>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {editingStatusId === listing._id ? (
+                    <select
+                      className="px-2 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
+                      value={listing.businessDetails?.status || ''} onChange={(e) => handleUpdateStatus(listing._id, e.target.value)} onBlur={() => setEditingStatusId(null)} autoFocus                    >
+
+                      {statusOptions?.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      {getStatusBadge(listing.businessDetails?.status || "Pending")}
+                      <button
+                        onClick={() => setEditingStatusId(listing._id)}
+                        className="p-1 bg-orange-200 rounded-md hover:bg-orange-300 transition-colors w-6 h-6 flex items-center justify-center"
+                        title="Edit Status"
                       >
                         <Pencil className="w-3 h-3 text-orange-600" />
                       </button>

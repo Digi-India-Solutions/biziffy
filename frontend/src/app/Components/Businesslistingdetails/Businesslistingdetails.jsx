@@ -14,7 +14,7 @@ import ListingPageFaq from "./ListingPageFaq";
 import { useRouter } from "next/navigation";
 import { postData } from "../../services/FetchNodeServices";
 import { toast, ToastContainer } from "react-toastify";
-
+import VerifyImage from "../../Images/verified.gif"
 const Businesslistingdetails = ({ businesses, advertisements }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
@@ -194,11 +194,12 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
       <ToastContainer />
       <div className="container mt-4">
         <div className="row">
-          {/* <Link href="/pages/bussiness-listing"> */}
-          <button className="black-btn px-4 " style={{ width: "120px" }} onClick={() => router.back()}>
+          <div className="back-sec">
+          <button className="black-btn " onClick={() => router.back()}>
             <i className="bi bi-arrow-left-short"></i> Back
           </button>
-          {/* </Link> */}
+          <Image src={VerifyImage} className="verify-img" alt="verifyimage" />
+          </div>
         </div>
       </div>
       <div className="container">
