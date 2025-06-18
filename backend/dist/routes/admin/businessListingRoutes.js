@@ -15,6 +15,7 @@ router.post("/update-listings-by-id/:id", upload_1.upload.any(), businessListing
 // router.post("/update-listings-without-image-by-id/:id", updateAllListingsWithoutImageById);
 router.get("/delete-business-listing/:id", businessListingController_1.deleteBusinessListing);
 router.post("/update-business-listing-status/:id", businessListingController_1.updateBusinessListingStatus);
+router.post("/update-business-listing-verified/:id", businessListingController_1.updateBusinessListingVerified);
 router.post("/change-publish-status/:id", businessListingController_1.changePublishStatus);
 router.post("/listing-bulk-action", businessListingController_1.listingBulkAction);
 router.get("/get-all-listings-by-user-id/:id", businessListingController_1.getAllListingsByUserId);

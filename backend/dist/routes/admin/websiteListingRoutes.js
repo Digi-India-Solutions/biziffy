@@ -14,6 +14,7 @@ router.get("/get-all-website-listings", websiteListingController_1.getAllWebsite
 router.get("/get-all-website-listings-by-id/:id", websiteListingController_1.getAllWebsiteListingsById);
 router.get("/delete-website-listing/:id", websiteListingController_1.deleteWebsiteListing);
 router.post("/update-website-listing-status/:id", websiteListingController_1.updateWebsiteListingStatus);
+router.post("/update-website-listing-verified/:id", websiteListingController_1.updateBusinessListingVerified);
 router.post("/website-listing-bulk-action", websiteListingController_1.listingBulkAction);
 router.get("/search-website-listings", websiteListingController_1.searchWebsiteListings);
 router.get("/get-all-website-listings-by-user-id/:id", websiteListingController_1.getAllWebsiteListingsByUserId);

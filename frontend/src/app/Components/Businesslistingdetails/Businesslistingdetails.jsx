@@ -188,17 +188,45 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
 
     }
   }
-  console.log('responsereviews:=>', businesses.reviews)
+
+  const renderStatusBadge = (status) => {
+    const baseStyle = { padding: "4px 10px", borderRadius: "20px", fontSize: "13px", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: "6px", };
+
+    if (status === "Approved") {
+      return (
+        <span style={{ ...baseStyle, backgroundColor: "#d4edda", color: "#155724" }}>
+          <i className="bi bi-patch-check-fill" /> Approved
+        </span>
+      );
+    } else if (status === "Pending") {
+      return (
+        <span style={{ ...baseStyle, backgroundColor: "#fff3cd", color: "#856404" }}>
+          <i className="bi bi-clock-fill" /> Pending
+        </span>
+      );
+    } else {
+      return (
+        <span style={{ ...baseStyle, backgroundColor: "#f8d7da", color: "#721c24" }}>
+          <i className="bi bi-x-circle-fill" /> Rejected
+        </span>
+      );
+    }
+  };
+  const filter = advertisements?.filter((ad) => ad?.categoryName === businesses?.businessCategory?.category?.name) || [];
+  // console.log('responsereviews:=>', businesses)
+  // console.log('responsereviews:=>', advertisements)
+  // console.log('responsereviews:=>', advertisements?.filter((ad) => ad?.categoryName === businesses?.businessCategory?.category?.name))
   return (
     <>
       <ToastContainer />
       <div className="container mt-4">
         <div className="row">
           <div className="back-sec">
-          <button className="black-btn " onClick={() => router.back()}>
-            <i className="bi bi-arrow-left-short"></i> Back
-          </button>
-          <Image src={VerifyImage} className="verify-img" alt="verifyimage" />
+            <button className="black-btn " onClick={() => router.back()}>
+              <i className="bi bi-arrow-left-short"></i> Back
+            </button>
+            {renderStatusBadge(businesses?.verified)}
+            {/* <Image src={VerifyImage} className="verify-img" alt="verifyimage" /> */}
           </div>
         </div>
       </div>
@@ -784,7 +812,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
               </button>
             </form>
             {/* add section  */}
-            {advertisements?.map((ad) => {
+            {filter?.map((ad) => {
               return (
                 <section className="ads-section my-3">
                   <div className="d-flex justify-content-center align-item-center">

@@ -18,6 +18,7 @@ const websiteListingSchema = new mongoose_1.default.Schema({
     serviceArea: String,
     // businessPhotos: [String],
     status: { type: String, enum: ["Pending", "Approved", "Rejected"], default: "Pending" },
+    varified: { type: String, enum: ["Pending", "Approved", "Rejected"], default: "Pending" },
     cliCkCount: {
         type: Map,
         of: new mongoose_1.default.Schema({

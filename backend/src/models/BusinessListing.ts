@@ -46,7 +46,7 @@ const TimingSchema = new mongoose.Schema({
 const BusinessCategorySchema = new mongoose.Schema({
   category: { type: Schema.Types.ObjectId, ref: "Category", required: true, },
   subCategory: [{ type: Schema.Types.ObjectId, ref: "Subcategory", }],
-  categoryName: { type: String ,required: true },
+  categoryName: { type: String, required: true },
   subCategoryName: [{ type: String }],
   businessImages: [{ type: String }],
   about: { type: String },
@@ -100,7 +100,12 @@ const BusinessListingSchema = new mongoose.Schema(
     // clickCounts: clickCountsSchema,
     clickCounts: { type: ClickCountsSchema },
     faq: [faqSchema],
-    reviews:[reviewsSchema]
+    reviews: [reviewsSchema],
+    verified: {
+      type: String,
+      enum: ["Pending", "Approved", "Rejected"],
+      default: "Pending",
+    },
   },
   { timestamps: true }
 );

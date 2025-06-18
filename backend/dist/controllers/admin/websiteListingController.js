@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateAllWebsiteListingsById = exports.increaseClickCountWebsiteListing = exports.getAllWebsiteListingsByUserId = exports.searchWebsiteListings = exports.listingBulkAction = exports.updateWebsiteListingStatus = exports.deleteWebsiteListing = exports.getAllWebsiteListingsById = exports.getAllWebsiteListings = exports.createAdditionalInformation = exports.createDetails = void 0;
+exports.updateAllWebsiteListingsById = exports.increaseClickCountWebsiteListing = exports.getAllWebsiteListingsByUserId = exports.searchWebsiteListings = exports.listingBulkAction = exports.updateBusinessListingVerified = exports.updateWebsiteListingStatus = exports.deleteWebsiteListing = exports.getAllWebsiteListingsById = exports.getAllWebsiteListings = exports.createAdditionalInformation = exports.createDetails = void 0;
 const cloudinary_1 = require("../../utils/cloudinary");
 const deleteImageFromLocalFolder_1 = require("../../utils/deleteImageFromLocalFolder");
 const WebsiteListingModel_1 = __importDefault(require("../../models/WebsiteListingModel"));
@@ -166,6 +166,24 @@ const updateWebsiteListingStatus = (req, res) => __awaiter(void 0, void 0, void 
     }
 });
 exports.updateWebsiteListingStatus = updateWebsiteListingStatus;
+const updateBusinessListingVerified = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { verified } = req.body;
+        if (!verified) {
+            return res.status(400).json({ status: false, message: "New status is required" });
+        }
+        const listing = yield WebsiteListingModel_1.default.findByIdAndUpdate(req.params.id, { "varified": verified }, { new: true });
+        if (!listing) {
+            return res.status(404).json({ status: false, message: "Website listing not found" });
+        }
+        res.status(200).json({ status: true, message: "Website listing verified updated successfully", data: listing, });
+    }
+    catch (error) {
+        const err = error;
+        res.status(500).json({ message: "Error fetching listings", error: err.message });
+    }
+});
+exports.updateBusinessListingVerified = updateBusinessListingVerified;
 const listingBulkAction = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { ids, action } = req.body;

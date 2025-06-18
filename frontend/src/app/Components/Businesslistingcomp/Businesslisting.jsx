@@ -357,10 +357,24 @@ const Businesslisting = () => {
                               <h5>
                                 {biz?.businessDetails?.businessName?.slice(0, 15)}...
                               </h5>
-                              <Image src={verifyImage} className="verified-image" alt="veryfied-image" />
-                              {/* <span className="verified-text">
-                                <i className="bi bi-check-all"></i> Biziffy Verified
-                              </span> */}
+                              
+                              {biz?.verified === 'Approved' ? (
+                                <span
+                                  style={{ padding: "4px 10px", borderRadius: "20px", backgroundColor: "#d4edda", color: "#155724", fontSize: "14px", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: "6px", }}  >
+                                  <i className="bi bi-patch-check-fill"></i> Approved
+                                </span>
+                              ) : biz?.verified === 'Pending' ? (
+                                <span
+                                  style={{ padding: "4px 10px", borderRadius: "20px", backgroundColor: "#fff3cd", color: "#856404", fontSize: "14px", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: "6px", }}  >
+                                  <i className="bi bi-clock-fill"></i> Pending
+                                </span>
+                              ) : (
+                                <span
+                                  style={{ padding: "4px 10px", borderRadius: "20px", backgroundColor: "#f8d7da", color: "#721c24", fontSize: "14px", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: "6px", }}  >
+                                  <i className="bi bi-x-circle-fill"></i> Rejected
+                                </span>
+                              )}
+
                             </div>
 
                             <div className="d-flex gap-2 align-items-center">

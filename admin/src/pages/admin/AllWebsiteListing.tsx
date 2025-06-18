@@ -10,6 +10,7 @@ import { toast } from "@/components/ui/use-toast";
 import { formatDate } from "@/constant";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
+import { postData } from "../../services/FetchNodeServices";
 
 interface FullListing {
     _id: string;
@@ -67,12 +68,13 @@ export const AllWebsiteListing = () => {
     const [totalPages, setTotalPages] = useState(1);
 
     // Editing status state
-    const [editingPublishStatusId, setEditingPublishStatusId] = useState<
-        string | null
-    >(null);
+    const [editingPublishStatusId, setEditingPublishStatusId] = useState<string | null>(null);
     const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
+    const [editingVerifiedId, setEditingVerifiedId] = useState<string | null>(null);
+
     const [publishStatusOptions] = useState(["Pending", "Published", "Unpublished",]);
     const [statusOptions] = useState(["Pending", "Approved", "Rejected"]);
+    const [verifiedOptions] = useState(["Pending", "Approved", "Rejected"]);
 
     const navigate = useNavigate();
 
@@ -223,6 +225,38 @@ export const AllWebsiteListing = () => {
         }
     };
 
+    const getStatusVerifiedBadge = (verified: string) => {
+        const normalized =
+            verified?.toLowerCase() === "unpublish" ? "pending" : verified?.toLowerCase();
+        const displayStatus = normalized === "unpublish" ? "pending" : normalized;
+        switch (displayStatus) {
+            case "approved":
+                return (
+                    <span className="px-3 py-1 text-sm bg-green-100 text-green-800 rounded-full">
+                        Approved
+                    </span>
+                );
+            case "pending":
+                return (
+                    <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-full">
+                        Pending
+                    </span>
+                );
+            case "rejected":
+                return (
+                    <span className="px-3 py-1 text-sm bg-red-100 text-red-800 rounded-full">
+                        Rejected
+                    </span>
+                );
+            default:
+                return (
+                    <span className="px-3 py-1 text-sm bg-gray-100 text-gray-800 rounded-full">
+                        {verified}
+                    </span>
+                );
+        }
+    };
+
     const getBusinessTrustStatus = (status: string) => {
         const normalized = status.toLowerCase();
         const color = normalized === "approved" ? "bg-blue-600" : "bg-red-600";
@@ -269,6 +303,34 @@ export const AllWebsiteListing = () => {
                 title: "Status Updated",
                 description: `Listing ${id} status updated to ${newStatus}.`,
             });
+        } catch (error: any) {
+            console.error("Failed to update status", error);
+            toast({
+                variant: "destructive",
+                title: "Error Updating Status",
+                description:
+                    error.response?.data?.message || "Failed to update status.",
+            });
+        }
+    };
+
+    const handleUpdateVerified = async (id: string, newStatus: string) => {
+        // console.log("XXXXXXXXXXXXXXXXXXXXXXXX----", newStatus)
+        try {
+            const response = await postData(`admin/update-website-listing-verified/${id}`, { verified: newStatus });
+            if (response?.status === true) {
+                setFullListings(
+                    fullListings.map((listing) => {
+                        if (listing._id === id) {
+                            return { ...listing, verified: newStatus, };
+                        }
+                        return listing;
+                    })
+                );
+                setEditingVerifiedId(null);
+                toast({ title: "Status Verified", description: `Listing ${id} status Verified to ${newStatus}.`, });
+            }
+
         } catch (error: any) {
             console.error("Failed to update status", error);
             toast({
@@ -380,6 +442,7 @@ export const AllWebsiteListing = () => {
                             <TableHead>Created Date</TableHead>
                             {/* <TableHead>Published</TableHead> */}
                             <TableHead>Website Status</TableHead>
+                            <TableHead>Verified</TableHead>
                             <TableHead>Action</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -425,6 +488,31 @@ export const AllWebsiteListing = () => {
                                     )}
                                 </TableCell>
                                 <TableCell>
+                                    {editingVerifiedId === listing._id ? (
+                                        <select
+                                            className="px-2 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
+                                            value={listing?.verified || ''} onChange={(e) => handleUpdateVerified(listing?._id, e.target.value)} onBlur={() => setEditingVerifiedId(null)} autoFocus                    >
+
+                                            {verifiedOptions?.map((option) => (
+                                                <option key={option} value={option}>
+                                                    {option}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    ) : (
+                                        <div className="flex items-center gap-2">
+                                            {getStatusVerifiedBadge(listing?.verified || "Pending")}
+                                            <button
+                                                onClick={() => setEditingVerifiedId(listing._id)}
+                                                className="p-1 bg-orange-200 rounded-md hover:bg-orange-300 transition-colors w-6 h-6 flex items-center justify-center"
+                                                title="Edit Status"
+                                            >
+                                                <Pencil className="w-3 h-3 text-orange-600" />
+                                            </button>
+                                        </div>
+                                    )}
+                                </TableCell>
+                                <TableCell>
                                     <div className="flex flex-col gap-2">
                                         <div className="flex gap-2">
                                             <Button
@@ -446,6 +534,9 @@ export const AllWebsiteListing = () => {
                                         </div>
                                     </div>
                                 </TableCell>
+
+                               
+
                             </TableRow>
                         ))}
                     </TableBody>

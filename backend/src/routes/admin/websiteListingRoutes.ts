@@ -4,7 +4,7 @@ import { upload } from "../../middleware/upload";
 import {
     createAdditionalInformation, createDetails, getAllWebsiteListings, getAllWebsiteListingsById, deleteWebsiteListing,
     updateWebsiteListingStatus, listingBulkAction, searchWebsiteListings, getAllWebsiteListingsByUserId,increaseClickCountWebsiteListing,
-    updateAllWebsiteListingsById
+    updateAllWebsiteListingsById,updateBusinessListingVerified
 } from '../../controllers/admin/websiteListingController';
 const router = express.Router();
 
@@ -18,6 +18,7 @@ router.get("/get-all-website-listings", getAllWebsiteListings)
 router.get("/get-all-website-listings-by-id/:id", getAllWebsiteListingsById)
 router.get("/delete-website-listing/:id", deleteWebsiteListing)
 router.post("/update-website-listing-status/:id", updateWebsiteListingStatus)
+router.post("/update-website-listing-verified/:id", updateBusinessListingVerified)
 router.post("/website-listing-bulk-action", listingBulkAction)
 router.get("/search-website-listings", searchWebsiteListings)
 router.get("/get-all-website-listings-by-user-id/:id", getAllWebsiteListingsByUserId)

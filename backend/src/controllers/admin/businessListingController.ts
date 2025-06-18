@@ -221,6 +221,26 @@ export const updateBusinessListingStatus = async (req: Request, res: Response) =
   }
 };
 
+export const updateBusinessListingVerified = async (req: Request, res: Response) => {
+  try {
+    const { verified } = req.body;
+
+    if (!verified) {
+      return res.status(400).json({ status: false, message: "New status is required" });
+    }
+
+    const listing = await BusinessListing.findByIdAndUpdate(req.params.id, { "verified": verified }, { new: true });
+
+    if (!listing) {
+      return res.status(404).json({ status: false, message: "Business listing not found" });
+    }
+
+    res.status(200).json({ status: true, message: "Business listing verified updated successfully", data: listing, });
+  } catch (error: unknown) {
+    const err = error as Error;
+    res.status(500).json({ message: "Error fetching listings", error: err.message });
+  }
+};
 export const changePublishStatus = async (req: Request, res: Response) => {
   try {
     const { status } = req.body;

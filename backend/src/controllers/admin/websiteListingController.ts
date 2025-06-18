@@ -168,6 +168,28 @@ export const updateWebsiteListingStatus = async (req: Request, res: Response) =>
         res.status(500).json({ message: "Error fetching listings", error: err.message });
     }
 };
+
+export const updateBusinessListingVerified = async (req: Request, res: Response) => {
+  try {
+    const { verified } = req.body;
+
+    if (!verified) {
+      return res.status(400).json({ status: false, message: "New status is required" });
+    }
+
+    const listing = await WebsiteListing.findByIdAndUpdate(req.params.id, { "varified": verified }, { new: true });
+
+    if (!listing) {
+      return res.status(404).json({ status: false, message: "Website listing not found" });
+    }
+
+    res.status(200).json({ status: true, message: "Website listing verified updated successfully", data: listing, });
+  } catch (error: unknown) {
+    const err = error as Error;
+    res.status(500).json({ message: "Error fetching listings", error: err.message });
+  }
+};
+
 export const listingBulkAction = async (req: Request, res: Response) => {
     try {
         const { ids, action } = req.body;

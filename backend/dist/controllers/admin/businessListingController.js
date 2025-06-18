@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postReviewAllListingsById = exports.increaseClickCount = exports.searchBusinessListings = exports.getAllListingsByUserId = exports.listingBulkAction = exports.changePublishStatus = exports.updateBusinessListingStatus = exports.deleteBusinessListing = exports.updateAllListingsById = exports.getAllListingsById = exports.getAllListings = exports.createBusinessDetails = void 0;
+exports.postReviewAllListingsById = exports.increaseClickCount = exports.searchBusinessListings = exports.getAllListingsByUserId = exports.listingBulkAction = exports.changePublishStatus = exports.updateBusinessListingVerified = exports.updateBusinessListingStatus = exports.deleteBusinessListing = exports.updateAllListingsById = exports.getAllListingsById = exports.getAllListings = exports.createBusinessDetails = void 0;
 const BusinessListing_1 = __importDefault(require("../../models/BusinessListing"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
@@ -204,6 +204,24 @@ const updateBusinessListingStatus = (req, res) => __awaiter(void 0, void 0, void
     }
 });
 exports.updateBusinessListingStatus = updateBusinessListingStatus;
+const updateBusinessListingVerified = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { verified } = req.body;
+        if (!verified) {
+            return res.status(400).json({ status: false, message: "New status is required" });
+        }
+        const listing = yield BusinessListing_1.default.findByIdAndUpdate(req.params.id, { "verified": verified }, { new: true });
+        if (!listing) {
+            return res.status(404).json({ status: false, message: "Business listing not found" });
+        }
+        res.status(200).json({ status: true, message: "Business listing verified updated successfully", data: listing, });
+    }
+    catch (error) {
+        const err = error;
+        res.status(500).json({ message: "Error fetching listings", error: err.message });
+    }
+});
+exports.updateBusinessListingVerified = updateBusinessListingVerified;
 const changePublishStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { status } = req.body;
