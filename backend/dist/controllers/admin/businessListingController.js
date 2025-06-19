@@ -204,21 +204,41 @@ const updateBusinessListingStatus = (req, res) => __awaiter(void 0, void 0, void
     }
 });
 exports.updateBusinessListingStatus = updateBusinessListingStatus;
+// export const updateBusinessListingVerified = async (req: Request, res: Response) => {
+//   try {
+//     const { verified } = req.body;
+//     console.log("verified:=>", verified)
+//     const listing = await BusinessListing.findByIdAndUpdate(req.params.id, { "verified": verified }, { new: true });
+//     if (!listing) {
+//       return res.status(404).json({ status: false, message: "Business listing not found" });
+//     }
+//     res.status(200).json({ status: true, message: "Business listing verified updated successfully", data: listing, });
+//   } catch (error: unknown) {
+//     const err = error as Error;
+//     res.status(500).json({ message: "Error fetching listings", error: err.message });
+//   }
+// };
 const updateBusinessListingVerified = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { verified } = req.body;
-        if (!verified) {
-            return res.status(400).json({ status: false, message: "New status is required" });
-        }
-        const listing = yield BusinessListing_1.default.findByIdAndUpdate(req.params.id, { "verified": verified }, { new: true });
+        const listing = yield BusinessListing_1.default.findByIdAndUpdate(req.params.id, { verified }, { new: true });
         if (!listing) {
-            return res.status(404).json({ status: false, message: "Business listing not found" });
+            return res.status(404).json({
+                status: false,
+                message: "Business listing not found",
+            });
         }
-        res.status(200).json({ status: true, message: "Business listing verified updated successfully", data: listing, });
+        res.status(200).json({
+            status: true,
+            message: "Business listing verification status updated successfully",
+            data: listing,
+        });
     }
     catch (error) {
-        const err = error;
-        res.status(500).json({ message: "Error fetching listings", error: err.message });
+        res.status(500).json({
+            message: "Error updating verification status",
+            error: error.message,
+        });
     }
 });
 exports.updateBusinessListingVerified = updateBusinessListingVerified;

@@ -261,6 +261,7 @@ export const AllListings = () => {
         );
     }
   };
+
   const getBusinessTrustStatus = (status: string) => {
     const normalized = status.toLowerCase();
     const color = normalized === "approved" ? "bg-blue-600" : "bg-red-600";
@@ -353,31 +354,56 @@ export const AllListings = () => {
     }
   };
 
-  const handleUpdateVerified = async (id: string, newStatus: string) => {
-    // console.log("XXXXXXXXXXXXXXXXXXXXXXXX----", newStatus)
-    try {
-      const response = await postData(`update-business-listing-verified/${id}`, { verified: newStatus });
-      if (response?.status === true) {
-        setFullListings(
-          fullListings.map((listing) => {
-            if (listing._id === id) {
-              return { ...listing, verified: newStatus, };
-            }
-            return listing;
-          })
-        );
-        setEditingVerifiedId(null);
-        toast({ title: "Status Verified", description: `Listing ${id} status Verified to ${newStatus}.`, });
-      }
+  // const handleUpdateVerified = async (id: string, newStatus: string) => {
+  //   // console.log("XXXXXXXXXXXXXXXXXXXXXXXX----", newStatus)
+  //   try {
+  //     const response = await postData(`update-business-listing-verified/${id}`, { verified: newStatus });
+  //     if (response?.status === true) {
+  //       setFullListings(
+  //         fullListings.map((listing) => {
+  //           if (listing._id === id) {
+  //             return { ...listing, verified: newStatus, };
+  //           }
+  //           return listing;
+  //         })
+  //       );
+  //       setEditingVerifiedId(null);
+  //       toast({ title: "Status Verified", description: `Listing ${id} status Verified to ${newStatus}.`, });
+  //     }
 
-    } catch (error: any) {
-      console.error("Failed to update status", error);
-      toast({
-        variant: "destructive",
-        title: "Error Updating Status",
-        description:
-          error.response?.data?.message || "Failed to update status.",
-      });
+  //   } catch (error: any) {
+  //     console.error("Failed to update status", error);
+  //     toast({
+  //       variant: "destructive",
+  //       title: "Error Updating Status",
+  //       description:
+  //         error.response?.data?.message || "Failed to update status.",
+  //     });
+  //   }
+  // };
+
+
+  const handleToggleVerified = async (id, isChecked) => {
+    try {
+      const response = await postData(`update-business-listing-verified/${id}`, { verified: isChecked, });
+      console.log("response:=>", response)
+      if (response?.status === true) {
+        // Update state
+        setFullListings((prevListings) =>
+          prevListings.map((listing) =>
+            listing._id === id
+              ? { ...listing, verified: isChecked }
+              : listing
+          )
+        );
+
+        toast({
+          title: "Verification Updated", description: `Listing ID ${id} is now ${isChecked ? "Verified" : "Pending"}.`,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to update verified status:", error);
+      toast({ variant: "destrctive", title: "Error", description: error?.response?.data?.message || "Could not update verified status.", });
     }
   };
 
@@ -429,7 +455,7 @@ export const AllListings = () => {
       </AdminLayout>
     );
   }
-  // console.log("currentListings", currentListings)
+  console.log("currentListings", currentListings?.map((item) => item?.verified))
   return (
     <AdminLayout title="">
       <div className="mb-6">
@@ -573,33 +599,23 @@ export const AllListings = () => {
                     </div>
                   )}
                 </TableCell>
-
                 <TableCell>
-                  {editingVerifiedId === listing._id ? (
-                    <select
-                      className="px-2 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
-                      value={listing?.verified || ''} onChange={(e) => handleUpdateVerified(listing?._id, e.target.value)} onBlur={() => setEditingVerifiedId(null)} autoFocus                    >
-
-                      {verifiedOptions?.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      {getStatusVerifiedBadge(listing?.verified || "Pending")}
-                      <button
-                        onClick={() => setEditingVerifiedId(listing._id)}
-                        className="p-1 bg-orange-200 rounded-md hover:bg-orange-300 transition-colors w-6 h-6 flex items-center justify-center"
-                        title="Edit Status"
-                      >
-                        <Pencil className="w-3 h-3 text-orange-600" />
-                      </button>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <label className="relative inline-flex items-center cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={JSON.parse(listing?.verified)}
+                        onChange={(e) => handleToggleVerified(listing?._id, e.target?.checked)}
+                      />
+                      <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 rounded-full peer-checked:bg-blue-600 transition-colors duration-300"></div>
+                      <div className="absolute left-0.5 top-0.5 w-5 h-5 bg-white border border-gray-300 rounded-full transition-transform duration-300 transform peer-checked:translate-x-full"></div>
+                    </label>
+                    <span className={`text-sm font-medium ${JSON.parse(listing?.verified) ? "text-green-600" : "text-gray-500"}`}>
+                      {JSON.parse(listing?.verified) ? "Verified" : "Pending"}
+                    </span>
+                  </div>
                 </TableCell>
-
                 <TableCell>
                   <div className="flex flex-col gap-2">
                     <div className="flex gap-2">
@@ -625,7 +641,7 @@ export const AllListings = () => {
                       </Button>
                     </div>
 
-                    <div className="flex flex-col gap-1">
+                    {/* <div className="flex flex-col gap-1">
                       {getBusinessTrustStatus(
                         listing.businessDetails?.status ||
                         "Not Approved"
@@ -633,7 +649,8 @@ export const AllListings = () => {
                       {getTrustStatus(
                         listing.businessDetails?.publishedDate || "Not Approved"
                       )}
-                    </div>
+                    </div> */}
+                    
                   </div>
                 </TableCell>
               </TableRow>

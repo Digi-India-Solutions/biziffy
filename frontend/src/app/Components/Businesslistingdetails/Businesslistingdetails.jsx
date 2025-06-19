@@ -225,8 +225,8 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
             <button className="black-btn " onClick={() => router.back()}>
               <i className="bi bi-arrow-left-short"></i> Back
             </button>
-            {renderStatusBadge(businesses?.verified)}
-            {/* <Image src={VerifyImage} className="verify-img" alt="verifyimage" /> */}
+            {/* {renderStatusBadge(businesses?.verified)} */}
+            {businesses?.verified && businesses?.verified === "Approved" ? <Image src={VerifyImage} className="verify-img" alt="verifyimage" /> : ''}
           </div>
         </div>
       </div>

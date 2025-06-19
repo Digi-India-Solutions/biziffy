@@ -80,8 +80,8 @@ const BusinessListingPage = () => {
 
     if (!companyName || companyName.length < 2)
       return toast.error("Company name must be at least 2 characters.");
-    if (!website || !/^https?:\/\/.+/.test(website))
-      return toast.error("Enter a valid website (http/https).");
+    // if (!website || !/^https?:\/\/.+/.test(website))
+    //   return toast.error("Enter a valid website (http/https).");
     if (!shortDescription || shortDescription.length < 10)
       return toast.error("Short description must be at least 10 characters.");
     if (!logo)
@@ -96,7 +96,7 @@ const BusinessListingPage = () => {
     e.preventDefault();
     const { website, category, subCategory, serviceArea, companyName, shortDescription, logo, userId, service } = formData;
 
-    if (!website.startsWith("https://")) return toast.error("Website must start with https://");
+    // if (!website.startsWith("https://")) return toast.error("Website must start with https://");
     if (!category) return toast.error("Please select a category.");
     if (!subCategory) return toast.error("Please select a sub-category.");
     if (!serviceArea) return toast.error("Please enter service area or pincode.");
@@ -191,7 +191,7 @@ const BusinessListingPage = () => {
 
                   <div className="mb-3">
                     <label>Website</label>
-                    <input className="form-control" type="url" value={formData?.website || ""} onChange={(e) => setFormData({ ...formData, website: e.target.value })} />
+                    <input className="form-control" type="text" value={formData?.website || ""} onChange={(e) => setFormData({ ...formData, website: e.target.value })} />
                   </div>
 
                   <div className="mb-3">

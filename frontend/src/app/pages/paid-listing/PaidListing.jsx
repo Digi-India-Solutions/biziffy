@@ -4,8 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { postData } from "../../services/FetchNodeServices";
 import "./paid-listing.css";
+import { useRouter } from "next/navigation";
 
 const PaidListing = ({ websiteList = [], user }) => {
+  const router = useRouter();
   const handleClick = async (id) => {
     if (!id) return;
 
@@ -46,19 +48,20 @@ const PaidListing = ({ websiteList = [], user }) => {
       );
     }
   };
-
+  console.log("websiteList:=>", websiteList)
   return (
     <section className="custom-section">
       <div className="container">
         <div className="col-md-12">
           <div className="custom-row">
-            {websiteList.map((shop, index) => (
+            {websiteList?.map((shop, index) => (
               <div key={index} className="custom-col">
                 <div>
-                  <Link
-                    href={shop?.website || "#"}
+                  <a
+                    href={shop?.website?.startsWith("http") ? shop?.website : `https://${shop?.website}`}
                     target="_blank"
-                    style={{ textDecoration: "none" }}
+                    rel="noopener noreferrer"
+                    style={{ textDecoration: "none", color: "inherit" }}
                     onClick={() => handleClick(shop?._id)}
                   >
                     <div className="listing-content">
@@ -93,7 +96,7 @@ const PaidListing = ({ websiteList = [], user }) => {
                         ))}
                       </div>
                     </div>
-                  </Link>
+                  </a>
                 </div>
 
                 <div className="listing-image mt-3 d-flex flex-column align-items-start">

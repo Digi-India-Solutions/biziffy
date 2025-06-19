@@ -101,11 +101,7 @@ const BusinessListingSchema = new mongoose.Schema(
     clickCounts: { type: ClickCountsSchema },
     faq: [faqSchema],
     reviews: [reviewsSchema],
-    verified: {
-      type: String,
-      enum: ["Pending", "Approved", "Rejected"],
-      default: "Pending",
-    },
+    verified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

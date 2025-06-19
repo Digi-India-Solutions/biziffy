@@ -180,7 +180,7 @@ const Businesslisting = () => {
         {/* Business Listings */}
         <div className="container">
           <div className="business-listing-container">
-            <h5 className="text-dark mb-1">Business Category Name</h5>
+            <h5 className="text-dark mb-2">Find the right business solutions for your goals</h5>
             <div className="row">
               {/* Business Cards */}
               <div className="col-md-6">
@@ -345,7 +345,7 @@ const Businesslisting = () => {
                         <div className="business-card" onClick={handleCardClick} >
                           <div>
                             <Image
-                              src={biz?.businessCategory?.businessImages?.[0]}
+                              src={biz?.businessCategory?.businessImages?.[0] || null}
                               alt={biz?.name || "Business"}
                               className="listing-image"
                               width={300}
@@ -357,8 +357,8 @@ const Businesslisting = () => {
                               <h5>
                                 {biz?.businessDetails?.businessName?.slice(0, 15)}...
                               </h5>
-                              
-                              {biz?.verified === 'Approved' ? (
+                              {biz?.verified === 'Approved' ? <Image src={verifyImage} className="verify-img" width={30} height={30} alt="verifyimage" /> : null}
+                              {/* {biz?.verified === 'Approved' ? (
                                 <span
                                   style={{ padding: "4px 10px", borderRadius: "20px", backgroundColor: "#d4edda", color: "#155724", fontSize: "14px", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: "6px", }}  >
                                   <i className="bi bi-patch-check-fill"></i> Approved
@@ -373,7 +373,7 @@ const Businesslisting = () => {
                                   style={{ padding: "4px 10px", borderRadius: "20px", backgroundColor: "#f8d7da", color: "#721c24", fontSize: "14px", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: "6px", }}  >
                                   <i className="bi bi-x-circle-fill"></i> Rejected
                                 </span>
-                              )}
+                              )} */}
 
                             </div>
 
