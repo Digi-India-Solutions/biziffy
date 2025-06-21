@@ -24,12 +24,14 @@ import { postData } from "../../services/FetchNodeServices";
 const Page = () => {
   const [key, setKey] = useState("contact");
   const [formData, setFormData] = useState({ contactPerson: { userId: "" } });
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const tabImages = { contact: contactImage, business: businessImage, category: categoryImage, timing: timingImage, upgrade: upgradeImage, };
 
   console.log("FORMDATA:-", formData);
   const handleListingSubmit = async () => {
     // console.log("FORMDATA2:-", formData.businessCategory?.businessImages?.bImage);
+    setLoading(true);
     const form = new FormData();
     form.append("contactPerson", JSON.stringify(formData?.contactPerson));
     form.append("businessDetails", JSON.stringify(formData?.businessDetails));
@@ -44,13 +46,16 @@ const Page = () => {
       const response = await postData("createBusinessListing", form);
       console.log("ZZZZZZZZZZ:=>", response.status)
       if (response?.status) {
+        setLoading(false);
         toast.success(response.message);
         router.push('/pages/freelistingform/freelistingformsuccess')
 
       } else {
+        setLoading(false);
         toast.error(response.message);
       }
     } catch (e) {
+      setLoading(false);
       console.log(e);
     }
   }
@@ -138,7 +143,7 @@ const Page = () => {
                     <BusinessTiming setKey={setKey} formData={formData} setFormData={setFormData} />
                   </Tab>
                   <Tab eventKey="upgrade" className="tab-stlye">
-                    <UpgradeListing setKey={setKey} handleListingSubmit={handleListingSubmit} formData={formData} setFormData={setFormData} />
+                    <UpgradeListing loading={loading} setLoading={setLoading} setKey={setKey} handleListingSubmit={handleListingSubmit} formData={formData} setFormData={setFormData} />
                   </Tab>
                 </Tabs>
               </div>

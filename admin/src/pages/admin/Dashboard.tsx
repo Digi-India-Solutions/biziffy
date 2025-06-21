@@ -1,3 +1,5 @@
+"use client";
+
 import { AdminLayout } from "@/components/Layout/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,57 +7,47 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Settings } from "lucide-react";
-
-
 import gradientClasses from "../data/gradientClasses";
-import dashboardCardTemplates from "../data/dashboardCards";
-import { toast } from "@/components/ui/use-toast";
+import { getData } from "../../services/FetchNodeServices";
 
-// Define or import the DashboardCardTemplate type
-type DashboardCardTemplate = {
-  key: string;
-  title: string;
-  linkTo: string;
-};
+// Define your static dashboard card template list
+const dashboardCardTemplates = [
+  { key: "listings", title: "Business Listings", linkTo: "/admin/listings" },
+   { key: "website-listings", title: "WebSite Listings", linkTo: "/admin/Website/listings" },
+  { key: "advertisements", title: "Advertisements", linkTo: "/admin/advertisements" },
+  { key: "users", title: "Users", linkTo: "/admin/users" },
+  { key: "categories", title: "Categories", linkTo: "/admin/categories" },
+  { key: "subcategories", title: "Subcategories", linkTo: "/admin/subcategories" },
+  // { key: "child-categories", title: "Child Categories", linkTo: "/admin/child-categories" },
+  { key: "contact-us", title: "Contact Messages", linkTo: "/admin/contact-us" },
+  { key: "supports", title: "Support Tickets", linkTo: "/admin/supports" },
+  { key: "enquiries", title: "Enquiries", linkTo: "/admin/enquiries" },
+  { key: "blog", title: "Blog", linkTo: "/admin/blog" },
+  { key: "faqs", title: "FAQs", linkTo: "/admin/faq" },
+];
 
 const Dashboard = () => {
   const { user } = useAuth();
-
-  const [dashboardData, setDashboardData] = useState({
-    listings: 0,
-    advertisements: 0,
-    users: 0,
-    categories: 0,
-    subcategories: 0,
-    // childCategories: 0,
-    contacts: 0,
-    supports: 0,
-    enquiries: 0,
-    links: 0,
-    reviews: 0,
-    memberships: 0,
-  });
-  const [customCards, setCustomCards] = useState<DashboardCardTemplate[]>([]);
-  
+  const [dashboardData, setDashboardData] = useState<Record<string, number>>({});
   const [isMobile, setIsMobile] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
+  // Detect screen size
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Fetch dashboard data and convert array to object
   useEffect(() => {
     const fetchDashboardCounts = async () => {
       try {
         const endpoints = [
           "listings",
+          "website-listings",
           "advertisements",
           "users",
           "categories",
@@ -64,30 +56,24 @@ const Dashboard = () => {
           "contact-us",
           "supports",
           "enquiries",
-          "links",
           "reviews",
-          "memberships",
+          "blog",
+          "faqs"
         ];
 
         const responses = await Promise.all(
-          endpoints.map((e) => fetch(`/api/admin/${e}/count`))
+          endpoints.map((path) => getData(`admin/dashboard/${path}/count`))
         );
-        const data = await Promise.all(responses.map((r) => r.json()));
 
-        setDashboardData({
-          listings: data[0].count,
-          advertisements: data[1].count,
-          users: data[2].count,
-          categories: data[3].count,
-          subcategories: data[4].count,
-          // childCategories: data[5].count,
-          contacts: data[6].count,
-          supports: data[7].count,
-          enquiries: data[8].count,
-          links: data[9].count,
-          reviews: data[10].count,
-          memberships: data[11].count,
+        console.log("responses:=>>>", responses);
+        const formattedData: Record<string, number> = {};
+        responses.forEach((item) => {
+          if (item.path && typeof item.count === "number") {
+            formattedData[item.path] = item.count;
+          }
         });
+
+        setDashboardData(formattedData);
       } catch (err) {
         console.error("Error fetching dashboard counts:", err);
       }
@@ -96,26 +82,26 @@ const Dashboard = () => {
     fetchDashboardCounts();
   }, []);
 
+  // Merge template + actual data
   const dashboardCards = dashboardCardTemplates.map((tpl) => ({
     ...tpl,
-    count: dashboardData[tpl.key] || 0,
+    count: dashboardData[tpl.key] ?? 0,
     linkText: "View",
   }));
 
+  // Filter based on search
   const filteredCards = dashboardCards.filter((card) =>
     card.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Pagination
   const cardsPerPage = isMobile ? 6 : 24;
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(filteredCards.length / cardsPerPage);
+  const totalPages = Math.ceil(filteredCards?.length / cardsPerPage);
 
-  const paginatedCards = isMobile
-    ? filteredCards.slice(0, 9)
-    : filteredCards.slice(
-        (currentPage - 1) * cardsPerPage,
-        currentPage * cardsPerPage
-      );
+  const paginatedCards = filteredCards.slice(
+    (currentPage - 1) * cardsPerPage,
+    currentPage * cardsPerPage
+  );
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
@@ -123,46 +109,23 @@ const Dashboard = () => {
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    setCurrentPage(1); // reset to first page when searching
+    setCurrentPage(1);
   };
 
   return (
-    <AdminLayout title="" onSearch={handleSearch}>
-      {/* mb -0 ka matlab hai ham dashboard aur sabse uper rakh rhe hai navbar ke karib */}
-
-      <div className="mb-0 flex items-center justify-between flex-wrap gap-2">
-        <h1 className="text-2xl font-bold hidden md:block"></h1>
-      </div>
-      
-      {/* <div className="mb-4 flex items-center justify-between flex-wrap gap-2">
-  <h1 className="text-2xl font-bold hidden md:block"></h1> */}
-
-  {/* <Link to="/admin/DashboardManager">
-    <Button variant="outline" className="flex items-center gap-2">
-      <span>Manage Dashboard</span>
-      <Settings className="w-4 h-4" />
-    </Button>
-  </Link> */}
-{/* </div> */}
-
-
+    <AdminLayout title="Dashboard" onSearch={handleSearch}>
       <div className="grid gap-4 grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
         {paginatedCards.map((card, idx) => (
           <Card
             key={idx}
-            className={`admin-card h-[180px] md:h-[180px] h-[170px] sm:w-[250px] md:w-[300px] lg:w-[180px] rounded-2xl 
-              transform transition duration-300 hover:scale-105 
-              text-white ${gradientClasses[
-                (idx + (currentPage - 1) * cardsPerPage) % gradientClasses.length
-              ]}
-            `}
+            className={`admin-card h-[180px] sm:w-[250px] md:w-[300px] lg:w-[180px] rounded-2xl transform transition duration-300 hover:scale-105 text-white ${gradientClasses[(idx + (currentPage - 1) * cardsPerPage) % gradientClasses.length]
+              }`}
           >
             <CardContent className="p-4 flex flex-col justify-between text-center h-full w-full">
               <div>
                 <span className="text-2xl font-bold block">{card.count}</span>
                 <h3 className="text-base font-semibold mt-2 truncate">{card.title}</h3>
               </div>
-
               <Link to={card.linkTo} className="w-full">
                 <Button className="w-full bg-white text-black hover:bg-gray-200 font-semibold text-sm transition duration-200 mt-4">
                   {card.linkText}
@@ -173,47 +136,48 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="flex justify-center mt-6 space-x-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          <ChevronLeft className="w-4 h-4 mr-1" />
-          Previous
-        </Button>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-6 space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+          </Button>
 
-        {Array.from({ length: totalPages }, (_, i) => i + 1)
-          .filter((page) => {
-            if (!isMobile) return true;
-            return (
-              page === 1 ||
-              page === totalPages ||
-              Math.abs(page - currentPage) <= 1
-            );
-          })
-          .map((page) => (
-            <Button
-              key={page}
-              size="sm"
-              variant={currentPage === page ? "default" : "outline"}
-              onClick={() => handlePageChange(page)}
-            >
-              {page}
-            </Button>
-          ))}
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter((page) => {
+              if (!isMobile) return true;
+              return (
+                page === 1 ||
+                page === totalPages ||
+                Math.abs(page - currentPage) <= 1
+              );
+            })
+            .map((page) => (
+              <Button
+                key={page}
+                size="sm"
+                variant={currentPage === page ? "default" : "outline"}
+                onClick={() => handlePageChange(page)}
+              >
+                {page}
+              </Button>
+            ))}
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Next
-          <ChevronRight className="w-4 h-4 ml-1" />
-        </Button>
-      </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next <ChevronRight className="w-4 h-4 ml-1" />
+          </Button>
+        </div>
+      )}
     </AdminLayout>
   );
 };

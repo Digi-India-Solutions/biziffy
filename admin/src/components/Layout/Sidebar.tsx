@@ -394,7 +394,7 @@ export const Sidebar = () => {
 
 
 
-              <li>
+              {/* <li>
                 <Link
                   to="/admin/membership"
                   className={cn(
@@ -405,7 +405,7 @@ export const Sidebar = () => {
                   <Users className="h-5 w-5 mr-3" />
                   User membership
                 </Link>
-              </li>
+              </li> */}
 
               <li>
                 <button

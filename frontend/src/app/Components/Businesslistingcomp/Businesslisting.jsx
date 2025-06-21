@@ -15,6 +15,8 @@ import banner3 from "../../Images/slide3.webp";
 import PaidListing from "../../pages/paid-listing/PaidListing"
 import { getData, postData } from "../../services/FetchNodeServices";
 import verifyImage from "../../Images/verified.gif"
+
+
 const Businesslisting = () => {
   const path = usePathname()
   const formatSlug = (text) => text?.replace(/-/g, ' ');
@@ -342,7 +344,7 @@ const Businesslisting = () => {
                           </div>
                         </div>
 
-                        <div className="business-card" onClick={handleCardClick} >
+                        <div className="business-card" style={{ width: '100%', display: 'flex', justifyContent: 'space-between', gap: '20px' }} onClick={handleCardClick} >
                           <div>
                             <Image
                               src={biz?.businessCategory?.businessImages?.[0] || null}
@@ -352,34 +354,18 @@ const Businesslisting = () => {
                               height={300}
                             />
                           </div>
-                          <div>
+                          <div style={{ width: '100%' }}>
                             <div className="d-flex justify-content-between gap-3 mb-2 align-items-center">
                               <h5>
-                                {biz?.businessDetails?.businessName?.slice(0, 15)}...
+                                {biz?.businessDetails?.businessName?.slice(0, 45)}...
                               </h5>
-                              {biz?.verified === 'Approved' ? <Image src={verifyImage} className="verify-img" width={30} height={30} alt="verifyimage" /> : null}
-                              {/* {biz?.verified === 'Approved' ? (
-                                <span
-                                  style={{ padding: "4px 10px", borderRadius: "20px", backgroundColor: "#d4edda", color: "#155724", fontSize: "14px", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: "6px", }}  >
-                                  <i className="bi bi-patch-check-fill"></i> Approved
-                                </span>
-                              ) : biz?.verified === 'Pending' ? (
-                                <span
-                                  style={{ padding: "4px 10px", borderRadius: "20px", backgroundColor: "#fff3cd", color: "#856404", fontSize: "14px", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: "6px", }}  >
-                                  <i className="bi bi-clock-fill"></i> Pending
-                                </span>
-                              ) : (
-                                <span
-                                  style={{ padding: "4px 10px", borderRadius: "20px", backgroundColor: "#f8d7da", color: "#721c24", fontSize: "14px", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: "6px", }}  >
-                                  <i className="bi bi-x-circle-fill"></i> Rejected
-                                </span>
-                              )} */}
+                              {biz?.verified === 'Approved' || JSON.parse(biz?.verified) ? <Image src={verifyImage} className="verify-img" width={30} height={30} alt="verifyimage" /> : null}
 
                             </div>
 
                             <div className="d-flex gap-2 align-items-center">
                               <div>
-                                {biz?.reviews[0]?.rating} <i className="bi bi-star-fill"></i>
+                                {biz?.reviews[0]?.rating.length} <i className="bi bi-star-fill"></i>
                                 <i className="bi bi-star-fill"></i>
                                 <i className="bi bi-star-fill"></i>
                                 <i className="bi bi-star-fill"></i>

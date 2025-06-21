@@ -29,6 +29,7 @@ import pinCodeRoutes from "./routes/admin/pinCodeRoutes"
 import contactRoutes from "./routes/admin/contactRoutes"
 import faqRoutes from "./routes/admin/faqRoutes";
 import blogRoutes from "./routes/admin/blogRoutes";
+import dashboardRoutes from "./routes/admin/adminDashboard";
 
 // hm yaha per all listiing ka data import kr rhe hai
 import businessListingRoutes from "./routes/admin/businessListingRoutes";
@@ -100,7 +101,8 @@ app.use("/api/pincode", pinCodeRoutes)
 app.use('/api/faq', faqRoutes)
 app.use("/api/admin", businessListingRoutes);
 app.use("/api/admin", websiteListingRoutes);
-app.use("/api/blog",blogRoutes)
+app.use("/api/blog", blogRoutes)
+app.use("/api/admin/dashboard", dashboardRoutes)
 // signup
 app.use("/api/auth", authRoutes);
 

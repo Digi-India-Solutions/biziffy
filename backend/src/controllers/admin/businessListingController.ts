@@ -12,9 +12,9 @@ export const createBusinessDetails = async (req: Request, res: Response) => {
 
     const parsedBusinessDetails = JSON.parse(businessDetails);
     const userId = JSON.parse(contactPerson).userId
-    console.log("userId", userId)
+    // console.log("userId", userId)
     const existingBusiness = await BusinessListing.findOne({ "businessDetails.businessName": parsedBusinessDetails.businessName, "contactPerson.userId": userId });
-
+    // console.log("userId", existingBusiness)
     if (existingBusiness) {
       return res.status(200).json({ message: "Business already exists", status: false });
     }
@@ -664,12 +664,13 @@ export const increaseClickCount = async (req: Request, res: Response) => {
     // Increment the click count
     (business as any).clickCounts[type].count += 1;
 
-    await business.save();
+    // await business.save();
+    const update = await BusinessListing.findOneAndUpdate({ businessId, business });
 
     return res.status(200).json({
       status: true,
       message: `${type} click count incremented.`,
-      updatedCounts: (business as any).clickCounts[type],
+      updatedCounts: (update as any).clickCounts[type],
     });
   } catch (error: any) {
     console.error("Click count error:", error);
@@ -684,7 +685,7 @@ export const postReviewAllListingsById = async (req: Request, res: Response) => 
 
     const listing = await BusinessListing.findById(req.params.id);
     if (!listing) {
-      return res.status(404).json({ status: false, message: "Business listing not found" });
+      return res.status(204).json({ status: false, message: "Business listing not found" });
     }
 
     // Extract and format review fields properly
@@ -697,18 +698,42 @@ export const postReviewAllListingsById = async (req: Request, res: Response) => 
 
     // Basic validation
     if (!review.author || !review.comment || isNaN(review.rating) || !review.user) {
-      return res.status(400).json({ status: false, message: "Missing or invalid review fields" });
+      return res.status(200).json({ status: false, message: "Missing or invalid review fields" });
+    }
+
+    // Check if the user already added a review
+    // const alreadyReviewed = listing.reviews.some(r => r.user.toString() === review?.user);
+    const alreadyReviewed = listing.reviews.some(
+      r => r.user && r.user.toString() === review?.user
+    );
+    if (alreadyReviewed) {
+      return res.status(200).json({
+        status: false,
+        message: "You have already submitted a review for this business listing.",
+      });
     }
 
     // Add the review
     listing.reviews.push(review);
-    await listing.save();
+    // await listing.save();
 
-    return res.status(200).json({ status: true, message: "Review added successfully", data: listing.reviews[listing.reviews.length - 1], });
+    const updatedListing = await BusinessListing.findByIdAndUpdate(req.params.id, listing, { new: true });
+    if (!updatedListing) {
+      return res.status(204).json({ status: false, message: "Business listing not found" });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "Review added successfully",
+      data: listing.reviews[listing.reviews.length - 1],
+    });
 
   } catch (error: any) {
     console.error("Error adding review:", error);
-    return res.status(500).json({ status: false, message: "Failed to add review", error: error.message, });
+    return res.status(500).json({
+      status: false,
+      message: "Failed to add review",
+      error: error.message,
+    });
   }
 };
-

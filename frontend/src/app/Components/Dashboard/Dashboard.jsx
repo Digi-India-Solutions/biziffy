@@ -176,12 +176,14 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import Link from "next/link";
 import "./dashboard.css";
 import DashboardDetails from "../DashboardDetails/DashboardDetails";
+import { toast, ToastContainer } from "react-toastify";
 
 const Dashboard = ({ businessListing }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [singleData, setSingleData] = useState(businessListing?.[0]?._id || "");
+  const [singleData, setSingleData] = useState(businessListing[0]?._id || "");
   const [type, setType] = useState(null);
   const menuRef = useRef();
+
 
   useEffect(() => {
     const handler = (e) => {
@@ -190,6 +192,34 @@ const Dashboard = ({ businessListing }) => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  const handleLogout = () => {
+    toast.info(
+      ({ closeToast }) => (
+        <div className="p-2">
+          <p className="mb-2">Are you sure you want to logout?</p>
+          <div className="d-flex justify-content-end gap-2">
+            <button onClick={() => { confirmLogout(); closeToast(); }} className="btn btn-sm btn-danger">Yes</button>
+            <button onClick={closeToast} className="btn btn-sm btn-secondary">No</button>
+          </div>
+        </div>
+      ),
+      {
+        position: "top-center",
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        closeButton: false,
+      }
+    );
+  };
+
+  const confirmLogout = () => {
+    localStorage.removeItem("biziffyUser");
+    toast.success("Logout Successfully!", { position: "top-right", autoClose: 3000 });
+    window.location.href = "/pages/login";
+  };
+
 
   const filteredData = businessListing?.find((item) => item?._id === singleData);
   const clickCountsArray = filteredData?.clickCounts
@@ -201,7 +231,7 @@ const Dashboard = ({ businessListing }) => {
     }))
     : [];
 
-    // console.log("businessListing", businessListing)
+  // console.log("businessListing", businessListing)
   const totalListings = businessListing.reduce((acc, item) => {
     return acc + (item?.clickCounts?.listings?.count || 0);
   }, 0);
@@ -215,9 +245,15 @@ const Dashboard = ({ businessListing }) => {
     "linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)",
     "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)"
   ];
- console.log("TYPE:-",type)
+  useEffect(() => {
+    if (businessListing.length > 0 && !singleData) {
+      setSingleData(businessListing[0]._id);
+    }
+  }, [businessListing]);
+  console.log("XXXXXXXXDDDDDDD:=>", singleData)
   return (
     <div className="d-flex" style={{ minHeight: "100vh", backgroundColor: "#f8f9fa" }}>
+      <ToastContainer />
       <div className="flex-grow-1">
         {/* Navbar */}
         <nav className="navbar navbar-light bg-white shadow-sm px-4 d-flex justify-content-between">
@@ -243,7 +279,7 @@ const Dashboard = ({ businessListing }) => {
                 <Link href="/pages/Profile" className="dropdown-item">
                   <i className="bi bi-person"></i> Profile
                 </Link>
-                <button onClick={() => alert("Logout logic here")} className="dropdown-item text-danger">
+                <button onClick={() => handleLogout()} className="dropdown-item text-danger">
                   <i className="bi bi-box-arrow-right"></i> Logout
                 </button>
               </div>
@@ -278,19 +314,19 @@ const Dashboard = ({ businessListing }) => {
 
           <div className="row g-4">
             {/* Total Profile Views Card */}
-            <div className="col-md-3" onClick={() => setType("table")}>
+            {/* <div className="col-md-3" onClick={() => setType("table")}>
               <div className="card shadow-sm border-0">
                 <div className="card-body dashboard-card-body">
                   <h5 className="card-title">Total Profile Views</h5>
                   <p className="card-text display-6">{totalListings}</p>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Dynamic Cards */}
             {Array.from({ length: 6 }).map((_, i) => {
               const data = clickCountsArray[i + 1] || {
-                title: ["Listings", "Whatsapp", "Website", "Contact", "Share", "Direction"][i],
+                title: ["Visitor", "Whatsapp", "Website", "Contact", "Share", "Direction"][i],
                 count: 0,
               };
               console.log("data=>", data?.user)

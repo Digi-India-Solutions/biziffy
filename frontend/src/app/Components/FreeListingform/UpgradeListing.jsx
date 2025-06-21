@@ -4,7 +4,7 @@ import "../../pages/freelistingform/freelistingform.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const UpgradeListing = ({ formData, setFormData, handleListingSubmit, setKey }) => {
+const UpgradeListing = ({ formData, setFormData, handleListingSubmit, setKey, loading, setLoading }) => {
   const isHttpsUrl = (url) => {
     return url === "" || url?.startsWith("https://");
   };
@@ -22,20 +22,23 @@ const UpgradeListing = ({ formData, setFormData, handleListingSubmit, setKey }) 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    // setLoading(true);
     const { upgradeListing = {} } = formData;
     const allFields = ["direction", "website", "facebook", "instagram", "linkedin", "twitter"];
 
     const invalidField = allFields.find(
+      // setLoading(false),
       (field) => !isHttpsUrl(upgradeListing?.[field] || "")
     );
 
     if (invalidField) {
+      // setLoading(false);
       toast.error(`Invalid URL in "${invalidField}" field. Please use HTTPS.`);
       return;
     }
 
     handleListingSubmit(); // All validations passed
+
   };
 
   const socialPlatforms = ["facebook", "instagram", "linkedin", "twitter"];
@@ -108,7 +111,7 @@ const UpgradeListing = ({ formData, setFormData, handleListingSubmit, setKey }) 
           className="btn btn-success fw-bold"
           style={{ flex: 1 }}
         >
-          Submit
+         {loading ? "Submitting..." : "Submit"}
         </button>
       </div>
 

@@ -23,8 +23,9 @@ const createBusinessDetails = (req, res) => __awaiter(void 0, void 0, void 0, fu
         const { contactPerson, businessDetails, businessTiming, businessCategory, upgradeListing, } = req.body;
         const parsedBusinessDetails = JSON.parse(businessDetails);
         const userId = JSON.parse(contactPerson).userId;
-        console.log("userId", userId);
+        // console.log("userId", userId)
         const existingBusiness = yield BusinessListing_1.default.findOne({ "businessDetails.businessName": parsedBusinessDetails.businessName, "contactPerson.userId": userId });
+        // console.log("userId", existingBusiness)
         if (existingBusiness) {
             return res.status(200).json({ message: "Business already exists", status: false });
         }
@@ -223,22 +224,12 @@ const updateBusinessListingVerified = (req, res) => __awaiter(void 0, void 0, vo
         const { verified } = req.body;
         const listing = yield BusinessListing_1.default.findByIdAndUpdate(req.params.id, { verified }, { new: true });
         if (!listing) {
-            return res.status(404).json({
-                status: false,
-                message: "Business listing not found",
-            });
+            return res.status(404).json({ status: false, message: "Business listing not found", });
         }
-        res.status(200).json({
-            status: true,
-            message: "Business listing verification status updated successfully",
-            data: listing,
-        });
+        res.status(200).json({ status: true, message: "Business listing verification status updated successfully", data: listing, });
     }
     catch (error) {
-        res.status(500).json({
-            message: "Error updating verification status",
-            error: error.message,
-        });
+        res.status(500).json({ status: false, message: "Error updating verification status", error: error.message, });
     }
 });
 exports.updateBusinessListingVerified = updateBusinessListingVerified;
@@ -578,11 +569,12 @@ const increaseClickCount = (req, res) => __awaiter(void 0, void 0, void 0, funct
         }
         // Increment the click count
         business.clickCounts[type].count += 1;
-        yield business.save();
+        // await business.save();
+        const update = yield BusinessListing_1.default.findOneAndUpdate({ businessId, business });
         return res.status(200).json({
             status: true,
             message: `${type} click count incremented.`,
-            updatedCounts: business.clickCounts[type],
+            updatedCounts: update.clickCounts[type],
         });
     }
     catch (error) {
@@ -596,7 +588,7 @@ const postReviewAllListingsById = (req, res) => __awaiter(void 0, void 0, void 0
         console.log("BODY:->", req.body);
         const listing = yield BusinessListing_1.default.findById(req.params.id);
         if (!listing) {
-            return res.status(404).json({ status: false, message: "Business listing not found" });
+            return res.status(204).json({ status: false, message: "Business listing not found" });
         }
         // Extract and format review fields properly
         const review = {
@@ -607,16 +599,37 @@ const postReviewAllListingsById = (req, res) => __awaiter(void 0, void 0, void 0
         };
         // Basic validation
         if (!review.author || !review.comment || isNaN(review.rating) || !review.user) {
-            return res.status(400).json({ status: false, message: "Missing or invalid review fields" });
+            return res.status(200).json({ status: false, message: "Missing or invalid review fields" });
+        }
+        // Check if the user already added a review
+        // const alreadyReviewed = listing.reviews.some(r => r.user.toString() === review?.user);
+        const alreadyReviewed = listing.reviews.some(r => r.user && r.user.toString() === (review === null || review === void 0 ? void 0 : review.user));
+        if (alreadyReviewed) {
+            return res.status(200).json({
+                status: false,
+                message: "You have already submitted a review for this business listing.",
+            });
         }
         // Add the review
         listing.reviews.push(review);
-        yield listing.save();
-        return res.status(200).json({ status: true, message: "Review added successfully", data: listing.reviews[listing.reviews.length - 1], });
+        // await listing.save();
+        const updatedListing = yield BusinessListing_1.default.findByIdAndUpdate(req.params.id, listing, { new: true });
+        if (!updatedListing) {
+            return res.status(204).json({ status: false, message: "Business listing not found" });
+        }
+        return res.status(200).json({
+            status: true,
+            message: "Review added successfully",
+            data: listing.reviews[listing.reviews.length - 1],
+        });
     }
     catch (error) {
         console.error("Error adding review:", error);
-        return res.status(500).json({ status: false, message: "Failed to add review", error: error.message, });
+        return res.status(500).json({
+            status: false,
+            message: "Failed to add review",
+            error: error.message,
+        });
     }
 });
 exports.postReviewAllListingsById = postReviewAllListingsById;

@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { postData } from "../../services/FetchNodeServices";
 import { toast, ToastContainer } from "react-toastify";
 import VerifyImage from "../../Images/verified.gif"
-const Businesslistingdetails = ({ businesses, advertisements }) => {
+const Businesslistingdetails = ({ businesses, advertisements, fetchBusinessDetails }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const [lightbox, setLightbox] = useState(false);
@@ -79,17 +79,18 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
           `admin/post-review-all-listings-by-id/${businesses?._id}`,
           body
         );
-        console.log('responsereviews:', response);
+        // console.log('responsereviews:', response);
 
         if (response?.status || response?.data?.status) {
           const updatedReviews = [...reviews, newReview];
           setReviews(updatedReviews);
           setNewReview({ author: '', comment: '', rating: 0, user: '' });
           toast.success('Review added successfully!');
+          fetchBusinessDetails()
 
           setShowForm(false);
         } else {
-          toast.error('Failed to add review. Please try again.');
+          toast.error(response.message || 'Failed to add review. Please try again.');
         }
       } catch (error) {
         console.error('Error adding review:', error);
@@ -100,7 +101,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
     }
   };
 
-  console.log("businesses", businesses?._id)
+
   const openLightbox = (index) => {
     setCurrentIndex(index);
     setLightbox(true);
@@ -176,7 +177,7 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
   };
 
   const today = getCurrentDay();
-  console.log("XXXXXXXXDDDDDDD", businesses)
+  console.log("XXXXXXXXDDDDDDD:=>", businesses)
 
   const handleEnquiryForm = async () => {
     const respons = postData("enquiries/create-enquiryform", { ...enquiryForm })
@@ -216,6 +217,30 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
   // console.log('responsereviews:=>', businesses)
   // console.log('responsereviews:=>', advertisements)
   // console.log('responsereviews:=>', advertisements?.filter((ad) => ad?.categoryName === businesses?.businessCategory?.category?.name))
+
+  const handleShare = async () => {
+    const shareData = {
+      title: "Biziffy Listing",
+      text: "Check out this business listing!",
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        handleCountClick('share')
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        alert("Link copied to clipboard!");
+      }
+    } catch (error) {
+      console.error("Sharing failed", error);
+    }
+  };
+
+  const totalRating = businesses?.reviews?.reduce((acc, r) => acc + r?.rating, 0);
+  const avgRating = totalRating / businesses?.reviews?.length;
+
   return (
     <>
       <ToastContainer />
@@ -237,11 +262,10 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
               <h5 className="m-0">{businesses?.businessDetails?.businessName}</h5>
               <div className="d-flex gap-2 align-items-center mb-1">
                 <p>
-                  Dummy <i className="bi bi-star-fill"></i>{" "}
-                  <i className="bi bi-star-fill"></i>{" "}
-                  <i className="bi bi-star-fill"></i>{" "}
-                  <i className="bi bi-star-fill"></i>{" "}
-                  <i className="bi bi-star-fill"></i> Dummy
+                  {[...Array(Math.floor(avgRating))].map((_, i) => (
+                    <i key={i} className="bi bi-star-fill text-warning"></i>
+                  ))} |
+                  {businesses?.reviews?.length}
                 </p>
                 <span>|</span>
                 <p>{businesses?.businessCategory?.category?.name}</p>
@@ -259,14 +283,17 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                 >
                   <i className="bi bi-crosshair"></i> Direction
                 </Link>
-
+                {/* 
                 <Link
                   href={"#"}
                   onClick={() => handleCountClick('share')}
                   className="business-listing-black-btn"
                 >
                   <i className="bi bi-share"></i> Share
-                </Link>
+                </Link> */}
+                <button onClick={handleShare} className="business-listing-black-btn">
+                  <i className="bi bi-share"></i> Share
+                </button>
 
                 <Link
                   href={`tel:+91${businesses?.contactPerson?.contactNumber}`}
@@ -495,14 +522,16 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
                     <ul className="review-list">
 
                       {businesses?.reviews?.map((review, index) => (
-                        <li key={index}>
-                          <span className="review-name">
-                            {typeof review.author === "string" &&
-                              review.author.length > 0
-                              ? review.author.charAt(0)
-                              : "?"}
-                          </span>
-                          <div>
+                        <li key={index} style={{ width: '100%' }}>
+                          <div style={{ width: '10%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <span style={{ width: 40, height: 40, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'green', color: 'white' }}>
+                              {typeof review.author === "string" &&
+                                review.author.length > 0
+                                ? review.author.charAt(0)
+                                : "?"}
+                            </span>
+                          </div>
+                          <div style={{ width: '90%' }}>
                             <div className="review-comment-star">
                               {[...Array(5)].map((_, i) => (
                                 <i
@@ -812,9 +841,9 @@ const Businesslistingdetails = ({ businesses, advertisements }) => {
               </button>
             </form>
             {/* add section  */}
-            {filter?.map((ad) => {
+            {filter?.map((ad, index) => {
               return (
-                <section className="ads-section my-3">
+                <section key={index} className="ads-section my-3">
                   <div className="d-flex justify-content-center align-item-center">
                     <Image src={ad?.image} alt="ads" className="img-fluid" width={500} height={500} />
                   </div>

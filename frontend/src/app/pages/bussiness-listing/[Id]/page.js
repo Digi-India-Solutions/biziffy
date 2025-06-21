@@ -15,8 +15,7 @@ const Page = () => {
   const [error, setError] = useState('');
   const [advertisements, setAdvertisements] = useState([])
 
-  useEffect(() => {
-    const fetchBusinessDetails = async () => {
+   const fetchBusinessDetails = async () => {
       try {
         const response = await getData(`get-all-listings-by-id/${Id}`);
         console.log("Business Listings:=>", response);
@@ -32,7 +31,9 @@ const Page = () => {
         setLoading(false);
       }
     };
-
+    
+  useEffect(() => {
+  
     const fetchAdvartisMant = async () => {
       try {
         const response = await getData("advertisements/get-all-advertisements");
@@ -59,7 +60,7 @@ const Page = () => {
         ) : error ? (
           <p style={{ color: 'red' }}>{error}</p>
         ) : (
-          <Businesslistingdetails  advertisements={advertisements} businesses={businesses} />
+          <Businesslistingdetails fetchBusinessDetails={fetchBusinessDetails}  advertisements={advertisements} businesses={businesses} />
         )}
       </div>
     </div>

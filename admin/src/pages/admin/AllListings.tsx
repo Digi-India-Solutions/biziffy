@@ -612,7 +612,7 @@ export const AllListings = () => {
                       <div className="absolute left-0.5 top-0.5 w-5 h-5 bg-white border border-gray-300 rounded-full transition-transform duration-300 transform peer-checked:translate-x-full"></div>
                     </label>
                     <span className={`text-sm font-medium ${JSON.parse(listing?.verified) ? "text-green-600" : "text-gray-500"}`}>
-                      {JSON.parse(listing?.verified) ? "Verified" : "Pending"}
+                      {JSON.parse(listing?.verified)||listing?.verified=== "Verified"? "Verified" : "Pending"}
                     </span>
                   </div>
                 </TableCell>
